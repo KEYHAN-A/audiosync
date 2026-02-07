@@ -40,6 +40,15 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n" > ~/.ssh/config
 
+      - name: Debug SSH connection
+        run: |
+          echo "=== Key file check ==="
+          ls -la ~/.ssh/id_ed25519
+          ssh-keygen -l -f ~/.ssh/id_ed25519
+          echo ""
+          echo "=== Testing SSH connection (verbose) ==="
+          ssh -vvv -o BatchMode=yes root@${{ secrets.PRODUCTION_SSH_HOST }} "echo SSH OK" 2>&1 || true
+
       - name: Deploy website files
         run: |
           echo "Deploying AudioSync website"
