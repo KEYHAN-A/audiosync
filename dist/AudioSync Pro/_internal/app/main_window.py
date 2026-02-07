@@ -1,4 +1,4 @@
-"""Main window — toolbar, workflow bar, splitter layout, orchestrates all components."""
+"""Main window — minimal layout with card-based tracks and timeline."""
 
 from __future__ import annotations
 
@@ -13,14 +13,15 @@ from PyQt6.QtGui import QKeySequence
 from PyQt6.QtWidgets import (
     QApplication,
     QFileDialog,
+    QFrame,
     QHBoxLayout,
     QLabel,
     QMainWindow,
     QMessageBox,
     QProgressBar,
     QPushButton,
+    QScrollArea,
     QSplitter,
-    QToolBar,
     QVBoxLayout,
     QWidget,
 )
@@ -41,7 +42,7 @@ from core.models import CancelledError, SyncConfig, SyncResult, Track
 
 from .dialogs import AboutDialog, ExportDialog, ImportProgressDialog, ProcessingDialog
 from .theme import COLORS
-from .track_panel import TrackPanel
+from .track_card import TrackPanel
 from .waveform_view import WaveformView
 from .workflow_bar import Step, WorkflowBar
 
@@ -160,10 +161,6 @@ class _SyncWorker(QThread):
             self.error.emit(f"{exc}\n{traceback.format_exc()}")
 
 
-# ---------------------------------------------------------------------------
-#  Grouped-import worker — imports into multiple tracks at once
-# ---------------------------------------------------------------------------
-
 class _ExportWorker(QThread):
     """Export tracks in background thread with per-track progress."""
 
@@ -252,13 +249,13 @@ class _GroupedImportWorker(QThread):
 # ---------------------------------------------------------------------------
 
 class MainWindow(QMainWindow):
-    """AudioSync Pro main application window."""
+    """AudioSync Pro main application window — minimal card-based layout."""
 
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("AudioSync Pro")
-        self.setMinimumSize(960, 600)
-        self.resize(1140, 720)
+        self.setMinimumSize(900, 560)
+        self.resize(1080, 720)
 
         self._config = SyncConfig()
         self._sync_result: Optional[SyncResult] = None
@@ -270,8 +267,6 @@ class MainWindow(QMainWindow):
         cleanup_cache(max_age_hours=24)
 
         self._build_menubar()
-        self._build_toolbar()
-        self._build_workflow_bar()
         self._build_central()
         self._build_statusbar()
         self._update_button_states()
@@ -336,87 +331,53 @@ class MainWindow(QMainWindow):
         act = help_menu.addAction("&About AudioSync Pro")
         act.triggered.connect(lambda: AboutDialog(self).exec())
 
-    def _build_toolbar(self) -> None:
-        tb = QToolBar("Main Toolbar")
-        tb.setMovable(False)
-        tb.setIconSize(QSize(20, 20))
-        self.addToolBar(tb)
+    def _build_central(self) -> None:
+        # Main vertical layout: workflow bar + splitter(tracks | timeline)
+        central = QWidget()
+        central_layout = QVBoxLayout(central)
+        central_layout.setContentsMargins(0, 0, 0, 0)
+        central_layout.setSpacing(0)
 
-        # Track management buttons only
-        self._btn_add_track = QPushButton("+ Track")
-        self._btn_add_track.setToolTip("Create a new device track (Ctrl+T)")
-        self._btn_add_track.clicked.connect(self._on_add_track)
-        tb.addWidget(self._btn_add_track)
-
-        self._btn_add_files = QPushButton("+ Files")
-        self._btn_add_files.setToolTip("Add audio/video files to selected track (Ctrl+O)")
-        self._btn_add_files.clicked.connect(self._on_add_files)
-        tb.addWidget(self._btn_add_files)
-
-        self._btn_remove = QPushButton("Remove")
-        self._btn_remove.setToolTip("Remove selected track or file (Delete)")
-        self._btn_remove.setProperty("cssClass", "danger")
-        self._btn_remove.clicked.connect(self._on_remove)
-        tb.addWidget(self._btn_remove)
-
-    def _build_workflow_bar(self) -> None:
+        # Workflow bar at top
         self._workflow_bar = WorkflowBar()
         self._workflow_bar.action_triggered.connect(self._on_workflow_action)
+        central_layout.addWidget(self._workflow_bar)
 
-        # Create a wrapper widget so it sits below toolbar
-        wrapper = QWidget()
-        wrapper.setFixedHeight(52)
-        layout = QVBoxLayout(wrapper)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
-        layout.addWidget(self._workflow_bar)
+        # Vertical splitter: track cards (top) | timeline (bottom)
+        splitter = QSplitter(Qt.Orientation.Vertical)
+        splitter.setHandleWidth(4)
 
-        # Add as a second toolbar row
-        tb2 = QToolBar("Workflow")
-        tb2.setMovable(False)
-        tb2.setFloatable(False)
-        tb2.setStyleSheet(f"QToolBar {{ padding: 0; spacing: 0; border: none; background: {COLORS['bg_panel_solid']}; }}")
-        tb2.addWidget(wrapper)
-        self.addToolBar(Qt.ToolBarArea.TopToolBarArea, tb2)
-
-    def _build_central(self) -> None:
-        splitter = QSplitter(Qt.Orientation.Horizontal)
-
-        # Left: track panel
-        left = QWidget()
-        left_layout = QVBoxLayout(left)
-        left_layout.setContentsMargins(0, 0, 0, 0)
-        left_layout.setSpacing(0)
-
-        panel_header = QLabel("  TRACKS & FILES")
-        panel_header.setProperty("cssClass", "heading")
-        panel_header.setFixedHeight(32)
-        left_layout.addWidget(panel_header)
-
+        # Track panel
         self._track_panel = TrackPanel()
         self._track_panel.tracks_changed.connect(self._on_tracks_changed)
         self._track_panel.files_requested.connect(self._on_add_files_to_track)
         self._track_panel.files_dropped_on_empty.connect(self._on_files_dropped_empty)
-        left_layout.addWidget(self._track_panel)
+        splitter.addWidget(self._track_panel)
 
-        # Right: waveform view
-        right = QWidget()
-        right_layout = QVBoxLayout(right)
-        right_layout.setContentsMargins(0, 0, 0, 0)
-        right_layout.setSpacing(0)
+        # Timeline / waveform view
+        timeline_wrapper = QWidget()
+        timeline_layout = QVBoxLayout(timeline_wrapper)
+        timeline_layout.setContentsMargins(12, 4, 12, 4)
+        timeline_layout.setSpacing(0)
 
-        waveform_header = QLabel("  TIMELINE")
-        waveform_header.setProperty("cssClass", "heading")
-        waveform_header.setFixedHeight(32)
-        right_layout.addWidget(waveform_header)
+        timeline_header = QLabel("TIMELINE")
+        timeline_header.setStyleSheet(
+            f"color: {COLORS['text_dim']}; font-size: 10px; font-weight: 600; "
+            f"letter-spacing: 1.5px; padding: 6px 4px 2px;"
+        )
+        timeline_layout.addWidget(timeline_header)
 
         self._waveform = WaveformView()
-        right_layout.addWidget(self._waveform)
+        self._waveform.setMinimumHeight(100)
+        timeline_layout.addWidget(self._waveform)
 
-        splitter.addWidget(left)
-        splitter.addWidget(right)
-        splitter.setSizes([360, 780])
-        self.setCentralWidget(splitter)
+        splitter.addWidget(timeline_wrapper)
+        splitter.setSizes([460, 200])
+        splitter.setStretchFactor(0, 3)
+        splitter.setStretchFactor(1, 1)
+
+        central_layout.addWidget(splitter, stretch=1)
+        self.setCentralWidget(central)
 
     def _build_statusbar(self) -> None:
         sb = self.statusBar()
@@ -496,10 +457,8 @@ class MainWindow(QMainWindow):
     def _on_import_done(
         self, track_idx: int, clips: list, errors: list, dlg: ImportProgressDialog,
     ) -> None:
-        # FIX A1: Clear worker BEFORE anything that triggers _update_button_states
         self._worker = None
         self._cancel_event = None
-
         dlg.accept()
 
         if clips:
@@ -552,7 +511,6 @@ class MainWindow(QMainWindow):
         worker.finished.connect(lambda r: self._on_analyze_done(r, dlg))
         worker.error.connect(lambda e: self._on_worker_error(e, dlg))
 
-        # Wire cancel
         dlg._cancel_btn.clicked.disconnect()
         dlg._cancel_btn.clicked.connect(lambda: (
             cancel.set(),
@@ -566,7 +524,6 @@ class MainWindow(QMainWindow):
         dlg.exec()
 
     def _on_analyze_done(self, result: SyncResult, dlg: ProcessingDialog) -> None:
-        # FIX A1: Clear worker BEFORE _update_button_states
         self._worker = None
         self._cancel_event = None
 
@@ -621,7 +578,6 @@ class MainWindow(QMainWindow):
         dlg.exec()
 
     def _on_sync_done(self, dlg: ProcessingDialog) -> None:
-        # FIX A1: Clear worker BEFORE _update_button_states
         self._worker = None
         self._cancel_event = None
 
@@ -670,7 +626,6 @@ class MainWindow(QMainWindow):
             lambda exported, errors: self._on_export_done(exported, errors, output_dir, proc_dlg)
         )
 
-        # Wire cancel
         proc_dlg._cancel_btn.clicked.disconnect()
         proc_dlg._cancel_btn.clicked.connect(lambda: (
             cancel.set(),
@@ -686,7 +641,6 @@ class MainWindow(QMainWindow):
     def _on_export_done(
         self, exported: int, errors: list, output_dir: str, dlg: ProcessingDialog,
     ) -> None:
-        # Clear worker BEFORE _update_button_states
         self._worker = None
         self._cancel_event = None
         self._set_busy(False)
@@ -708,9 +662,7 @@ class MainWindow(QMainWindow):
     # ----- Workflow bar actions ----------------------------------------------
 
     def _on_workflow_action(self, step_value: int) -> None:
-        """Handle workflow bar button clicks."""
         if step_value == -1:
-            # Reset button
             self._on_reset()
             return
 
@@ -729,10 +681,8 @@ class MainWindow(QMainWindow):
     # =====================================================================
 
     def _on_files_dropped_empty(self, paths: list[str]) -> None:
-        """Handle files dropped on empty space — auto-group by device name."""
         groups = group_files_by_device(paths)
 
-        # Create tracks for each group
         track_map: dict[int, list[str]] = {}
         for device_name, file_paths in groups.items():
             idx = self._track_panel.add_track(name=device_name)
@@ -763,10 +713,8 @@ class MainWindow(QMainWindow):
     def _on_grouped_import_done(
         self, results: dict, errors: list, dlg: ImportProgressDialog,
     ) -> None:
-        # FIX A1: Clear worker BEFORE _update_button_states
         self._worker = None
         self._cancel_event = None
-
         dlg.accept()
 
         total_clips = 0
@@ -833,15 +781,9 @@ class MainWindow(QMainWindow):
         tracks = self._track_panel.tracks
         has_tracks = len(tracks) > 0
         total_clips = sum(t.clip_count for t in tracks)
-        has_clips = total_clips >= 2
         has_analysis = self._sync_result is not None
         has_sync = any(t.synced_audio is not None for t in tracks)
         busy = self._worker is not None
-
-        # Toolbar buttons
-        self._btn_add_track.setEnabled(not busy)
-        self._btn_add_files.setEnabled(has_tracks and not busy)
-        self._btn_remove.setEnabled(has_tracks and not busy)
 
         # Workflow bar
         self._workflow_bar.update_state(total_clips, has_analysis, has_sync, busy)
@@ -904,8 +846,6 @@ class MainWindow(QMainWindow):
             return
 
         event.acceptProposedAction()
-
-        # Drop on main window (not on track panel) → auto-group
         self._on_files_dropped_empty(paths)
 
     # =====================================================================
@@ -926,7 +866,6 @@ class MainWindow(QMainWindow):
 # ---------------------------------------------------------------------------
 
 def _fmt_duration(seconds: float) -> str:
-    """Format seconds into a readable duration string."""
     if seconds <= 0:
         return "0:00"
     total_s = int(seconds)

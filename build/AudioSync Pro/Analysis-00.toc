@@ -30,6 +30,34 @@
   ('app/__init__.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/__init__.py',
    'DATA'),
+  ('app/__pycache__/__init__.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/__init__.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/dialogs.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/dialogs.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/main_window.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/main_window.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/theme.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/theme.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/track_panel.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/track_panel.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/waveform_view.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/waveform_view.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/workflow_bar.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/workflow_bar.cpython-313.pyc',
+   'DATA'),
   ('app/dialogs.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/dialogs.py',
    'DATA'),
@@ -38,6 +66,9 @@
    'DATA'),
   ('app/theme.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/theme.py',
+   'DATA'),
+  ('app/track_card.py',
+   '/Users/keyhan/Server/AudioSync - MaxForLive/app/track_card.py',
    'DATA'),
   ('app/track_panel.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/track_panel.py',
@@ -54,6 +85,30 @@
   ('core/__init__.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/core/__init__.py',
    'DATA'),
+  ('core/__pycache__/__init__.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/__init__.cpython-313.pyc',
+   'DATA'),
+  ('core/__pycache__/audio_io.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/audio_io.cpython-313.pyc',
+   'DATA'),
+  ('core/__pycache__/engine.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/engine.cpython-313.pyc',
+   'DATA'),
+  ('core/__pycache__/grouping.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/grouping.cpython-313.pyc',
+   'DATA'),
+  ('core/__pycache__/metadata.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/metadata.cpython-313.pyc',
+   'DATA'),
+  ('core/__pycache__/models.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/models.cpython-313.pyc',
+   'DATA'),
   ('core/audio_io.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/core/audio_io.py',
    'DATA'),
@@ -68,6 +123,9 @@
    'DATA'),
   ('core/models.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/core/models.py',
+   'DATA'),
+  ('version.py',
+   '/Users/keyhan/Server/AudioSync - MaxForLive/version.py',
    'DATA')],
  '3.13.7 (main, Aug 14 2025, 11:12:11) [Clang 17.0.0 (clang-1700.0.13.3)]',
  [('pyi_rth_inspect',
@@ -4191,14 +4249,14 @@
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/scipy/signal/windows/_windows.py',
    'PYMODULE'),
-  ('tracemalloc',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/tracemalloc.py',
-   'PYMODULE'),
   ('_py_abc',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/_py_abc.py',
    'PYMODULE'),
   ('stringprep',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/stringprep.py',
+   'PYMODULE'),
+  ('tracemalloc',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/tracemalloc.py',
    'PYMODULE'),
   ('app.theme',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/theme.py',
@@ -4215,8 +4273,8 @@
   ('app.waveform_view',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/waveform_view.py',
    'PYMODULE'),
-  ('app.track_panel',
-   '/Users/keyhan/Server/AudioSync - MaxForLive/app/track_panel.py',
+  ('app.track_card',
+   '/Users/keyhan/Server/AudioSync - MaxForLive/app/track_card.py',
    'PYMODULE'),
   ('app.dialogs',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/dialogs.py',
@@ -4239,55 +4297,21 @@
   ('core.metadata',
    '/Users/keyhan/Server/AudioSync - MaxForLive/core/metadata.py',
    'PYMODULE'),
+  ('uuid',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/uuid.py',
+   'PYMODULE'),
+  ('version',
+   '/Users/keyhan/Server/AudioSync - MaxForLive/version.py',
+   'PYMODULE'),
   ('logging',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/logging/__init__.py',
    'PYMODULE')],
  [('Python.framework/Versions/3.13/Python',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/Python',
    'BINARY'),
-  ('PyQt6/Qt6/plugins/iconengines/libqsvgicon.dylib',
+  ('PyQt6/Qt6/plugins/imageformats/libqgif.dylib',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/iconengines/libqsvgicon.dylib',
-   'BINARY'),
-  ('PyQt6/Qt6/plugins/imageformats/libqjpeg.dylib',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqjpeg.dylib',
-   'BINARY'),
-  ('PyQt6/Qt6/plugins/platforms/libqcocoa.dylib',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/platforms/libqcocoa.dylib',
-   'BINARY'),
-  ('PyQt6/Qt6/plugins/imageformats/libqwbmp.dylib',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqwbmp.dylib',
-   'BINARY'),
-  ('PyQt6/Qt6/plugins/imageformats/libqsvg.dylib',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqsvg.dylib',
-   'BINARY'),
-  ('PyQt6/Qt6/plugins/imageformats/libqwebp.dylib',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqwebp.dylib',
-   'BINARY'),
-  ('PyQt6/Qt6/plugins/imageformats/libqtiff.dylib',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqtiff.dylib',
-   'BINARY'),
-  ('PyQt6/Qt6/plugins/platforms/libqoffscreen.dylib',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/platforms/libqoffscreen.dylib',
-   'BINARY'),
-  ('PyQt6/Qt6/plugins/generic/libqtuiotouchplugin.dylib',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/generic/libqtuiotouchplugin.dylib',
-   'BINARY'),
-  ('PyQt6/Qt6/plugins/imageformats/libqico.dylib',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqico.dylib',
-   'BINARY'),
-  ('PyQt6/Qt6/plugins/imageformats/libqtga.dylib',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqtga.dylib',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqgif.dylib',
    'BINARY'),
   ('PyQt6/Qt6/plugins/imageformats/libqpdf.dylib',
    '/Users/keyhan/Server/AudioSync - '
@@ -4297,21 +4321,61 @@
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqicns.dylib',
    'BINARY'),
-  ('PyQt6/Qt6/plugins/imageformats/libqgif.dylib',
+  ('PyQt6/Qt6/plugins/platforms/libqoffscreen.dylib',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqgif.dylib',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/platforms/libqoffscreen.dylib',
+   'BINARY'),
+  ('PyQt6/Qt6/plugins/imageformats/libqsvg.dylib',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqsvg.dylib',
+   'BINARY'),
+  ('PyQt6/Qt6/plugins/iconengines/libqsvgicon.dylib',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/iconengines/libqsvgicon.dylib',
+   'BINARY'),
+  ('PyQt6/Qt6/plugins/generic/libqtuiotouchplugin.dylib',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/generic/libqtuiotouchplugin.dylib',
+   'BINARY'),
+  ('PyQt6/Qt6/plugins/imageformats/libqwbmp.dylib',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqwbmp.dylib',
+   'BINARY'),
+  ('PyQt6/Qt6/plugins/platforms/libqcocoa.dylib',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/platforms/libqcocoa.dylib',
    'BINARY'),
   ('PyQt6/Qt6/plugins/platforms/libqminimal.dylib',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/platforms/libqminimal.dylib',
    'BINARY'),
+  ('PyQt6/Qt6/plugins/imageformats/libqmacjp2.dylib',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqmacjp2.dylib',
+   'BINARY'),
+  ('PyQt6/Qt6/plugins/imageformats/libqjpeg.dylib',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqjpeg.dylib',
+   'BINARY'),
   ('PyQt6/Qt6/plugins/imageformats/libqmacheif.dylib',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqmacheif.dylib',
    'BINARY'),
-  ('PyQt6/Qt6/plugins/imageformats/libqmacjp2.dylib',
+  ('PyQt6/Qt6/plugins/imageformats/libqtiff.dylib',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqmacjp2.dylib',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqtiff.dylib',
+   'BINARY'),
+  ('PyQt6/Qt6/plugins/imageformats/libqwebp.dylib',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqwebp.dylib',
+   'BINARY'),
+  ('PyQt6/Qt6/plugins/imageformats/libqico.dylib',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqico.dylib',
+   'BINARY'),
+  ('PyQt6/Qt6/plugins/imageformats/libqtga.dylib',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/plugins/imageformats/libqtga.dylib',
    'BINARY'),
   ('_soundfile_data/libsndfile_arm64.dylib',
    '/Users/keyhan/Server/AudioSync - '
@@ -4885,9 +4949,6 @@
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/scipy/signal/_sigtools.cpython-313-darwin.so',
    'EXTENSION'),
-  ('python3.13/lib-dynload/_heapq.cpython-313-darwin.so',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/lib-dynload/_heapq.cpython-313-darwin.so',
-   'EXTENSION'),
   ('python3.13/lib-dynload/_multibytecodec.cpython-313-darwin.so',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/lib-dynload/_multibytecodec.cpython-313-darwin.so',
    'EXTENSION'),
@@ -4909,6 +4970,12 @@
   ('python3.13/lib-dynload/_codecs_hk.cpython-313-darwin.so',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/lib-dynload/_codecs_hk.cpython-313-darwin.so',
    'EXTENSION'),
+  ('python3.13/lib-dynload/_heapq.cpython-313-darwin.so',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/lib-dynload/_heapq.cpython-313-darwin.so',
+   'EXTENSION'),
+  ('python3.13/lib-dynload/_uuid.cpython-313-darwin.so',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/lib-dynload/_uuid.cpython-313-darwin.so',
+   'EXTENSION'),
   ('PyQt6/QtCore.abi3.so',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/QtCore.abi3.so',
@@ -4917,13 +4984,17 @@
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/QtWidgets.abi3.so',
    'EXTENSION'),
+  ('PyQt6/Qt6/lib/QtCore.framework/Versions/A/QtCore',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/lib/QtCore.framework/Versions/A/QtCore',
+   'BINARY'),
   ('PyQt6/Qt6/lib/QtGui.framework/Versions/A/QtGui',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/lib/QtGui.framework/Versions/A/QtGui',
    'BINARY'),
-  ('PyQt6/Qt6/lib/QtCore.framework/Versions/A/QtCore',
+  ('PyQt6/Qt6/lib/QtPdf.framework/Versions/A/QtPdf',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/lib/QtCore.framework/Versions/A/QtCore',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/lib/QtPdf.framework/Versions/A/QtPdf',
    'BINARY'),
   ('PyQt6/Qt6/lib/QtSvg.framework/Versions/A/QtSvg',
    '/Users/keyhan/Server/AudioSync - '
@@ -4932,10 +5003,6 @@
   ('PyQt6/Qt6/lib/QtNetwork.framework/Versions/A/QtNetwork',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/lib/QtNetwork.framework/Versions/A/QtNetwork',
-   'BINARY'),
-  ('PyQt6/Qt6/lib/QtPdf.framework/Versions/A/QtPdf',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/lib/QtPdf.framework/Versions/A/QtPdf',
    'BINARY'),
   ('PyQt6/Qt6/lib/QtWidgets.framework/Versions/A/QtWidgets',
    '/Users/keyhan/Server/AudioSync - '
@@ -4972,6 +5039,34 @@
  [('app/__init__.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/__init__.py',
    'DATA'),
+  ('app/__pycache__/__init__.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/__init__.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/dialogs.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/dialogs.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/main_window.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/main_window.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/theme.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/theme.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/track_panel.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/track_panel.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/waveform_view.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/waveform_view.cpython-313.pyc',
+   'DATA'),
+  ('app/__pycache__/workflow_bar.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/app/__pycache__/workflow_bar.cpython-313.pyc',
+   'DATA'),
   ('app/dialogs.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/dialogs.py',
    'DATA'),
@@ -4980,6 +5075,9 @@
    'DATA'),
   ('app/theme.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/theme.py',
+   'DATA'),
+  ('app/track_card.py',
+   '/Users/keyhan/Server/AudioSync - MaxForLive/app/track_card.py',
    'DATA'),
   ('app/track_panel.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/app/track_panel.py',
@@ -4992,6 +5090,30 @@
    'DATA'),
   ('core/__init__.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/core/__init__.py',
+   'DATA'),
+  ('core/__pycache__/__init__.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/__init__.cpython-313.pyc',
+   'DATA'),
+  ('core/__pycache__/audio_io.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/audio_io.cpython-313.pyc',
+   'DATA'),
+  ('core/__pycache__/engine.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/engine.cpython-313.pyc',
+   'DATA'),
+  ('core/__pycache__/grouping.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/grouping.cpython-313.pyc',
+   'DATA'),
+  ('core/__pycache__/metadata.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/metadata.cpython-313.pyc',
+   'DATA'),
+  ('core/__pycache__/models.cpython-313.pyc',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/core/__pycache__/models.cpython-313.pyc',
    'DATA'),
   ('core/audio_io.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/core/audio_io.py',
@@ -5008,25 +5130,12 @@
   ('core/models.py',
    '/Users/keyhan/Server/AudioSync - MaxForLive/core/models.py',
    'DATA'),
+  ('version.py',
+   '/Users/keyhan/Server/AudioSync - MaxForLive/version.py',
+   'DATA'),
   ('_soundfile_data/COPYING',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/_soundfile_data/COPYING',
-   'DATA'),
-  ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/METADATA',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/METADATA',
-   'DATA'),
-  ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/WHEEL',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/WHEEL',
-   'DATA'),
-  ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/RECORD',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/RECORD',
-   'DATA'),
-  ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/INSTALLER',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/INSTALLER',
    'DATA'),
   ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/REQUESTED',
    '/Users/keyhan/Server/AudioSync - '
@@ -5035,6 +5144,22 @@
   ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/top_level.txt',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/top_level.txt',
+   'DATA'),
+  ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/RECORD',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/RECORD',
+   'DATA'),
+  ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/WHEEL',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/WHEEL',
+   'DATA'),
+  ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/METADATA',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/METADATA',
+   'DATA'),
+  ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/INSTALLER',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/INSTALLER',
    'DATA'),
   ('setuptools/_vendor/importlib_metadata-8.7.1.dist-info/licenses/LICENSE',
    '/Users/keyhan/Server/AudioSync - '
@@ -5045,25 +5170,25 @@
    'MaxForLive/.venv/lib/python3.13/site-packages/setuptools/_vendor/jaraco/text/Lorem '
    'ipsum.txt',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_da.qm',
+  ('PyQt6/Qt6/translations/qtbase_ru.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_da.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_ru.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_fa.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_fa.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_fi.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_fi.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qt_es.qm',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_es.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_lt.qm',
+  ('PyQt6/Qt6/translations/qt_it.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_lt.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_cs.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_cs.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_lg.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_lg.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_it.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qt_help_nn.qm',
    '/Users/keyhan/Server/AudioSync - '
@@ -5073,37 +5198,169 @@
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_bg.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_hu.qm',
+  ('PyQt6/Qt6/translations/qt_lv.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_hu.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_pl.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_pl.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_bg.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_bg.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_en.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_en.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_nn.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_nn.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_lv.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qtbase_ja.qm',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_ja.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_uk.qm',
+  ('PyQt6/Qt6/translations/qt_help_sk.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_uk.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_sk.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_sv.qm',
+  ('PyQt6/Qt6/translations/qt_ru.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_sv.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ru.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_ca.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ca.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_fa.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_fa.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_zh_TW.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_zh_TW.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_gl.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_gl.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_de.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_de.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_ru.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ru.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_pl.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_pl.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_lg.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_lg.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_lt.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_lt.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_ko.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ko.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_gd.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_gd.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_hu.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_hu.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_hr.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_hr.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_tr.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_tr.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_ko.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_ko.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_pt_BR.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_pt_BR.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_sl.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_sl.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_en.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_en.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_da.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_da.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_da.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_da.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_de.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_de.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_he.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_he.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_de.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_de.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_zh_CN.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_zh_CN.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_nn.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_nn.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_pt_BR.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_pt_BR.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_sl.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_sl.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_gl.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_gl.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_ar.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ar.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_lg.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_lg.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_he.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_he.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_pl.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_pl.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_sk.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_sk.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_tr.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_tr.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_zh_CN.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_zh_CN.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_uk.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_uk.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_sv.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_sv.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qtbase_ca.qm',
    '/Users/keyhan/Server/AudioSync - '
@@ -5113,93 +5370,9 @@
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_nl.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_ko.qm',
+  ('PyQt6/Qt6/translations/qt_bg.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ko.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_zh_TW.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_zh_TW.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_fi.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_fi.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_ja.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ja.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_sk.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_sk.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_hr.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_hr.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_ru.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_ru.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_zh_CN.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_zh_CN.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_ca.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ca.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_de.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_de.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_fr.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_fr.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_uk.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_uk.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_gl.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_gl.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_ru.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ru.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_sk.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_sk.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_zh_CN.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_zh_CN.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_ka.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_ka.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_nl.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_nl.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_he.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_he.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_de.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_de.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_en.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_en.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_es.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_es.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_bg.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qt_help_zh_TW.qm',
    '/Users/keyhan/Server/AudioSync - '
@@ -5209,6 +5382,58 @@
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_hu.qm',
    'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_hr.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_hr.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_zh_TW.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_zh_TW.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_ar.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_ar.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_fr.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_fr.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_en.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_en.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_fr.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_fr.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_ar.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ar.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_ja.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ja.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_da.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_da.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_es.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_es.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_ca.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ca.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_hu.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_hu.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_nn.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_nn.qm',
+   'DATA'),
   ('PyQt6/Qt6/translations/qt_gd.qm',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_gd.qm',
@@ -5217,322 +5442,222 @@
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_it.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_tr.qm',
+  ('PyQt6/Qt6/translations/qt_help_nl.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_tr.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_nl.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_uk.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_uk.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_sv.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_sv.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qt_ko.qm',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ko.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_cs.qm',
+  ('PyQt6/Qt6/translations/qt_hr.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_cs.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_he.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_he.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_nn.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_nn.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_da.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_da.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_fa.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_fa.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_da.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_da.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_fr.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_fr.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_ar.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ar.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_nl.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_nl.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_pl.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_pl.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_sv.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_sv.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_fi.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_fi.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_ka.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ka.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_uk.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_uk.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_pt_BR.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_pt_BR.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_pt_BR.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_pt_BR.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_it.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_it.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_zh_TW.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_zh_TW.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_hr.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_hr.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_hu.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_hu.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_sl.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_sl.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_ka.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ka.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_sv.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_sv.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_lg.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_lg.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_ar.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ar.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_sl.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_sl.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_bg.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_bg.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_ru.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ru.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_hr.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qt_pt_PT.qm',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_pt_PT.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_it.qm',
+  ('PyQt6/Qt6/translations/qtbase_bg.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_it.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_bg.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_ka.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_ka.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qtbase_lv.qm',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_lv.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_ja.qm',
+  ('PyQt6/Qt6/translations/qtbase_sv.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ja.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_sv.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_tr.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_tr.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_ka.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ka.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qtbase_en.qm',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_en.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_fr.qm',
+  ('PyQt6/Qt6/translations/qt_sk.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_fr.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_fa.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_fa.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_pl.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_pl.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_ar.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_ar.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_gd.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_gd.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_lv.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_lv.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_ko.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_ko.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_cs.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_cs.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_ca.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_ca.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_gl.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_gl.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_zh_CN.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_zh_CN.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_hr.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_hr.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qtbase_tr.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_tr.qm',
-   'DATA'),
-  ('PyQt6/Qt6/translations/qt_de.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_de.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_sk.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qt_help_pt_BR.qm',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_pt_BR.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_tr.qm',
+  ('PyQt6/Qt6/translations/qt_fr.qm',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_tr.qm',
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_fr.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_fi.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_fi.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_cs.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_cs.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_ja.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ja.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_pl.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_pl.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_cs.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_cs.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_cs.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_cs.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_uk.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_uk.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_help_ka.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_ka.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qt_nl.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_nl.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_zh_CN.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_zh_CN.qm',
+   'DATA'),
+  ('PyQt6/Qt6/translations/qtbase_it.qm',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qtbase_it.qm',
    'DATA'),
   ('PyQt6/Qt6/translations/qt_help_es.qm',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_es.qm',
    'DATA'),
-  ('PyQt6/Qt6/translations/qt_help_sk.qm',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyQt6/Qt6/translations/qt_help_sk.qm',
-   'DATA'),
   ('Python', 'Python.framework/Versions/3.13/Python', 'SYMLINK'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md',
+  ('numpy-2.4.2.dist-info/REQUESTED',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/random/src/philox/LICENSE.md',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/src/philox/LICENSE.md',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/entry_points.txt',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/entry_points.txt',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/METADATA',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/METADATA',
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/REQUESTED',
    'DATA'),
   ('numpy-2.4.2.dist-info/licenses/numpy/ma/LICENSE',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/ma/LICENSE',
    'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md',
+  ('numpy-2.4.2.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/WHEEL',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/WHEEL',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/LICENSE.txt',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/LICENSE.txt',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/_core/src/highway/LICENSE',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/src/highway/LICENSE',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt',
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md',
    'DATA'),
   ('numpy-2.4.2.dist-info/licenses/numpy/random/LICENSE.md',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/LICENSE.md',
    'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/random/src/distributions/LICENSE.md',
+  ('numpy-2.4.2.dist-info/WHEEL',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/src/distributions/LICENSE.md',
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/WHEEL',
    'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md',
+  ('numpy-2.4.2.dist-info/METADATA',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/INSTALLER',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/INSTALLER',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md',
-   'DATA'),
-  ('numpy-2.4.2.dist-info/RECORD',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/RECORD',
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/METADATA',
    'DATA'),
   ('numpy-2.4.2.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md',
    'DATA'),
-  ('numpy-2.4.2.dist-info/REQUESTED',
+  ('numpy-2.4.2.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md',
    '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/REQUESTED',
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/licenses/numpy/_core/src/highway/LICENSE',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/src/highway/LICENSE',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md',
    'DATA'),
   ('numpy-2.4.2.dist-info/licenses/numpy/linalg/lapack_lite/LICENSE.txt',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/linalg/lapack_lite/LICENSE.txt',
    'DATA'),
+  ('numpy-2.4.2.dist-info/RECORD',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/RECORD',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/entry_points.txt',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/entry_points.txt',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/licenses/numpy/random/src/philox/LICENSE.md',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/src/philox/LICENSE.md',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt',
+   'DATA'),
   ('numpy-2.4.2.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/licenses/LICENSE.txt',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/LICENSE.txt',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/licenses/numpy/random/src/distributions/LICENSE.md',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/random/src/distributions/LICENSE.md',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/INSTALLER',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/INSTALLER',
+   'DATA'),
+  ('numpy-2.4.2.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt',
+   '/Users/keyhan/Server/AudioSync - '
+   'MaxForLive/.venv/lib/python3.13/site-packages/numpy-2.4.2.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt',
    'DATA'),
   ('base_library.zip',
    '/Users/keyhan/Server/AudioSync - MaxForLive/build/AudioSync '
    'Pro/base_library.zip',
    'DATA'),
-  ('QtGui', 'PyQt6/Qt6/lib/QtGui.framework/Versions/A/QtGui', 'SYMLINK'),
   ('QtCore', 'PyQt6/Qt6/lib/QtCore.framework/Versions/A/QtCore', 'SYMLINK'),
+  ('QtGui', 'PyQt6/Qt6/lib/QtGui.framework/Versions/A/QtGui', 'SYMLINK'),
+  ('QtPdf', 'PyQt6/Qt6/lib/QtPdf.framework/Versions/A/QtPdf', 'SYMLINK'),
   ('QtSvg', 'PyQt6/Qt6/lib/QtSvg.framework/Versions/A/QtSvg', 'SYMLINK'),
   ('QtNetwork',
    'PyQt6/Qt6/lib/QtNetwork.framework/Versions/A/QtNetwork',
    'SYMLINK'),
-  ('QtPdf', 'PyQt6/Qt6/lib/QtPdf.framework/Versions/A/QtPdf', 'SYMLINK'),
   ('QtWidgets',
    'PyQt6/Qt6/lib/QtWidgets.framework/Versions/A/QtWidgets',
    'SYMLINK'),
@@ -5617,65 +5742,23 @@
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/Resources/Info.plist',
    'DATA'),
   ('Python.framework/Versions/Current', '3.13', 'SYMLINK')],
- [('linecache',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/linecache.py',
-   'PYMODULE'),
-  ('warnings',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/warnings.py',
-   'PYMODULE'),
-  ('abc',
+ [('abc',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/abc.py',
-   'PYMODULE'),
-  ('posixpath',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/posixpath.py',
-   'PYMODULE'),
-  ('reprlib',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/reprlib.py',
-   'PYMODULE'),
-  ('stat',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/stat.py',
-   'PYMODULE'),
-  ('codecs',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/codecs.py',
-   'PYMODULE'),
-  ('keyword',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/keyword.py',
-   'PYMODULE'),
-  ('types',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/types.py',
-   'PYMODULE'),
-  ('collections',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/collections/__init__.py',
-   'PYMODULE'),
-  ('heapq',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/heapq.py',
-   'PYMODULE'),
-  ('sre_compile',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/sre_compile.py',
-   'PYMODULE'),
-  ('ntpath',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/ntpath.py',
-   'PYMODULE'),
-  ('io',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/io.py',
    'PYMODULE'),
   ('enum',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/enum.py',
    'PYMODULE'),
-  ('re._parser',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/re/_parser.py',
+  ('sre_parse',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/sre_parse.py',
    'PYMODULE'),
-  ('re._constants',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/re/_constants.py',
+  ('functools',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/functools.py',
    'PYMODULE'),
-  ('re._compiler',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/re/_compiler.py',
+  ('collections',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/collections/__init__.py',
    'PYMODULE'),
-  ('re._casefix',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/re/_casefix.py',
-   'PYMODULE'),
-  ('re',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/re/__init__.py',
+  ('stat',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/stat.py',
    'PYMODULE'),
   ('encodings.zlib_codec',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/encodings/zlib_codec.py',
@@ -6043,38 +6126,80 @@
   ('encodings',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/encodings/__init__.py',
    'PYMODULE'),
-  ('weakref',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/weakref.py',
+  ('re._parser',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/re/_parser.py',
    'PYMODULE'),
-  ('sre_constants',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/sre_constants.py',
+  ('re._constants',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/re/_constants.py',
    'PYMODULE'),
-  ('_weakrefset',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/_weakrefset.py',
+  ('re._compiler',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/re/_compiler.py',
    'PYMODULE'),
-  ('functools',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/functools.py',
+  ('re._casefix',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/re/_casefix.py',
    'PYMODULE'),
-  ('sre_parse',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/sre_parse.py',
+  ('re',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/re/__init__.py',
    'PYMODULE'),
   ('genericpath',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/genericpath.py',
    'PYMODULE'),
-  ('copyreg',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/copyreg.py',
-   'PYMODULE'),
-  ('locale',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/locale.py',
-   'PYMODULE'),
-  ('_collections_abc',
-   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/_collections_abc.py',
+  ('warnings',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/warnings.py',
    'PYMODULE'),
   ('operator',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/operator.py',
    'PYMODULE'),
+  ('heapq',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/heapq.py',
+   'PYMODULE'),
+  ('io',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/io.py',
+   'PYMODULE'),
+  ('ntpath',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/ntpath.py',
+   'PYMODULE'),
+  ('copyreg',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/copyreg.py',
+   'PYMODULE'),
+  ('weakref',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/weakref.py',
+   'PYMODULE'),
+  ('reprlib',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/reprlib.py',
+   'PYMODULE'),
+  ('_collections_abc',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/_collections_abc.py',
+   'PYMODULE'),
   ('traceback',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/traceback.py',
+   'PYMODULE'),
+  ('locale',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/locale.py',
+   'PYMODULE'),
+  ('sre_constants',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/sre_constants.py',
+   'PYMODULE'),
+  ('keyword',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/keyword.py',
+   'PYMODULE'),
+  ('sre_compile',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/sre_compile.py',
+   'PYMODULE'),
+  ('codecs',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/codecs.py',
+   'PYMODULE'),
+  ('types',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/types.py',
+   'PYMODULE'),
+  ('linecache',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/linecache.py',
+   'PYMODULE'),
+  ('posixpath',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/posixpath.py',
+   'PYMODULE'),
+  ('_weakrefset',
+   '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/_weakrefset.py',
    'PYMODULE'),
   ('os',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/os.py',

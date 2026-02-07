@@ -1,4 +1,4 @@
-"""Track panel — tree widget for managing tracks and their clips."""
+"""Track panel — card-style track/clip display with drag-and-drop."""
 
 from __future__ import annotations
 
@@ -6,13 +6,18 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from PyQt6.QtCore import Qt, pyqtSignal, QRect
-from PyQt6.QtGui import QColor, QFont, QPainter, QPen, QDragMoveEvent, QDropEvent
+from PyQt6.QtCore import Qt, pyqtSignal, QRect, QRectF, QSize
+from PyQt6.QtGui import (
+    QColor, QFont, QPainter, QPen, QDragMoveEvent, QDropEvent,
+    QPainterPath,
+)
 from PyQt6.QtWidgets import (
     QAbstractItemView,
     QHeaderView,
     QInputDialog,
     QMenu,
+    QStyledItemDelegate,
+    QStyleOptionViewItem,
     QTreeWidget,
     QTreeWidgetItem,
     QWidget,
@@ -41,6 +46,97 @@ COL_CONFIDENCE = 3
 
 COLUMN_LABELS = ["Name", "Duration", "Offset", "Confidence"]
 
+# Item data role to tag items
+ROLE_TRACK_IDX = Qt.ItemDataRole.UserRole + 1
+ROLE_IS_TRACK = Qt.ItemDataRole.UserRole + 2
+
+
+# ---------------------------------------------------------------------------
+#  Card-style delegate — paints rounded card backgrounds for track rows
+# ---------------------------------------------------------------------------
+
+class _TrackCardDelegate(QStyledItemDelegate):
+    """Custom delegate that draws card-style backgrounds for track (top-level) items."""
+
+    def __init__(self, tree: QTreeWidget, parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+        self._tree = tree
+
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index) -> None:
+        item = self._tree.itemFromIndex(index)
+        if item is None:
+            super().paint(painter, option, index)
+            return
+
+        painter.save()
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        rect = option.rect
+        is_track = item.data(0, ROLE_IS_TRACK)
+        track_idx = item.data(0, ROLE_TRACK_IDX)
+
+        if is_track and track_idx is not None:
+            color = QColor(track_color(track_idx))
+
+            # Card background — glass panel with subtle gradient
+            card_rect = QRectF(
+                rect.x() + 2, rect.y() + 1,
+                rect.width() - 4, rect.height() - 2,
+            )
+
+            # Background fill — slightly lighter than panel
+            bg = QColor("#151c2e")
+            if option.state & option.state.State_Selected:
+                bg = QColor(COLORS["bg_selected"])
+            elif option.state & option.state.State_MouseOver:
+                bg = QColor(COLORS["bg_hover"])
+
+            path = QPainterPath()
+            path.addRoundedRect(card_rect, 10, 10)
+            painter.fillPath(path, bg)
+
+            # Left accent stripe
+            stripe_rect = QRectF(card_rect.x(), card_rect.y() + 3,
+                                 3, card_rect.height() - 6)
+            stripe_path = QPainterPath()
+            stripe_path.addRoundedRect(stripe_rect, 1.5, 1.5)
+            painter.fillPath(stripe_path, color)
+
+            # Subtle border
+            border_color = QColor(color)
+            border_color.setAlpha(30)
+            painter.setPen(QPen(border_color, 1))
+            painter.drawRoundedRect(card_rect, 10, 10)
+
+        else:
+            # Clip rows — subtle indent with hover highlight
+            if option.state & option.state.State_Selected:
+                clip_bg = QColor(COLORS["bg_selected"])
+                clip_rect = QRectF(
+                    rect.x() + 8, rect.y(),
+                    rect.width() - 12, rect.height(),
+                )
+                path = QPainterPath()
+                path.addRoundedRect(clip_rect, 6, 6)
+                painter.fillPath(path, clip_bg)
+            elif option.state & option.state.State_MouseOver:
+                hover_bg = QColor(COLORS["bg_hover"])
+                clip_rect = QRectF(
+                    rect.x() + 8, rect.y(),
+                    rect.width() - 12, rect.height(),
+                )
+                path = QPainterPath()
+                path.addRoundedRect(clip_rect, 6, 6)
+                painter.fillPath(path, hover_bg)
+
+        painter.restore()
+
+        # Draw the text content using the default painter (but skip default background)
+        opt = QStyleOptionViewItem(option)
+        # Clear the selection/hover state so default paint doesn't draw over our custom bg
+        opt.state &= ~(opt.state.State_Selected | opt.state.State_MouseOver)
+        super().paint(painter, opt, index)
+
 
 # ---------------------------------------------------------------------------
 #  TrackPanel
@@ -48,8 +144,9 @@ COLUMN_LABELS = ["Name", "Duration", "Offset", "Confidence"]
 
 class TrackPanel(QTreeWidget):
     """
-    Two-level tree:
+    Two-level tree with card-style rendering:
       - Level 0: Track  (device label, file count + time span, [REF] badge)
+                 Rendered as a rounded card with colored accent stripe.
       - Level 1: Clip   (filename with [V]/[A] badge + creation date, duration, offset, confidence)
 
     Preserves expansion state across rebuilds using track names as keys.
@@ -91,6 +188,15 @@ class TrackPanel(QTreeWidget):
         self.customContextMenuRequested.connect(self._show_context_menu)
         self.setAcceptDrops(True)
         self.setDragDropMode(QAbstractItemView.DragDropMode.DropOnly)
+
+        # Card-style delegate
+        self._delegate = _TrackCardDelegate(self, self)
+        self.setItemDelegate(self._delegate)
+
+        # Tree styling — extra spacing for card look
+        self.setIndentation(16)
+        self.setAnimated(True)
+        self.setUniformRowHeights(False)
 
         # Mono font for numbers — use guaranteed system fonts
         mono = QFont("Menlo", 11)
@@ -206,16 +312,23 @@ class TrackPanel(QTreeWidget):
             t_item = QTreeWidgetItem()
             color = track_color(i)
 
+            # Store metadata for the delegate
+            t_item.setData(0, ROLE_IS_TRACK, True)
+            t_item.setData(0, ROLE_TRACK_IDX, i)
+
             # Track name with optional [REF] badge
             label = track.name
             if track.is_reference:
                 label += "  [REF]"
-            t_item.setText(COL_NAME, label)
+            t_item.setText(COL_NAME, f"  {label}")
             t_item.setForeground(COL_NAME, QColor(color))
             font = t_item.font(COL_NAME)
             font.setBold(True)
             font.setPointSize(12)
             t_item.setFont(COL_NAME, font)
+
+            # Make track row taller for card look
+            t_item.setSizeHint(COL_NAME, QSize(0, 36))
 
             # Duration column shows total + file count + time span subtitle
             dur = track.total_duration_s
@@ -239,21 +352,25 @@ class TrackPanel(QTreeWidget):
             if not track.clips:
                 # Empty-track hint
                 hint = QTreeWidgetItem(t_item)
-                hint.setText(COL_NAME, "  Drop files here or click + Files")
-                hint.setForeground(COL_NAME, QColor(COLORS["text_dim"]))
+                hint.setText(COL_NAME, "    Drop files here or click + Files")
+                hint.setForeground(COL_NAME, QColor(COLORS["text_tertiary"]))
                 hint_font = hint.font(COL_NAME)
                 hint_font.setItalic(True)
                 hint_font.setPointSize(10)
                 hint.setFont(COL_NAME, hint_font)
                 hint.setFlags(Qt.ItemFlag.NoItemFlags)  # Non-selectable
+                hint.setData(0, ROLE_IS_TRACK, False)
+                hint.setData(0, ROLE_TRACK_IDX, i)
             else:
                 for clip in track.clips:
                     c_item = QTreeWidgetItem(t_item)
+                    c_item.setData(0, ROLE_IS_TRACK, False)
+                    c_item.setData(0, ROLE_TRACK_IDX, i)
 
                     # Clip name with [V] or [A] badge + creation date
                     badge = "[V]" if clip.is_video else "[A]"
                     date_str = _fmt_creation_date(clip.creation_time) if clip.creation_time else ""
-                    name_text = f"  {badge} {clip.name}"
+                    name_text = f"    {badge} {clip.name}"
                     if date_str:
                         name_text += f"  \u2022 {date_str}"
                     c_item.setText(COL_NAME, name_text)
@@ -262,6 +379,9 @@ class TrackPanel(QTreeWidget):
                     c_item.setText(COL_DURATION, _fmt_duration(clip.duration_s))
                     c_item.setFont(COL_DURATION, self._mono_font)
                     c_item.setForeground(COL_DURATION, QColor(COLORS["text_dim"]))
+
+                    # Set clip row height
+                    c_item.setSizeHint(COL_NAME, QSize(0, 30))
 
                     if clip.analyzed:
                         c_item.setText(COL_OFFSET, _fmt_offset(clip.timeline_offset_s))
@@ -439,10 +559,10 @@ class TrackPanel(QTreeWidget):
                 # Highlight hovered track with accent border
                 rect = self.visualItemRect(self._drop_hover_item)
                 accent = QColor(COLORS["accent"])
-                accent.setAlpha(40)
+                accent.setAlpha(30)
                 painter.fillRect(rect, accent)
                 painter.setPen(QPen(QColor(COLORS["accent"]), 2))
-                painter.drawRoundedRect(rect.adjusted(1, 1, -1, -1), 8, 8)
+                painter.drawRoundedRect(rect.adjusted(1, 1, -1, -1), 10, 10)
             elif self._drop_hover_empty:
                 # Drop zone at the bottom
                 vp = self.viewport()
@@ -462,7 +582,7 @@ class TrackPanel(QTreeWidget):
 
                 zone_rect = QRect(8, y, vp.width() - 16, 36)
                 accent = QColor(COLORS["accent"])
-                accent.setAlpha(25)
+                accent.setAlpha(20)
                 painter.fillRect(zone_rect, accent)
                 painter.setPen(QPen(QColor(COLORS["accent"]), 1, Qt.PenStyle.DashLine))
                 painter.drawRoundedRect(zone_rect.adjusted(1, 1, -1, -1), 10, 10)

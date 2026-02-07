@@ -84,7 +84,11 @@ class WaveformView(QWidget):
         w = self.width()
         h = self.height()
 
+        # Rounded background matching card aesthetic
         painter.fillRect(0, 0, w, h, QColor(COLORS["bg_dark"]))
+        border_pen = QPen(QColor(COLORS["border"]), 1)
+        painter.setPen(border_pen)
+        painter.drawRoundedRect(0, 0, w - 1, h - 1, 12, 12)
 
         if not self._tracks:
             self._draw_empty_state(painter, w, h, "no_tracks")
@@ -174,9 +178,13 @@ class WaveformView(QWidget):
     ) -> None:
         color = QColor(track_color(track_idx))
 
+        # Glass lane background with rounded edges
         lane_bg = QColor(COLORS["bg_panel_solid"])
-        lane_bg.setAlpha(100)
-        painter.fillRect(0, y, w, h, lane_bg)
+        lane_bg.setAlpha(80)
+        lane_rect = QRectF(4, y, w - 8, h)
+        painter.setBrush(lane_bg)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.drawRoundedRect(lane_rect, 8, 8)
 
         painter.setPen(color)
         font = painter.font()

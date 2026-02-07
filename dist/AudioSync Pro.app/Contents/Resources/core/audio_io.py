@@ -7,6 +7,15 @@ Performance strategy
 - On export: re-read original files at full resolution, one clip at a time,
   and write directly into the output array.  Never hold the entire project
   in memory at full resolution.
+
+Caching strategy
+----------------
+- Cache lives in a platform-appropriate directory:
+    macOS/Linux: ~/.cache/audiosync/
+    Windows:     %LOCALAPPDATA%/AudioSync/cache/
+- LRU eviction keeps total cache under a configurable size limit (default 2 GB).
+- Per-session tracking prevents one instance from clearing another's cache.
+- Stale files (older than max_age_hours) are cleaned on startup.
 """
 
 from __future__ import annotations
@@ -15,13 +24,14 @@ import atexit
 import hashlib
 import logging
 import os
+import platform
 import shutil
 import subprocess
-import tempfile
 import time
+import uuid
 from math import gcd
 from pathlib import Path
-from threading import Event
+from threading import Event, Lock
 from typing import Optional
 
 import numpy as np
@@ -54,15 +64,130 @@ def is_supported_file(path: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
-#  Cache directory management
+#  Cache directory management — cross-platform, LRU, session-aware
 # ---------------------------------------------------------------------------
 
-_CACHE_DIR = os.path.join(tempfile.gettempdir(), "audiosync_cache")
+# Maximum total cache size in bytes (default 2 GB)
+CACHE_MAX_BYTES: int = 2 * 1024 * 1024 * 1024
+
+# Unique session ID so multiple instances don't collide
+_SESSION_ID = uuid.uuid4().hex[:8]
+
+# Thread lock for cache operations
+_cache_lock = Lock()
+
+
+def _get_cache_dir() -> str:
+    """Return the platform-appropriate cache directory."""
+    system = platform.system()
+    if system == "Windows":
+        base = os.environ.get("LOCALAPPDATA", os.path.expanduser("~"))
+        return os.path.join(base, "AudioSync", "cache")
+    elif system == "Darwin":
+        return os.path.join(os.path.expanduser("~"), ".cache", "audiosync")
+    else:
+        # Linux / other Unix
+        xdg = os.environ.get("XDG_CACHE_HOME", os.path.join(os.path.expanduser("~"), ".cache"))
+        return os.path.join(xdg, "audiosync")
+
+
+_CACHE_DIR = _get_cache_dir()
 
 
 def _ensure_cache_dir() -> str:
     os.makedirs(_CACHE_DIR, exist_ok=True)
     return _CACHE_DIR
+
+
+def _get_cache_size() -> int:
+    """Return total size of all files in the cache directory in bytes."""
+    if not os.path.isdir(_CACHE_DIR):
+        return 0
+    total = 0
+    try:
+        for name in os.listdir(_CACHE_DIR):
+            path = os.path.join(_CACHE_DIR, name)
+            if os.path.isfile(path):
+                try:
+                    total += os.path.getsize(path)
+                except OSError:
+                    pass
+    except OSError:
+        pass
+    return total
+
+
+def get_cache_size_mb() -> float:
+    """Return cache size in megabytes (useful for UI display)."""
+    return _get_cache_size() / (1024 * 1024)
+
+
+def _evict_lru(target_free: int = 0) -> None:
+    """Evict oldest cache files until total size is under CACHE_MAX_BYTES - target_free.
+
+    Skips files belonging to active sessions (identified by lock files).
+    """
+    if not os.path.isdir(_CACHE_DIR):
+        return
+
+    with _cache_lock:
+        # Collect active session IDs from lock files
+        active_sessions: set[str] = set()
+        try:
+            for name in os.listdir(_CACHE_DIR):
+                if name.endswith(".lock"):
+                    active_sessions.add(name.replace(".lock", ""))
+        except OSError:
+            pass
+
+        # Collect all cache files with metadata
+        entries: list[tuple[str, float, int]] = []  # (path, mtime, size)
+        try:
+            for name in os.listdir(_CACHE_DIR):
+                if name.endswith(".lock"):
+                    continue
+                path = os.path.join(_CACHE_DIR, name)
+                if os.path.isfile(path):
+                    try:
+                        stat = os.stat(path)
+                        entries.append((path, stat.st_mtime, stat.st_size))
+                    except OSError:
+                        pass
+        except OSError:
+            return
+
+        total_size = sum(e[2] for e in entries)
+        limit = CACHE_MAX_BYTES - target_free
+
+        if total_size <= limit:
+            return
+
+        # Sort by mtime ascending (oldest first)
+        entries.sort(key=lambda e: e[1])
+
+        removed = 0
+        for path, mtime, size in entries:
+            if total_size <= limit:
+                break
+            # Don't evict files from active sessions
+            fname = os.path.basename(path)
+            session_match = False
+            for sid in active_sessions:
+                if sid in fname:
+                    session_match = True
+                    break
+            if session_match and sid != _SESSION_ID:
+                continue
+
+            try:
+                os.remove(path)
+                total_size -= size
+                removed += 1
+            except OSError:
+                pass
+
+        if removed:
+            logger.info("Cache LRU eviction: removed %d file(s), freed space", removed)
 
 
 def cleanup_cache(max_age_hours: float = 24.0) -> None:
@@ -72,6 +197,17 @@ def cleanup_cache(max_age_hours: float = 24.0) -> None:
     cutoff = time.time() - max_age_hours * 3600
     removed = 0
     for name in os.listdir(_CACHE_DIR):
+        if name.endswith(".lock"):
+            # Clean stale lock files too (older than max_age)
+            path = os.path.join(_CACHE_DIR, name)
+            try:
+                if os.path.getmtime(path) < cutoff:
+                    os.remove(path)
+                    removed += 1
+            except OSError:
+                pass
+            continue
+
         path = os.path.join(_CACHE_DIR, name)
         try:
             if os.path.getmtime(path) < cutoff:
@@ -84,24 +220,82 @@ def cleanup_cache(max_age_hours: float = 24.0) -> None:
 
 
 def clear_cache() -> None:
-    """Delete the entire cache directory."""
-    if os.path.isdir(_CACHE_DIR):
+    """Delete only this session's cache files, or all if no other sessions active."""
+    if not os.path.isdir(_CACHE_DIR):
+        return
+
+    # Check for other active sessions
+    other_active = False
+    try:
+        for name in os.listdir(_CACHE_DIR):
+            if name.endswith(".lock") and not name.startswith(_SESSION_ID):
+                lock_path = os.path.join(_CACHE_DIR, name)
+                # Check if lock is stale (older than 24 hours)
+                try:
+                    age = time.time() - os.path.getmtime(lock_path)
+                    if age < 24 * 3600:
+                        other_active = True
+                        break
+                except OSError:
+                    pass
+    except OSError:
+        pass
+
+    if other_active:
+        # Only remove our session's files
+        removed = 0
+        try:
+            for name in os.listdir(_CACHE_DIR):
+                if _SESSION_ID in name:
+                    try:
+                        os.remove(os.path.join(_CACHE_DIR, name))
+                        removed += 1
+                    except OSError:
+                        pass
+        except OSError:
+            pass
+        logger.info("Cache cleared (session %s): removed %d file(s)", _SESSION_ID, removed)
+    else:
+        # No other active sessions — safe to clear everything
         shutil.rmtree(_CACHE_DIR, ignore_errors=True)
         logger.info("Cache cleared: %s", _CACHE_DIR)
 
 
-# Cleanup on normal exit
+def _create_session_lock() -> None:
+    """Create a lock file indicating this session is active."""
+    _ensure_cache_dir()
+    lock_path = os.path.join(_CACHE_DIR, f"{_SESSION_ID}.lock")
+    try:
+        with open(lock_path, "w") as f:
+            f.write(f"pid={os.getpid()}\ntime={time.time()}\n")
+    except OSError:
+        pass
+
+
+def _remove_session_lock() -> None:
+    """Remove the session lock file on exit."""
+    lock_path = os.path.join(_CACHE_DIR, f"{_SESSION_ID}.lock")
+    try:
+        os.remove(lock_path)
+    except OSError:
+        pass
+
+
+# Create session lock on import; remove + clean on exit
+_create_session_lock()
+atexit.register(_remove_session_lock)
 atexit.register(clear_cache)
 
 
 def _cache_key(path: str) -> str:
-    """Stable cache key based on path + mtime + size."""
+    """Stable cache key based on path + mtime + size. Includes session ID."""
     try:
         stat = os.stat(path)
         raw = f"{os.path.abspath(path)}|{stat.st_mtime}|{stat.st_size}"
     except OSError:
         raw = os.path.abspath(path)
-    return hashlib.sha256(raw.encode()).hexdigest()[:16]
+    base = hashlib.sha256(raw.encode()).hexdigest()[:16]
+    return f"{_SESSION_ID}_{base}"
 
 
 # ---------------------------------------------------------------------------
@@ -216,6 +410,8 @@ def load_clip(
         cached_wav = os.path.join(cache_dir, f"{key}_analysis.wav")
 
         if not os.path.exists(cached_wav):
+            # Evict if needed before writing new file
+            _evict_lru(target_free=50 * 1024 * 1024)  # Reserve 50 MB
             _extract_audio_from_video(path, cached_wav, ANALYSIS_SR, cancel)
 
         data, sr = sf.read(cached_wav, dtype="float32")
@@ -276,6 +472,7 @@ def read_clip_full_res(
         cached_full = os.path.join(cache_dir, f"{key}_full.wav")
 
         if not os.path.exists(cached_full):
+            _evict_lru(target_free=200 * 1024 * 1024)  # Reserve 200 MB for full-res
             _extract_audio_full_quality(clip.file_path, cached_full, target_sr, cancel)
 
         data, sr = sf.read(cached_full, dtype="float64")

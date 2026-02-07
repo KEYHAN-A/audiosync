@@ -16,6 +16,10 @@ COLORS = {
     "bg_hover":         "rgba(56, 189, 248, 0.10)",
     "bg_selected":      "rgba(56, 189, 248, 0.18)",
 
+    # Card glass
+    "card_bg":          "rgba(21, 28, 46, 0.7)",
+    "card_border":      "rgba(56, 189, 248, 0.12)",
+
     # Borders — subtle blue-tinted glass edges
     "border":           "rgba(56, 189, 248, 0.08)",
     "border_light":     "rgba(56, 189, 248, 0.18)",
@@ -55,7 +59,7 @@ COLORS = {
 
 
 # ---------------------------------------------------------------------------
-#  QSS Stylesheet — Navy Glass
+#  QSS Stylesheet — Navy Glass (minimal card-based layout)
 # ---------------------------------------------------------------------------
 
 STYLESHEET = f"""
@@ -123,20 +127,6 @@ QMenu::separator {{
     height: 1px;
     background: {COLORS['border']};
     margin: 6px 12px;
-}}
-
-/* ===== Toolbar — glass bar ===== */
-QToolBar {{
-    background-color: {COLORS['bg_panel_solid']};
-    border-bottom: 1px solid {COLORS['border']};
-    padding: 6px 12px;
-    spacing: 8px;
-}}
-
-QToolBar::separator {{
-    width: 1px;
-    background: {COLORS['border']};
-    margin: 6px 4px;
 }}
 
 /* ===== Buttons — glass pill style ===== */
@@ -233,46 +223,28 @@ QPushButton[cssClass="danger"]:pressed {{
     background-color: rgba(248, 113, 113, 0.2);
 }}
 
-/* ===== Tree Widget — glass panel ===== */
-QTreeWidget {{
-    background-color: {COLORS['bg_panel_solid']};
-    color: {COLORS['text']};
-    border: 1px solid {COLORS['border_light']};
-    border-radius: 14px;
-    outline: none;
-    padding: 6px;
+/* ===== Scroll Area — transparent glass ===== */
+QScrollArea {{
+    background-color: transparent;
+    border: none;
 }}
 
-QTreeWidget::item {{
-    color: {COLORS['text']};
-    padding: 5px 8px;
-    border-radius: 8px;
-    min-height: 24px;
-}}
-
-QTreeWidget::item:hover {{
-    background-color: {COLORS['bg_hover']};
-}}
-
-QTreeWidget::item:selected {{
-    background-color: {COLORS['bg_selected']};
-    color: {COLORS['text_bright']};
-}}
-
-QTreeWidget::branch {{
+QScrollArea > QWidget > QWidget {{
     background-color: transparent;
 }}
 
-QHeaderView::section {{
-    background-color: {COLORS['bg_panel_solid']};
-    color: {COLORS['text_dim']};
-    border: none;
-    border-bottom: 1px solid {COLORS['border']};
-    padding: 6px 10px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+/* ===== Splitter ===== */
+QSplitter::handle {{
+    background-color: {COLORS['border']};
+}}
+
+QSplitter::handle:vertical {{
+    height: 3px;
+    margin: 0 12px;
+}}
+
+QSplitter::handle:horizontal {{
+    width: 1px;
 }}
 
 /* ===== Table Widget — glass panel ===== */
@@ -298,6 +270,18 @@ QTableWidget::item:selected {{
 
 QTableWidgetItem {{
     color: {COLORS['text']};
+}}
+
+QHeaderView::section {{
+    background-color: {COLORS['bg_panel_solid']};
+    color: {COLORS['text_dim']};
+    border: none;
+    border-bottom: 1px solid {COLORS['border']};
+    padding: 6px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }}
 
 /* ===== Scroll Bar — ultra-thin, near-invisible ===== */
@@ -345,15 +329,6 @@ QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal,
 QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {{
     width: 0;
     background: transparent;
-}}
-
-/* ===== Splitter ===== */
-QSplitter::handle {{
-    background-color: {COLORS['border']};
-}}
-
-QSplitter::handle:horizontal {{
-    width: 1px;
 }}
 
 /* ===== Status Bar — glass ===== */

@@ -27,6 +27,7 @@ from PyQt6.QtWidgets import (
 )
 
 from core.models import SyncConfig
+from version import __version__, APP_NAME, GITHUB_URL
 
 
 # ---------------------------------------------------------------------------
@@ -384,22 +385,22 @@ class ExportDialog(QDialog):
 class AboutDialog(QDialog):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
-        self.setWindowTitle("About AudioSync Pro")
-        self.setFixedSize(360, 200)
+        self.setWindowTitle(f"About {APP_NAME}")
+        self.setFixedSize(360, 260)
 
         layout = QVBoxLayout(self)
         layout.setSpacing(12)
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        title = QLabel("AudioSync Pro")
+        title = QLabel(APP_NAME)
         title.setProperty("cssClass", "heading")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(title)
 
-        version = QLabel("Version 2.0.0")
-        version.setProperty("cssClass", "dim")
-        version.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(version)
+        ver_label = QLabel(f"Version {__version__}")
+        ver_label.setProperty("cssClass", "dim")
+        ver_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(ver_label)
 
         desc = QLabel(
             "Multi-device audio/video synchronization tool.\n"
@@ -408,6 +409,18 @@ class AboutDialog(QDialog):
         desc.setWordWrap(True)
         desc.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(desc)
+
+        link = QLabel('<a href="https://keyhan.info" style="color: #38bdf8;">keyhan.info</a>')
+        link.setOpenExternalLinks(True)
+        link.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(link)
+
+        gh_link = QLabel(
+            f'<a href="{GITHUB_URL}" style="color: #a78bfa;">GitHub — Open Source</a>'
+        )
+        gh_link.setOpenExternalLinks(True)
+        gh_link.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(gh_link)
 
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
         buttons.accepted.connect(self.accept)

@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('core', 'core'), ('app', 'app')],
+    datas=[('core', 'core'), ('app', 'app'), ('version.py', '.')],
     hiddenimports=['scipy.signal', 'scipy.fft', 'scipy.fft._pocketfft', 'numpy', 'soundfile', 'PyQt6.QtCore', 'PyQt6.QtGui', 'PyQt6.QtWidgets'],
     hookspath=[],
     hooksconfig={},

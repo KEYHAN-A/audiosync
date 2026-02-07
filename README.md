@@ -1,7 +1,13 @@
 # AudioSync Pro
 
-Multi-device audio/video synchronization tool. Syncs recordings from
-multiple cameras, microphones, and recorders using FFT cross-correlation.
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![GitHub](https://img.shields.io/badge/GitHub-KEYHAN--A%2Faudiosync-181717?logo=github)](https://github.com/KEYHAN-A/audiosync)
+[![Version](https://img.shields.io/badge/version-2.2.0-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-a78bfa)]()
+
+Multi-device audio/video synchronization tool with high-quality audio processing. Syncs recordings from multiple cameras, microphones, and recorders using FFT cross-correlation.
+
+**Free and open source.** [Website](https://audiosync.keyhan.info) | [Download](https://github.com/KEYHAN-A/audiosync/releases) | [Report Issue](https://github.com/KEYHAN-A/audiosync/issues)
 
 ---
 
@@ -24,7 +30,7 @@ Track 1 "Camera A":  2 files  (full-length video)
 Track 2 "Camera B": 12 files  (short B-roll clips)
 Track 3 "Zoom H6":   3 files  (audio recordings)
 
-→ Exports 3 aligned WAV files, all the same length:
+-> Exports 3 aligned WAV files, all the same length:
 
   Track 1: |=audio==silence==audio========================|
   Track 2: |==c1=c2==silence==c3=c4=...=silence==c12=====|
@@ -33,12 +39,25 @@ Track 3 "Zoom H6":   3 files  (audio recordings)
 
 ---
 
+## High-Quality Audio Processing
+
+AudioSync Pro is designed for professional audio workflows where quality matters:
+
+- **24-bit PCM / 32-bit float** — Full bit-depth preservation throughout the pipeline
+- **Polyphase resampling** — SciPy-powered sample rate conversion with minimal artifacts
+- **Lossless format support** — Native WAV, AIFF, and FLAC export
+- **Sample-rate preservation** — Exports at your project's highest native sample rate
+- **No lossy re-encoding** — Audio data passes through without lossy compression
+- **Analysis at 8 kHz** — Cross-correlation runs on downsampled copies; your original files are never modified
+
+---
+
 ## Requirements
 
 - Python 3.10+
-- ffmpeg (for video file support)
+- FFmpeg (for video file support)
 
-### Install ffmpeg
+### Install FFmpeg
 
 ```bash
 # macOS
@@ -56,6 +75,10 @@ sudo apt install ffmpeg
 ## Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/KEYHAN-A/audiosync.git
+cd audiosync
+
 # Create a virtual environment
 python3 -m venv .venv
 source .venv/bin/activate    # macOS/Linux
@@ -76,32 +99,29 @@ python main.py
 
 ### Workflow
 
-1. **Create tracks** — Click **+ Track** for each recording device.
-   A loading screen shows progress while importing files.
+1. **Create tracks** — Click **+ Add Track** for each recording device,
+   or drag-and-drop files to auto-group by device.
 
-2. **Import files** — Select a track, click **+ Files**, and add all
-   audio/video files from that device. Drag-and-drop also works.
-   Video audio is extracted automatically via ffmpeg. Supports WAV,
-   AIFF, FLAC, MP3, MP4, MOV, MKV, AVI, WEBM, and more.
+2. **Import files** — Click **+ Files** on a track card, or drag files
+   directly onto a card. Video audio is extracted automatically via FFmpeg.
+   Supports WAV, AIFF, FLAC, MP3, MP4, MOV, MKV, AVI, WEBM, and more.
 
-3. **Analyze** — Click **Analyze**. A processing screen shows live
-   progress, per-clip results, elapsed time, and ETA. Analysis runs
-   at 8 kHz for speed (~36x faster than full resolution). Cancel
-   anytime with the Cancel button.
+3. **Analyze** — Click the **Analyze** button. A processing screen shows
+   live progress, per-clip results, elapsed time, and ETA. Analysis runs
+   at 8 kHz for speed. Cancel anytime.
 
-4. **Sync** — Click **Sync**. Each track's clips are stitched into
-   a single continuous audio array at full resolution, with silence
-   filling gaps.
+4. **Sync** — Click **Sync**. Each track's clips are stitched into a
+   single continuous audio array at full resolution, with silence filling gaps.
 
-5. **Export** — Click **Export** to save one synced audio file per
-   track. Choose format (WAV/AIFF/FLAC) and bit depth (16/24/32).
+5. **Export** — Click **Export** to save one synced audio file per track.
+   Choose format (WAV/AIFF/FLAC) and bit depth (16/24/32-bit float).
 
 6. **Reset** — Click **Reset** to clear analysis results and start over.
 
 ### Reference Track
 
 The reference track is auto-detected (longest total audio duration).
-To override, right-click a track and select **Set as Reference**.
+To override, click the menu on a track card and select **Set as Reference**.
 
 ### Keyboard Shortcuts
 
@@ -143,7 +163,7 @@ pip install pyinstaller
 # Optional: AppImage if appimagetool is installed
 ```
 
-> **Note:** ffmpeg must be installed on the system for video file
+> **Note:** FFmpeg must be installed on the system for video file
 > support to work in the bundled application.
 
 ---
@@ -155,12 +175,12 @@ build scripts, and the About dialog read from this single source.
 
 ```python
 # version.py
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 ```
 
 ---
 
-## Performance (v2.1)
+## Performance
 
 - **Analysis at 8 kHz**: Cross-correlation runs on 8 kHz mono audio,
   using ~36x less memory and CPU than 48 kHz. Temporal precision is
@@ -183,7 +203,7 @@ __version__ = "2.1.0"
 1. **Metadata extraction** — Creation timestamps extracted via ffprobe
    for accurate chronological ordering
 2. **Reference selection** — Track with widest time coverage becomes
-   reference (user can override via right-click)
+   reference (user can override via context menu)
 3. **Reference timeline** — Built using metadata timestamp gaps (not
    cross-correlation), correctly handling sequential same-device clips
 4. **Pass 1 — Cross-correlation** — Every non-reference clip is
@@ -196,7 +216,7 @@ __version__ = "2.1.0"
 ### Confidence Score
 
 - **> 10**: Strong match, reliable alignment
-- **3–10**: Moderate match, likely correct
+- **3-10**: Moderate match, likely correct
 - **< 3**: Weak match — may not overlap with reference
 
 ---
@@ -204,6 +224,7 @@ __version__ = "2.1.0"
 ## Project Structure
 
 ```
+audiosync/
 ├── main.py              Entry point
 ├── version.py           Centralized version info
 ├── requirements.txt     Python dependencies
@@ -212,6 +233,9 @@ __version__ = "2.1.0"
 ├── build_linux.sh       Linux build script
 ├── icon.icns            macOS app icon
 ├── icon.png             App icon (PNG)
+├── LICENSE              GPL v3 license
+├── CHANGELOG.md         Release history
+├── CONTRIBUTING.md      Contributor guide
 ├── core/                Reusable DSP library (no GUI dependencies)
 │   ├── models.py        Data models (Track, Clip, SyncResult, SyncConfig)
 │   ├── audio_io.py      Audio/video loading, caching, export
@@ -219,17 +243,17 @@ __version__ = "2.1.0"
 │   ├── metadata.py      ffprobe-based creation time extraction
 │   └── grouping.py      Auto-grouping files by device name
 ├── app/                 PyQt6 desktop application
-│   ├── main_window.py   Main window, toolbar, worker threads
-│   ├── track_panel.py   Card-style track/file display
+│   ├── main_window.py   Main window layout and worker threads
+│   ├── track_card.py    Card-based track/file display
 │   ├── waveform_view.py Timeline waveform display
-│   ├── workflow_bar.py  Step indicator (Import→Analyze→Sync→Export)
+│   ├── workflow_bar.py  Step indicator (Import->Analyze->Sync->Export)
 │   ├── theme.py         Dark navy + cyan/purple theme
 │   └── dialogs.py       Processing, import, export, about dialogs
 ├── website/             Landing page for web deployment
 │   ├── index.html       Single-page landing
 │   ├── style.css        Custom animations and glassmorphism
 │   └── icon.png         App icon
-└── AudioSync.js         Max for Live plugin for Ableton Live
+└── .github/workflows/   CI/CD pipeline scaffolds
 ```
 
 ---
@@ -247,8 +271,30 @@ just copy the files and serve.
 ### Audio
 WAV, AIFF, FLAC, MP3, OGG, Opus
 
-### Video (audio extracted via ffmpeg)
+### Video (audio extracted via FFmpeg)
 MP4, MOV, MKV, AVI, WEBM, MTS, M4V, MXF
+
+---
+
+## Deploy (Manual)
+
+To update the website on your server after pushing to GitHub:
+
+```bash
+# SSH into your server
+ssh your-server
+
+# Navigate to the website directory
+cd /path/to/audiosync-website
+
+# Pull latest changes
+git pull origin main
+
+# Only the website/ folder is needed for serving
+```
+
+Builds (macOS/Windows/Linux) are done locally and uploaded as
+[GitHub Releases](https://github.com/KEYHAN-A/audiosync/releases).
 
 ---
 
@@ -258,6 +304,20 @@ MP4, MOV, MKV, AVI, WEBM, MTS, M4V, MXF
 |------------|------------------------------------------|
 | PyQt6      | Desktop GUI framework                    |
 | numpy      | Array operations                         |
-| scipy      | FFT-based cross-correlation              |
+| scipy      | FFT-based cross-correlation, resampling  |
 | soundfile  | Audio file I/O (WAV, AIFF, FLAC)        |
-| ffmpeg     | Video audio extraction (system install)  |
+| FFmpeg     | Video audio extraction (system install)  |
+
+---
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+AudioSync Pro is licensed under the [GNU General Public License v3.0](LICENSE).
+
+## Author
+
+Made by [Keyhan](https://keyhan.info)

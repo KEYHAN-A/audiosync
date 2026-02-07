@@ -69,7 +69,7 @@
  [],
  False,
  False,
- 1770494823,
+ 1770501845,
  [('runw',
    '/Users/keyhan/Server/AudioSync - '
    'MaxForLive/.venv/lib/python3.13/site-packages/PyInstaller/bootloader/Darwin-64bit/runw',

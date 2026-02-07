@@ -27,7 +27,7 @@ from PyQt6.QtWidgets import (
 )
 
 from core.models import SyncConfig
-from version import __version__, APP_NAME
+from version import __version__, APP_NAME, GITHUB_URL
 
 
 # ---------------------------------------------------------------------------
@@ -386,7 +386,7 @@ class AboutDialog(QDialog):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.setWindowTitle(f"About {APP_NAME}")
-        self.setFixedSize(360, 220)
+        self.setFixedSize(360, 260)
 
         layout = QVBoxLayout(self)
         layout.setSpacing(12)
@@ -414,6 +414,13 @@ class AboutDialog(QDialog):
         link.setOpenExternalLinks(True)
         link.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(link)
+
+        gh_link = QLabel(
+            f'<a href="{GITHUB_URL}" style="color: #a78bfa;">GitHub — Open Source</a>'
+        )
+        gh_link.setOpenExternalLinks(True)
+        gh_link.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(gh_link)
 
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
         buttons.accepted.connect(self.accept)

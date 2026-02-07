@@ -6,14 +6,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AudioSync Pro — Multi-Device Audio &amp; Video Synchronization</title>
     <meta name="description"
-        content="Sync recordings from multiple cameras, microphones, and recorders with sample-accurate precision. Free to download and use.">
+        content="Free, open-source multi-device audio and video synchronization with high-quality 24-bit audio processing. Sync cameras, mics, and recorders with sample-accurate FFT cross-correlation.">
     <meta name="theme-color" content="#0a0e1a">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Keyhan">
+    <meta name="keywords"
+        content="audio sync, video sync, multi-device synchronization, FFT cross-correlation, audio alignment, multi-camera sync, free audio tool, open source audio">
+    <link rel="canonical" href="https://audiosync.keyhan.info/">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="AudioSync Pro">
-    <meta property="og:description" content="Sync every device. Every take. Perfectly aligned.">
-    <meta property="og:image" content="icon.png">
+    <meta property="og:title" content="AudioSync Pro — Multi-Device Audio &amp; Video Synchronization">
+    <meta property="og:description"
+        content="Free, open-source tool to sync recordings from multiple cameras, microphones, and recorders with sample-accurate precision and high-quality 24-bit audio processing.">
+    <meta property="og:image" content="https://audiosync.keyhan.info/icon.png">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://audiosync.keyhan.info/">
+    <meta property="og:site_name" content="AudioSync Pro">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="AudioSync Pro — Multi-Device Audio &amp; Video Synchronization">
+    <meta name="twitter:description"
+        content="Free, open-source tool to sync recordings from multiple cameras, microphones, and recorders with sample-accurate precision.">
+    <meta name="twitter:image" content="https://audiosync.keyhan.info/icon.png">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "AudioSync Pro",
+        "description": "Multi-device audio and video synchronization tool with high-quality 24-bit audio processing. Uses FFT cross-correlation for sample-accurate alignment.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "macOS, Windows, Linux",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "softwareVersion": "2.1.0",
+        "author": {
+            "@type": "Person",
+            "name": "Keyhan",
+            "url": "https://keyhan.info"
+        },
+        "url": "https://audiosync.keyhan.info",
+        "downloadUrl": "https://github.com/KEYHAN-A/audiosync/releases",
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "isAccessibleForFree": true
+    }
+    </script>
 
     <!-- Tailwind CSS v4 CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -54,445 +96,582 @@
     <div class="bg-grid"></div>
 
     <!-- ==================== NAVIGATION ==================== -->
-    <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-navy-deep/80 border-b border-white/5">
-        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="#" class="flex items-center gap-3">
-                <img src="icon.png" alt="AudioSync Pro" class="w-9 h-9 rounded-lg">
-                <span class="font-semibold text-white text-lg tracking-tight">AudioSync Pro</span>
-            </a>
-            <div class="hidden md:flex items-center gap-8 text-sm text-white/60">
-                <a href="#features" class="hover:text-cyan transition-colors">Features</a>
-                <a href="#how-it-works" class="hover:text-cyan transition-colors">How It Works</a>
-                <a href="#use-cases" class="hover:text-cyan transition-colors">Use Cases</a>
-                <a href="#download" class="hover:text-cyan transition-colors">Download</a>
-            </div>
-            <a href="#download"
-                class="hidden md:inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-cyan/10 border border-cyan/20 text-cyan text-sm font-medium hover:bg-cyan/20 transition-all">
-                Download Free
-            </a>
-        </div>
-    </nav>
-
-    <!-- ==================== HERO ==================== -->
-    <section class="relative min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-16 overflow-hidden">
-        <!-- Glow orbs -->
-        <div class="glow-orb glow-orb-cyan" style="width:500px;height:500px;top:-100px;right:-100px;opacity:0.15"></div>
-        <div class="glow-orb glow-orb-purple" style="width:400px;height:400px;bottom:50px;left:-150px;opacity:0.1">
-        </div>
-
-        <div class="relative z-10 text-center max-w-4xl mx-auto">
-            <!-- Icon -->
-            <div class="mb-8">
-                <img src="icon.png" alt="AudioSync Pro"
-                    class="w-24 h-24 mx-auto rounded-3xl icon-pulse shadow-2xl shadow-cyan/20">
-            </div>
-
-            <!-- Title -->
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
-                <span class="gradient-text">Sync Every Device.</span><br>
-                <span class="text-white/90">Perfectly Aligned.</span>
-            </h1>
-
-            <!-- Subtitle -->
-            <p class="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed">
-                Multi-device audio and video synchronization with sample-accurate FFT cross-correlation.
-                Import, analyze, sync, and export — all in one beautiful tool.
-            </p>
-
-            <!-- CTA Buttons -->
-            <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
-                <a href="#download"
-                    class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-cyan text-navy-deep font-bold text-base hover:bg-cyan-bright transition-all shadow-lg shadow-cyan/20 hover:shadow-cyan/30">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Download Free
+    <header>
+        <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-navy-deep/80 border-b border-white/5"
+            role="navigation" aria-label="Main navigation">
+            <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+                <a href="#" class="flex items-center gap-3">
+                    <img src="icon.png" alt="AudioSync Pro icon" class="w-9 h-9 rounded-lg" width="36" height="36"
+                        loading="eager">
+                    <span class="font-semibold text-white text-lg tracking-tight">AudioSync Pro</span>
                 </a>
-                <a href="#features"
-                    class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border border-white/10 text-white/80 font-medium text-base hover:border-cyan/30 hover:text-white transition-all">
-                    Learn More
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                <div class="hidden md:flex items-center gap-8 text-sm text-white/60">
+                    <a href="#features" class="hover:text-cyan transition-colors">Features</a>
+                    <a href="#how-it-works" class="hover:text-cyan transition-colors">How It Works</a>
+                    <a href="#use-cases" class="hover:text-cyan transition-colors">Use Cases</a>
+                    <a href="#download" class="hover:text-cyan transition-colors">Download</a>
+                </div>
+                <div class="hidden md:flex items-center gap-3">
+                    <a href="https://github.com/KEYHAN-A/audiosync" target="_blank" rel="noopener"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-white/60 text-sm font-medium hover:border-white/20 hover:text-white transition-all"
+                        aria-label="View source on GitHub">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                        </svg>
+                        GitHub
+                    </a>
+                    <a href="#download"
+                        class="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-cyan/10 border border-cyan/20 text-cyan text-sm font-medium hover:bg-cyan/20 transition-all">
+                        Download Free
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- ==================== HERO ==================== -->
+        <section
+            class="relative min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-16 overflow-hidden">
+            <!-- Glow orbs -->
+            <div class="glow-orb glow-orb-cyan" style="width:500px;height:500px;top:-100px;right:-100px;opacity:0.15">
+            </div>
+            <div class="glow-orb glow-orb-purple" style="width:400px;height:400px;bottom:50px;left:-150px;opacity:0.1">
+            </div>
+
+            <div class="relative z-10 text-center max-w-4xl mx-auto">
+                <!-- Icon -->
+                <div class="mb-8">
+                    <img src="icon.png" alt="AudioSync Pro"
+                        class="w-24 h-24 mx-auto rounded-3xl icon-pulse shadow-2xl shadow-cyan/20">
+                </div>
+
+                <!-- Title -->
+                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+                    <span class="gradient-text">Sync Every Device.</span><br>
+                    <span class="text-white/90">Perfectly Aligned.</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed">
+                    Multi-device audio and video synchronization with sample-accurate FFT cross-correlation.
+                    Import, analyze, sync, and export — all in one beautiful tool.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
+                    <a href="#download"
+                        class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-cyan text-navy-deep font-bold text-base hover:bg-cyan-bright transition-all shadow-lg shadow-cyan/20 hover:shadow-cyan/30">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download Free
+                    </a>
+                    <a href="#features"
+                        class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border border-white/10 text-white/80 font-medium text-base hover:border-cyan/30 hover:text-white transition-all">
+                        Learn More
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Waveform Animation -->
+                <div class="waveform-container">
+                    <svg class="waveform-svg" viewBox="0 0 600 120" preserveAspectRatio="none">
+                        <!-- Glow layer -->
+                        <path class="waveform-glow"
+                            d="M0,60 C50,20 100,100 150,60 C200,20 250,100 300,60 C350,20 400,100 450,60 C500,20 550,100 600,60" />
+                        <!-- Wave lines -->
+                        <path class="waveform-line waveform-line-1"
+                            d="M0,60 C50,20 100,100 150,60 C200,20 250,100 300,60 C350,20 400,100 450,60 C500,20 550,100 600,60" />
+                        <path class="waveform-line waveform-line-2"
+                            d="M0,60 C60,40 120,80 180,60 C240,40 300,80 360,60 C420,40 480,80 540,60 C560,50 580,70 600,60" />
+                        <path class="waveform-line waveform-line-3"
+                            d="M0,60 C75,45 150,75 225,60 C300,45 375,75 450,60 C525,45 575,70 600,60" />
+                        <!-- Center line -->
+                        <line x1="0" y1="60" x2="600" y2="60" stroke="rgba(56,189,248,0.15)" stroke-width="1" />
                     </svg>
-                </a>
+                </div>
+
+                <!-- Version badge -->
+                <p class="mt-6 text-xs text-white/30 font-mono">v2.1.0 &middot; Free &amp; Open Source</p>
             </div>
+        </section>
 
-            <!-- Waveform Animation -->
-            <div class="waveform-container">
-                <svg class="waveform-svg" viewBox="0 0 600 120" preserveAspectRatio="none">
-                    <!-- Glow layer -->
-                    <path class="waveform-glow"
-                        d="M0,60 C50,20 100,100 150,60 C200,20 250,100 300,60 C350,20 400,100 450,60 C500,20 550,100 600,60" />
-                    <!-- Wave lines -->
-                    <path class="waveform-line waveform-line-1"
-                        d="M0,60 C50,20 100,100 150,60 C200,20 250,100 300,60 C350,20 400,100 450,60 C500,20 550,100 600,60" />
-                    <path class="waveform-line waveform-line-2"
-                        d="M0,60 C60,40 120,80 180,60 C240,40 300,80 360,60 C420,40 480,80 540,60 C560,50 580,70 600,60" />
-                    <path class="waveform-line waveform-line-3"
-                        d="M0,60 C75,45 150,75 225,60 C300,45 375,75 450,60 C525,45 575,70 600,60" />
-                    <!-- Center line -->
-                    <line x1="0" y1="60" x2="600" y2="60" stroke="rgba(56,189,248,0.15)" stroke-width="1" />
-                </svg>
-            </div>
-
-            <!-- Version badge -->
-            <p class="mt-6 text-xs text-white/30 font-mono">v2.1.0 &middot; Free &amp; Open Source</p>
-        </div>
-    </section>
-
-    <!-- ==================== FEATURES ==================== -->
-    <section id="features" class="relative py-24 px-6">
-        <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-16 fade-in">
-                <p class="text-cyan text-sm font-semibold tracking-widest uppercase mb-3">Features</p>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Everything You Need for Perfect Sync</h2>
-                <div class="section-divider mt-6"></div>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Feature 1 -->
-                <div class="glass-card p-7 fade-in fade-delay-1">
-                    <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5">
-                        <svg class="w-6 h-6 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Multi-Device Sync</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Sync recordings from any combination of cameras,
-                        microphones, Zoom recorders, and phones. All devices aligned to a shared timeline.</p>
+        <!-- ==================== FEATURES ==================== -->
+        <section id="features" class="relative py-24 px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16 fade-in">
+                    <p class="text-cyan text-sm font-semibold tracking-widest uppercase mb-3">Features</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Everything You Need for Perfect Sync</h2>
+                    <div class="section-divider mt-6"></div>
                 </div>
 
-                <!-- Feature 2 -->
-                <div class="glass-card p-7 fade-in fade-delay-2">
-                    <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-5">
-                        <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Feature 1 -->
+                    <div class="glass-card p-7 fade-in fade-delay-1">
+                        <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Multi-Device Sync</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Sync recordings from any combination of
+                            cameras,
+                            microphones, Zoom recorders, and phones. All devices aligned to a shared timeline.</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Video Support</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Import MP4, MOV, MKV, AVI, and more. Audio is
-                        extracted automatically via ffmpeg — no manual conversion needed.</p>
-                </div>
 
-                <!-- Feature 3 -->
-                <div class="glass-card p-7 fade-in fade-delay-3">
-                    <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5">
-                        <svg class="w-6 h-6 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
+                    <!-- Feature 2 -->
+                    <div class="glass-card p-7 fade-in fade-delay-2">
+                        <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Video Support</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Import MP4, MOV, MKV, AVI, and more. Audio is
+                            extracted automatically via ffmpeg — no manual conversion needed.</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2">FFT Cross-Correlation</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Uses Fast Fourier Transform cross-correlation for
-                        sample-accurate alignment. Confidence scores tell you how reliable each match is.</p>
-                </div>
 
-                <!-- Feature 4 -->
-                <div class="glass-card p-7 fade-in fade-delay-4">
-                    <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-5">
-                        <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7zm5 0v10m6-10v10M4 12h16" />
-                        </svg>
+                    <!-- Feature 3 -->
+                    <div class="glass-card p-7 fade-in fade-delay-3">
+                        <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">FFT Cross-Correlation</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Uses Fast Fourier Transform cross-correlation
+                            for
+                            sample-accurate alignment. Confidence scores tell you how reliable each match is.</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Batch Processing</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Handle dozens of clips across multiple tracks.
-                        Background processing with live progress, ETA, and cancel support.</p>
-                </div>
 
-                <!-- Feature 5 -->
-                <div class="glass-card p-7 fade-in fade-delay-5">
-                    <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5">
-                        <svg class="w-6 h-6 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
+                    <!-- Feature 4 -->
+                    <div class="glass-card p-7 fade-in fade-delay-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7zm5 0v10m6-10v10M4 12h16" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Batch Processing</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Handle dozens of clips across multiple tracks.
+                            Background processing with live progress, ETA, and cancel support.</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Smart Grouping</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Drag and drop files — AudioSync automatically
-                        groups them by device name and creation metadata into separate tracks.</p>
-                </div>
 
-                <!-- Feature 6 -->
-                <div class="glass-card p-7 fade-in fade-delay-6">
-                    <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-5">
-                        <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                        </svg>
+                    <!-- Feature 5 -->
+                    <div class="glass-card p-7 fade-in fade-delay-5">
+                        <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Smart Grouping</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Drag and drop files — AudioSync automatically
+                            groups them by device name and creation metadata into separate tracks.</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Max for Live Plugin</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Includes a Max for Live JavaScript plugin for
-                        transient alignment directly within Ableton Live sessions.</p>
+
+                    <!-- Feature 6 -->
+                    <div class="glass-card p-7 fade-in fade-delay-6">
+                        <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Max for Live Plugin</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Includes a Max for Live JavaScript plugin for
+                            transient alignment directly within Ableton Live sessions.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ==================== HOW IT WORKS ==================== -->
-    <section id="how-it-works" class="relative py-24 px-6">
-        <div class="glow-orb glow-orb-cyan" style="width:350px;height:350px;top:100px;left:-100px;opacity:0.08"></div>
-
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-16 fade-in">
-                <p class="text-purple text-sm font-semibold tracking-widest uppercase mb-3">Workflow</p>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Four Steps to Perfect Sync</h2>
-                <div class="section-divider mt-6"></div>
+        <!-- ==================== HOW IT WORKS ==================== -->
+        <section id="how-it-works" class="relative py-24 px-6">
+            <div class="glow-orb glow-orb-cyan" style="width:350px;height:350px;top:100px;left:-100px;opacity:0.08">
             </div>
 
-            <div class="space-y-2">
-                <!-- Step 1 -->
-                <div class="fade-in fade-delay-1">
-                    <div class="glass-card p-8 flex items-start gap-6">
-                        <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-cyan/15 flex items-center justify-center">
-                            <span class="text-cyan font-bold text-xl">1</span>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-semibold text-white mb-2">Import</h3>
-                            <p class="text-white/50 leading-relaxed">Create tracks for each recording device and add
-                                your audio or video files. Drag-and-drop or use the file picker. Video audio is
-                                extracted automatically. Supports WAV, AIFF, FLAC, MP3, MP4, MOV, MKV, and many more
-                                formats.</p>
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-16 fade-in">
+                    <p class="text-purple text-sm font-semibold tracking-widest uppercase mb-3">Workflow</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Four Steps to Perfect Sync</h2>
+                    <div class="section-divider mt-6"></div>
+                </div>
+
+                <div class="space-y-2">
+                    <!-- Step 1 -->
+                    <div class="fade-in fade-delay-1">
+                        <div class="glass-card p-8 flex items-start gap-6">
+                            <div
+                                class="flex-shrink-0 w-14 h-14 rounded-2xl bg-cyan/15 flex items-center justify-center">
+                                <span class="text-cyan font-bold text-xl">1</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-white mb-2">Import</h3>
+                                <p class="text-white/50 leading-relaxed">Create tracks for each recording device and add
+                                    your audio or video files. Drag-and-drop or use the file picker. Video audio is
+                                    extracted automatically. Supports WAV, AIFF, FLAC, MP3, MP4, MOV, MKV, and many more
+                                    formats.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="step-connector"></div>
+                    <div class="step-connector"></div>
 
-                <!-- Step 2 -->
-                <div class="fade-in fade-delay-2">
-                    <div class="glass-card p-8 flex items-start gap-6">
-                        <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-purple/15 flex items-center justify-center">
-                            <span class="text-purple font-bold text-xl">2</span>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-semibold text-white mb-2">Analyze</h3>
-                            <p class="text-white/50 leading-relaxed">One click runs FFT cross-correlation at 8 kHz — 36x
-                                faster than full resolution while maintaining sub-millisecond precision. Watch live
-                                progress with per-clip confidence scores and ETA.</p>
+                    <!-- Step 2 -->
+                    <div class="fade-in fade-delay-2">
+                        <div class="glass-card p-8 flex items-start gap-6">
+                            <div
+                                class="flex-shrink-0 w-14 h-14 rounded-2xl bg-purple/15 flex items-center justify-center">
+                                <span class="text-purple font-bold text-xl">2</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-white mb-2">Analyze</h3>
+                                <p class="text-white/50 leading-relaxed">One click runs FFT cross-correlation at 8 kHz —
+                                    36x
+                                    faster than full resolution while maintaining sub-millisecond precision. Watch live
+                                    progress with per-clip confidence scores and ETA.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="step-connector"></div>
+                    <div class="step-connector"></div>
 
-                <!-- Step 3 -->
-                <div class="fade-in fade-delay-3">
-                    <div class="glass-card p-8 flex items-start gap-6">
-                        <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-cyan/15 flex items-center justify-center">
-                            <span class="text-cyan font-bold text-xl">3</span>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-semibold text-white mb-2">Sync</h3>
-                            <p class="text-white/50 leading-relaxed">Each track's clips are stitched into a single
-                                continuous audio stream at full resolution. Silence fills the gaps between clips, and
-                                crossfades smooth the transitions.</p>
+                    <!-- Step 3 -->
+                    <div class="fade-in fade-delay-3">
+                        <div class="glass-card p-8 flex items-start gap-6">
+                            <div
+                                class="flex-shrink-0 w-14 h-14 rounded-2xl bg-cyan/15 flex items-center justify-center">
+                                <span class="text-cyan font-bold text-xl">3</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-white mb-2">Sync</h3>
+                                <p class="text-white/50 leading-relaxed">Each track's clips are stitched into a single
+                                    continuous audio stream at full resolution. Silence fills the gaps between clips,
+                                    and
+                                    crossfades smooth the transitions.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="step-connector"></div>
+                    <div class="step-connector"></div>
 
-                <!-- Step 4 -->
-                <div class="fade-in fade-delay-4">
-                    <div class="glass-card p-8 flex items-start gap-6">
-                        <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-purple/15 flex items-center justify-center">
-                            <span class="text-purple font-bold text-xl">4</span>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-semibold text-white mb-2">Export</h3>
-                            <p class="text-white/50 leading-relaxed">Export one synced audio file per track — all the
-                                same length and perfectly aligned. Choose WAV, AIFF, or FLAC with 16/24/32-bit depth.
-                                Drop the files into any DAW or video editor.</p>
+                    <!-- Step 4 -->
+                    <div class="fade-in fade-delay-4">
+                        <div class="glass-card p-8 flex items-start gap-6">
+                            <div
+                                class="flex-shrink-0 w-14 h-14 rounded-2xl bg-purple/15 flex items-center justify-center">
+                                <span class="text-purple font-bold text-xl">4</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-white mb-2">Export</h3>
+                                <p class="text-white/50 leading-relaxed">Export one synced audio file per track — all
+                                    the
+                                    same length and perfectly aligned. Choose WAV, AIFF, or FLAC with 16/24/32-bit
+                                    depth.
+                                    Drop the files into any DAW or video editor.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ==================== USE CASES ==================== -->
-    <section id="use-cases" class="relative py-24 px-6">
-        <div class="glow-orb glow-orb-purple" style="width:400px;height:400px;bottom:0;right:-100px;opacity:0.08"></div>
-
-        <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-16 fade-in">
-                <p class="text-cyan text-sm font-semibold tracking-widest uppercase mb-3">Use Cases</p>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Built for Real Production Workflows</h2>
-                <div class="section-divider mt-6"></div>
+        <!-- ==================== USE CASES ==================== -->
+        <section id="use-cases" class="relative py-24 px-6">
+            <div class="glow-orb glow-orb-purple" style="width:400px;height:400px;bottom:0;right:-100px;opacity:0.08">
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Use Case 1 -->
-                <div class="glass-card p-7 fade-in fade-delay-1">
-                    <div class="text-3xl mb-4">🎬</div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Film &amp; Video Production</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Multi-camera shoots with separate audio recorders.
-                        Sync the main camera, B-roll cameras, and boom mic recordings into a perfectly aligned timeline.
-                    </p>
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16 fade-in">
+                    <p class="text-cyan text-sm font-semibold tracking-widest uppercase mb-3">Use Cases</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Built for Real Production Workflows</h2>
+                    <div class="section-divider mt-6"></div>
                 </div>
 
-                <!-- Use Case 2 -->
-                <div class="glass-card p-7 fade-in fade-delay-2">
-                    <div class="text-3xl mb-4">🎵</div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Live Music Recording</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Mix board recording plus audience mics, phone
-                        recordings, and instrument DIs. Every source aligned to the same timeline for mixing.</p>
-                </div>
-
-                <!-- Use Case 3 -->
-                <div class="glass-card p-7 fade-in fade-delay-3">
-                    <div class="text-3xl mb-4">🎙️</div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Podcast &amp; Multi-Mic</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Each host records locally on their device.
-                        AudioSync aligns all recordings even when they started at different times.</p>
-                </div>
-
-                <!-- Use Case 4 -->
-                <div class="glass-card p-7 fade-in fade-delay-4">
-                    <div class="text-3xl mb-4">🌿</div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Field Recording</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Multiple recorders placed in different locations.
-                        Sync ambient recordings, wildlife mics, and contact mics for spatial audio.</p>
-                </div>
-
-                <!-- Use Case 5 -->
-                <div class="glass-card p-7 fade-in fade-delay-5">
-                    <div class="text-3xl mb-4">📱</div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Content Creation</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">YouTube, TikTok, Twitch — sync your main camera,
-                        screen recording, and external mic without manual alignment in your editor.</p>
-                </div>
-
-                <!-- Use Case 6 -->
-                <div class="glass-card p-7 fade-in fade-delay-6">
-                    <div class="text-3xl mb-4">🎹</div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Ableton Live Integration</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Use the included Max for Live plugin for
-                        transient-level alignment directly inside your Ableton Live session.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== SUPPORTED FORMATS ==================== -->
-    <section class="relative py-20 px-6">
-        <div class="max-w-4xl mx-auto text-center fade-in">
-            <p class="text-purple text-sm font-semibold tracking-widest uppercase mb-3">Compatibility</p>
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-10">Works With Your Files</h2>
-
-            <div class="mb-8">
-                <p class="text-white/40 text-xs uppercase tracking-widest mb-4">Audio Formats</p>
-                <div class="flex flex-wrap justify-center gap-3">
-                    <span class="format-tag">WAV</span>
-                    <span class="format-tag">AIFF</span>
-                    <span class="format-tag">FLAC</span>
-                    <span class="format-tag">MP3</span>
-                    <span class="format-tag">OGG</span>
-                    <span class="format-tag">Opus</span>
-                </div>
-            </div>
-
-            <div>
-                <p class="text-white/40 text-xs uppercase tracking-widest mb-4">Video Formats (audio extracted via
-                    ffmpeg)</p>
-                <div class="flex flex-wrap justify-center gap-3">
-                    <span class="format-tag format-tag-video">MP4</span>
-                    <span class="format-tag format-tag-video">MOV</span>
-                    <span class="format-tag format-tag-video">MKV</span>
-                    <span class="format-tag format-tag-video">AVI</span>
-                    <span class="format-tag format-tag-video">WEBM</span>
-                    <span class="format-tag format-tag-video">MTS</span>
-                    <span class="format-tag format-tag-video">M4V</span>
-                    <span class="format-tag format-tag-video">MXF</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== DOWNLOAD ==================== -->
-    <section id="download" class="relative py-24 px-6">
-        <div class="glow-orb glow-orb-cyan"
-            style="width:500px;height:500px;top:-50px;left:50%;transform:translateX(-50%);opacity:0.08"></div>
-
-        <div class="max-w-4xl mx-auto text-center">
-            <div class="fade-in">
-                <p class="text-cyan text-sm font-semibold tracking-widest uppercase mb-3">Download</p>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Free to Download &amp; Use</h2>
-                <p class="text-white/50 max-w-xl mx-auto mb-10">No subscriptions, no watermarks, no limitations.
-                    AudioSync Pro is completely free for everyone.</p>
-            </div>
-
-            <div class="flex flex-wrap justify-center gap-4 mb-8 fade-in fade-delay-1">
-                <!-- macOS -->
-                <a href="#" class="platform-badge">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-                    </svg>
-                    <div class="text-left">
-                        <span class="block text-xs text-white/40">Download for</span>
-                        <span class="block text-sm font-semibold">macOS</span>
-                    </div>
-                </a>
-
-                <!-- Windows -->
-                <a href="#" class="platform-badge">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M3 12V6.75l8-1.25V12H3zm0 .5h8v6.5l-8-1.25V12.5zM11.5 5.25L21 3.5V12h-9.5V5.25zM11.5 12.5H21v8.5l-9.5-1.75V12.5z" />
-                    </svg>
-                    <div class="text-left">
-                        <span class="block text-xs text-white/40">Download for</span>
-                        <span class="block text-sm font-semibold">Windows</span>
-                    </div>
-                </a>
-
-                <!-- Linux -->
-                <a href="#" class="platform-badge">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.244-.477-.029-.592.238-.543.455.055.258.344.488.763.583.246.056.533.077.769.063.236-.012.459-.083.584-.235.189-.234.349-.487.546-.723a.38.38 0 01.083-.05c.448.107.926.149 1.416.143a7.3 7.3 0 002.035-.332c.078.155.158.303.26.413a.76.76 0 00.543.199c.447 0 .706-.259.706-.61a.53.53 0 00-.063-.27c.012-.018.025-.035.034-.054a7.67 7.67 0 002.047-2.637c.139-.33.218-.65.218-.912 0-.074-.005-.14-.015-.2a.78.78 0 00.08-.3c0-.188-.08-.35-.203-.462a.85.85 0 00-.095-.072c-.108-.78-.348-1.629-.749-2.43-.462-.916-.994-1.698-1.435-2.468-.455-.798-.648-1.553-.71-2.63C14.3 4.895 15.27.978 12.726.063a3.34 3.34 0 00-.222-.063z" />
-                    </svg>
-                    <div class="text-left">
-                        <span class="block text-xs text-white/40">Download for</span>
-                        <span class="block text-sm font-semibold">Linux</span>
-                    </div>
-                </a>
-            </div>
-
-            <p class="text-white/30 text-sm fade-in fade-delay-2">
-                Requires <a href="https://ffmpeg.org"
-                    class="text-cyan/60 hover:text-cyan transition-colors underline underline-offset-4">ffmpeg</a> for
-                video file support &middot; Python 3.10+ for building from source
-            </p>
-        </div>
-    </section>
-
-    <!-- ==================== PERFORMANCE ==================== -->
-    <section class="relative py-20 px-6">
-        <div class="max-w-5xl mx-auto">
-            <div class="glass-card p-10 md:p-14 fade-in">
-                <div class="grid md:grid-cols-3 gap-10 text-center">
-                    <div>
-                        <div class="text-4xl font-bold gradient-text mb-2">36x</div>
-                        <p class="text-white/50 text-sm">Faster than full-resolution analysis with 8 kHz downsampling
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Use Case 1 -->
+                    <div class="glass-card p-7 fade-in fade-delay-1">
+                        <div class="text-3xl mb-4">🎬</div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Film &amp; Video Production</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Multi-camera shoots with separate audio
+                            recorders.
+                            Sync the main camera, B-roll cameras, and boom mic recordings into a perfectly aligned
+                            timeline.
                         </p>
                     </div>
-                    <div>
-                        <div class="text-4xl font-bold gradient-text mb-2">&lt; 0.1ms</div>
-                        <p class="text-white/50 text-sm">Sub-millisecond temporal precision for sample-accurate
-                            alignment</p>
+
+                    <!-- Use Case 2 -->
+                    <div class="glass-card p-7 fade-in fade-delay-2">
+                        <div class="text-3xl mb-4">🎵</div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Live Music Recording</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Mix board recording plus audience mics, phone
+                            recordings, and instrument DIs. Every source aligned to the same timeline for mixing.</p>
                     </div>
-                    <div>
-                        <div class="text-4xl font-bold gradient-text mb-2">0 MB</div>
-                        <p class="text-white/50 text-sm">Full-res audio never loaded into memory during analysis phase
-                        </p>
+
+                    <!-- Use Case 3 -->
+                    <div class="glass-card p-7 fade-in fade-delay-3">
+                        <div class="text-3xl mb-4">🎙️</div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Podcast &amp; Multi-Mic</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Each host records locally on their device.
+                            AudioSync aligns all recordings even when they started at different times.</p>
+                    </div>
+
+                    <!-- Use Case 4 -->
+                    <div class="glass-card p-7 fade-in fade-delay-4">
+                        <div class="text-3xl mb-4">🌿</div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Field Recording</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Multiple recorders placed in different
+                            locations.
+                            Sync ambient recordings, wildlife mics, and contact mics for spatial audio.</p>
+                    </div>
+
+                    <!-- Use Case 5 -->
+                    <div class="glass-card p-7 fade-in fade-delay-5">
+                        <div class="text-3xl mb-4">📱</div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Content Creation</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">YouTube, TikTok, Twitch — sync your main
+                            camera,
+                            screen recording, and external mic without manual alignment in your editor.</p>
+                    </div>
+
+                    <!-- Use Case 6 -->
+                    <div class="glass-card p-7 fade-in fade-delay-6">
+                        <div class="text-3xl mb-4">🎹</div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Ableton Live Integration</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Use the included Max for Live plugin for
+                            transient-level alignment directly inside your Ableton Live session.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- ==================== SUPPORTED FORMATS ==================== -->
+        <section class="relative py-20 px-6">
+            <div class="max-w-4xl mx-auto text-center fade-in">
+                <p class="text-purple text-sm font-semibold tracking-widest uppercase mb-3">Compatibility</p>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-10">Works With Your Files</h2>
+
+                <div class="mb-8">
+                    <p class="text-white/40 text-xs uppercase tracking-widest mb-4">Audio Formats</p>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <span class="format-tag">WAV</span>
+                        <span class="format-tag">AIFF</span>
+                        <span class="format-tag">FLAC</span>
+                        <span class="format-tag">MP3</span>
+                        <span class="format-tag">OGG</span>
+                        <span class="format-tag">Opus</span>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-white/40 text-xs uppercase tracking-widest mb-4">Video Formats (audio extracted via
+                        ffmpeg)</p>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <span class="format-tag format-tag-video">MP4</span>
+                        <span class="format-tag format-tag-video">MOV</span>
+                        <span class="format-tag format-tag-video">MKV</span>
+                        <span class="format-tag format-tag-video">AVI</span>
+                        <span class="format-tag format-tag-video">WEBM</span>
+                        <span class="format-tag format-tag-video">MTS</span>
+                        <span class="format-tag format-tag-video">M4V</span>
+                        <span class="format-tag format-tag-video">MXF</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== HIGH-QUALITY AUDIO ==================== -->
+        <section id="audio-quality" class="relative py-24 px-6">
+            <div class="glow-orb glow-orb-purple" style="width:350px;height:350px;top:50px;right:-100px;opacity:0.08">
+            </div>
+
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-16 fade-in">
+                    <p class="text-cyan text-sm font-semibold tracking-widest uppercase mb-3">Audio Quality</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">High-Quality Audio Processing</h2>
+                    <p class="text-white/50 max-w-2xl mx-auto">Professional-grade audio pipeline that preserves every
+                        bit of your original recordings.</p>
+                    <div class="section-divider mt-6"></div>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="glass-card p-7 fade-in fade-delay-1">
+                        <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5">
+                            <span class="text-cyan font-mono font-bold text-sm">24b</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">24-bit / 32-bit Float</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Full bit-depth preservation throughout the
+                            entire processing pipeline. No quality loss from import to export.</p>
+                    </div>
+
+                    <div class="glass-card p-7 fade-in fade-delay-2">
+                        <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Polyphase Resampling</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">SciPy-powered sample rate conversion with
+                            minimal artifacts. Professional-quality resampling when needed.</p>
+                    </div>
+
+                    <div class="glass-card p-7 fade-in fade-delay-3">
+                        <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Lossless Formats</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Native WAV, AIFF, and FLAC export. No lossy
+                            re-encoding anywhere in the pipeline.</p>
+                    </div>
+
+                    <div class="glass-card p-7 fade-in fade-delay-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Sample-Rate Preservation</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Exports at your project's highest native sample
+                            rate. 44.1k, 48k, 96k, 192k — whatever your source files use.</p>
+                    </div>
+
+                    <div class="glass-card p-7 fade-in fade-delay-5">
+                        <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Non-Destructive</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Your original files are never modified.
+                            Analysis runs on 8 kHz copies; full-res audio is only read during export.</p>
+                    </div>
+
+                    <div class="glass-card p-7 fade-in fade-delay-6">
+                        <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-5">
+                            <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Scientific Precision</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">NumPy + SciPy powered DSP engine. FFT
+                            cross-correlation with sub-millisecond temporal accuracy.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== DOWNLOAD ==================== -->
+        <section id="download" class="relative py-24 px-6">
+            <div class="glow-orb glow-orb-cyan"
+                style="width:500px;height:500px;top:-50px;left:50%;transform:translateX(-50%);opacity:0.08"></div>
+
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="fade-in">
+                    <p class="text-cyan text-sm font-semibold tracking-widest uppercase mb-3">Download</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Free to Download &amp; Use</h2>
+                    <p class="text-white/50 max-w-xl mx-auto mb-10">No subscriptions, no watermarks, no limitations.
+                        AudioSync Pro is completely free for everyone.</p>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4 mb-8 fade-in fade-delay-1">
+                    <!-- macOS -->
+                    <a href="#" class="platform-badge">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+                        </svg>
+                        <div class="text-left">
+                            <span class="block text-xs text-white/40">Download for</span>
+                            <span class="block text-sm font-semibold">macOS</span>
+                        </div>
+                    </a>
+
+                    <!-- Windows -->
+                    <a href="#" class="platform-badge">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M3 12V6.75l8-1.25V12H3zm0 .5h8v6.5l-8-1.25V12.5zM11.5 5.25L21 3.5V12h-9.5V5.25zM11.5 12.5H21v8.5l-9.5-1.75V12.5z" />
+                        </svg>
+                        <div class="text-left">
+                            <span class="block text-xs text-white/40">Download for</span>
+                            <span class="block text-sm font-semibold">Windows</span>
+                        </div>
+                    </a>
+
+                    <!-- Linux -->
+                    <a href="#" class="platform-badge">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.244-.477-.029-.592.238-.543.455.055.258.344.488.763.583.246.056.533.077.769.063.236-.012.459-.083.584-.235.189-.234.349-.487.546-.723a.38.38 0 01.083-.05c.448.107.926.149 1.416.143a7.3 7.3 0 002.035-.332c.078.155.158.303.26.413a.76.76 0 00.543.199c.447 0 .706-.259.706-.61a.53.53 0 00-.063-.27c.012-.018.025-.035.034-.054a7.67 7.67 0 002.047-2.637c.139-.33.218-.65.218-.912 0-.074-.005-.14-.015-.2a.78.78 0 00.08-.3c0-.188-.08-.35-.203-.462a.85.85 0 00-.095-.072c-.108-.78-.348-1.629-.749-2.43-.462-.916-.994-1.698-1.435-2.468-.455-.798-.648-1.553-.71-2.63C14.3 4.895 15.27.978 12.726.063a3.34 3.34 0 00-.222-.063z" />
+                        </svg>
+                        <div class="text-left">
+                            <span class="block text-xs text-white/40">Download for</span>
+                            <span class="block text-sm font-semibold">Linux</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4 mb-6 fade-in fade-delay-2">
+                    <a href="https://github.com/KEYHAN-A/audiosync" target="_blank" rel="noopener"
+                        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-white/70 font-medium text-sm hover:border-purple/30 hover:text-white transition-all">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                        </svg>
+                        View Source on GitHub
+                    </a>
+                </div>
+
+                <p class="text-white/30 text-sm fade-in fade-delay-2">
+                    Requires <a href="https://ffmpeg.org"
+                        class="text-cyan/60 hover:text-cyan transition-colors underline underline-offset-4">ffmpeg</a>
+                    for
+                    video file support &middot; Python 3.10+ for building from source
+                </p>
+            </div>
+        </section>
+
+        <!-- ==================== PERFORMANCE ==================== -->
+        <section class="relative py-20 px-6">
+            <div class="max-w-5xl mx-auto">
+                <div class="glass-card p-10 md:p-14 fade-in">
+                    <div class="grid md:grid-cols-3 gap-10 text-center">
+                        <div>
+                            <div class="text-4xl font-bold gradient-text mb-2">36x</div>
+                            <p class="text-white/50 text-sm">Faster than full-resolution analysis with 8 kHz
+                                downsampling
+                            </p>
+                        </div>
+                        <div>
+                            <div class="text-4xl font-bold gradient-text mb-2">&lt; 0.1ms</div>
+                            <p class="text-white/50 text-sm">Sub-millisecond temporal precision for sample-accurate
+                                alignment</p>
+                        </div>
+                        <div>
+                            <div class="text-4xl font-bold gradient-text mb-2">0 MB</div>
+                            <p class="text-white/50 text-sm">Full-res audio never loaded into memory during analysis
+                                phase
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
 
     <!-- ==================== NEWSLETTER & FOOTER ==================== -->
     <footer class="relative py-20 px-6 border-t border-white/5">
@@ -521,6 +700,13 @@
                 </div>
                 <div class="flex items-center gap-6">
                     <span class="font-mono text-xs">v2.1.0</span>
+                    <a href="https://github.com/KEYHAN-A/audiosync" target="_blank" rel="noopener"
+                        class="hover:text-white transition-colors" aria-label="GitHub repository">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                        </svg>
+                    </a>
                     <a href="https://keyhan.info" target="_blank" rel="noopener"
                         class="hover:text-cyan transition-colors">keyhan.info</a>
                 </div>

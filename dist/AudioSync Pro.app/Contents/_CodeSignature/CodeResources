@@ -396,25 +396,57 @@
 		<data>
 		YwK+w77/LBTZ4fk89Gl/srX7eGU=
 		</data>
+		<key>Resources/app/__pycache__/__init__.cpython-313.pyc</key>
+		<data>
+		++xkKzWf5DDtbdPYKs8B2HCzYS0=
+		</data>
+		<key>Resources/app/__pycache__/dialogs.cpython-313.pyc</key>
+		<data>
+		sE1P/XoZmDrMfbB4weBkmn4xgXM=
+		</data>
+		<key>Resources/app/__pycache__/main_window.cpython-313.pyc</key>
+		<data>
+		zJcBKNTmbow5q2YJIbY1wUiz4Mo=
+		</data>
+		<key>Resources/app/__pycache__/theme.cpython-313.pyc</key>
+		<data>
+		2U7JZJDArN5EHPS8rmc355vQgmc=
+		</data>
+		<key>Resources/app/__pycache__/track_panel.cpython-313.pyc</key>
+		<data>
+		dw0ZeGiKfsAN7f/FmC6iwFQ4au0=
+		</data>
+		<key>Resources/app/__pycache__/waveform_view.cpython-313.pyc</key>
+		<data>
+		ZlxlQHjmRqCT+0piwAMQNLkYydA=
+		</data>
+		<key>Resources/app/__pycache__/workflow_bar.cpython-313.pyc</key>
+		<data>
+		u+1/3H9GMNKC9BZyrdfsIWU/cFQ=
+		</data>
 		<key>Resources/app/dialogs.py</key>
 		<data>
-		0fuIW+H+0l54Fr2oSpcXPni3BfE=
+		2XNI7eEH5B+/8nvwYWa9pas9FZA=
 		</data>
 		<key>Resources/app/main_window.py</key>
 		<data>
-		sf7pf7f4RcyUJ0fZulgAw902g94=
+		tBQlHF4fQ3p/BrlcyOm3f5Si1jg=
 		</data>
 		<key>Resources/app/theme.py</key>
 		<data>
-		XFGP4h9/rw6SFtYDtKMknEvHHYI=
+		/DssHXYqdM4tkR2qW6TufRN8ylU=
+		</data>
+		<key>Resources/app/track_card.py</key>
+		<data>
+		UkLGRhitff5t2F0uYvx5FPUNPyE=
 		</data>
 		<key>Resources/app/track_panel.py</key>
 		<data>
-		zfsyK8Bla9TIGDjcAvSxNsymAnI=
+		FrcTRfXgYukezF+6KiGl68eTpRQ=
 		</data>
 		<key>Resources/app/waveform_view.py</key>
 		<data>
-		utm5gvTbP6y1c+WLH0rjZscKG+o=
+		yex0wo3Zq90sq8QR7R4V86AKdZ0=
 		</data>
 		<key>Resources/app/workflow_bar.py</key>
 		<data>
@@ -422,15 +454,39 @@
 		</data>
 		<key>Resources/base_library.zip</key>
 		<data>
-		WlmIWxUjxRe2sN6RJSqisb3gJKM=
+		wHMWekv3p8wG03WGrMYJ0Smv82E=
 		</data>
 		<key>Resources/core/__init__.py</key>
 		<data>
-		9DO1apVCaEfvgvU8HBxAkkViW5k=
+		/Owhznffi/svF0NnM1zJwyhBfhc=
+		</data>
+		<key>Resources/core/__pycache__/__init__.cpython-313.pyc</key>
+		<data>
+		++ttZjSzGiafeqRIkv3h8UtVPlk=
+		</data>
+		<key>Resources/core/__pycache__/audio_io.cpython-313.pyc</key>
+		<data>
+		SSzeV8ghz5GsQvfZ7Uf2whmc7IU=
+		</data>
+		<key>Resources/core/__pycache__/engine.cpython-313.pyc</key>
+		<data>
+		6eoTiAbD5qIzW4Jw/1aUProvFUY=
+		</data>
+		<key>Resources/core/__pycache__/grouping.cpython-313.pyc</key>
+		<data>
+		w7YeLWXYjps2FZap5IASO/Nr5iI=
+		</data>
+		<key>Resources/core/__pycache__/metadata.cpython-313.pyc</key>
+		<data>
+		7ozbsdF3w7KCbHp96Ff53F+ziWU=
+		</data>
+		<key>Resources/core/__pycache__/models.cpython-313.pyc</key>
+		<data>
+		AB2vaJ8MnGPNHYPEJpqHe7aNvz0=
 		</data>
 		<key>Resources/core/audio_io.py</key>
 		<data>
-		m2qMF7sp/mjFzi9ADJrsXzxUUA0=
+		Gq1mkRyhWY0HEBabCcWgLatO5S4=
 		</data>
 		<key>Resources/core/engine.py</key>
 		<data>
@@ -575,6 +631,10 @@
 		<key>Resources/setuptools/_vendor/jaraco/text/Lorem ipsum.txt</key>
 		<data>
 		eDY2ciZNnNP3LVwdNmXhZXsaUHE=
+		</data>
+		<key>Resources/version.py</key>
+		<data>
+		rWcuhReBWK5aJhgX+Fo/49KNxCQ=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -1451,6 +1511,15 @@
 			</data>
 			<key>requirement</key>
 			<string>cdhash H"33437d4f2197d391a237068b6517be3ec268ead9"</string>
+		</dict>
+		<key>Frameworks/python3__dot__13/lib-dynload/_uuid.cpython-313-darwin.so</key>
+		<dict>
+			<key>cdhash</key>
+			<data>
+			zAmF3s/yXVHYHgFIcqvtrOnRuVg=
+			</data>
+			<key>requirement</key>
+			<string>cdhash H"cc0985decff25d51d81e014872abedace9d1b958"</string>
 		</dict>
 		<key>Frameworks/python3__dot__13/lib-dynload/array.cpython-313-darwin.so</key>
 		<dict>
@@ -2443,6 +2512,11 @@
 			<key>symlink</key>
 			<string>../Resources/setuptools</string>
 		</dict>
+		<key>Frameworks/version.py</key>
+		<dict>
+			<key>symlink</key>
+			<string>../Resources/version.py</string>
+		</dict>
 		<key>Resources/PyQt6/Qt6/lib</key>
 		<dict>
 			<key>symlink</key>
@@ -3219,39 +3293,95 @@
 			ZRE/tAZVfUoIOncx4Qb33gK2eQ1ONfrtaEkcJLwup30=
 			</data>
 		</dict>
+		<key>Resources/app/__pycache__/__init__.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7fIviYY8IMto6OubfDBlYzJDDSsU0a3DR/55VOJyuOc=
+			</data>
+		</dict>
+		<key>Resources/app/__pycache__/dialogs.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Ao/fD3ZiTE3kXdl+3hNKw+DNdNraGYw/lEu8ZXXsAa0=
+			</data>
+		</dict>
+		<key>Resources/app/__pycache__/main_window.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			FV4GgHfxX1TlHB4uk7yVQIiRsulBsDoNd5wEZhjkr5U=
+			</data>
+		</dict>
+		<key>Resources/app/__pycache__/theme.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			fiIKKucC8J4qJ2Ss1oGIXGQI76wPzd3s3xIvit+iIU0=
+			</data>
+		</dict>
+		<key>Resources/app/__pycache__/track_panel.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			6kHyui95qexXEBr6v3z6CIwac8e9cpldkYT7zhEm9Ts=
+			</data>
+		</dict>
+		<key>Resources/app/__pycache__/waveform_view.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			VyzsjvuqPBsUbYtFqbNIKWnjCdmXijQFobfZZ4K+xQM=
+			</data>
+		</dict>
+		<key>Resources/app/__pycache__/workflow_bar.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hKDzbUndJcXjQeub4ixM7+Q8GK6PPzLyrY5NNYKRddM=
+			</data>
+		</dict>
 		<key>Resources/app/dialogs.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			k8AluDeP7a2u5SD+fx4NZrkwmYIaeE/UbgE65R9v5eY=
+			9T1yGcMphJMRy02w5z96Df8KBQvSI1EGUEEAGixb9JI=
 			</data>
 		</dict>
 		<key>Resources/app/main_window.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			5qAluIEzA9au2aaqMLjwy/pvTf5J7G6U4pokLLWuG+Q=
+			ziAjEkcTzU/kDbi5EH1J+iB0FsvQQ7g8CJ7wXi7s7Q0=
 			</data>
 		</dict>
 		<key>Resources/app/theme.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			5e9cpRLlTUy++RmmaN5Nz2LnsYdPvcthIZTNVt+C1ZU=
+			3aaCbKXrxoc8FycWeaxdTwzi3ozAsHzAKHsxAO53R1M=
+			</data>
+		</dict>
+		<key>Resources/app/track_card.py</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			iTiMs9xn40Qh6kKNukJnBZKZhcOYvBaeSbuZCsfv2B0=
 			</data>
 		</dict>
 		<key>Resources/app/track_panel.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			nxTDaRfLpH9FxU4t9BmEs1Ee8XHqWgjDDMKYPbRRTs8=
+			kVQeKga0WBnCCvvXpmoGrcV4f4hFOt90O+sAwFEoNXI=
 			</data>
 		</dict>
 		<key>Resources/app/waveform_view.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			X0lQKVibb95aD87wgz9PZ6Yy3Jgi1RMFqh6ovnpNdfM=
+			2kiZDXri+q8j74KKtXn3w2eJFxyrSHuQW1XKmxANDHs=
 			</data>
 		</dict>
 		<key>Resources/app/workflow_bar.py</key>
@@ -3265,21 +3395,63 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			qs9ySTBdOcTSysqDVoatJkA6peEOyEO3foVlFrdfR/w=
+			N9WJaDlWvQYk5mmEt4vyJY4ihs57Yz/6z2LDTW4YhiU=
 			</data>
 		</dict>
 		<key>Resources/core/__init__.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			lKRP1wAtKA+lozWU2t2i6zJjvK3ytnGE670uzZQcVfo=
+			fOA3MwlXw7tYl4L9sdvaWkqZ5sjZW+hsrcpW+wIz2cs=
+			</data>
+		</dict>
+		<key>Resources/core/__pycache__/__init__.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2gZ99dgYjdbB6giz1ds7Z1b0GkoXWCa2qBg8qi+b32g=
+			</data>
+		</dict>
+		<key>Resources/core/__pycache__/audio_io.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nbBtV12vNcI4NjbvevNGGSjLc/byr9hsqsDO9hq/kwA=
+			</data>
+		</dict>
+		<key>Resources/core/__pycache__/engine.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			GDgNyyYCzATl5DnK5KiV+jHFpe3mbqqgPeyeUCoUaZQ=
+			</data>
+		</dict>
+		<key>Resources/core/__pycache__/grouping.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			tSgx6aSe6Jp4y8sGFVkFMgUncFar81GrnVwBESMKGiA=
+			</data>
+		</dict>
+		<key>Resources/core/__pycache__/metadata.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ITKCwmjFBBox5pc3aaWaEjQeQsc/SzADXBmZgUhu/gY=
+			</data>
+		</dict>
+		<key>Resources/core/__pycache__/models.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			fn9fmWThDJlXG47qo0BOs09pTpDxM2nLaofrSq4Mxug=
 			</data>
 		</dict>
 		<key>Resources/core/audio_io.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Uepu5oDHzILsX9koCuOU7bHZ2NKouxw7vGnLqY06Yog=
+			QULCiwlUtjxHSKOJynGeTlLwJtuUaFtrV2ydjaoVxD0=
 			</data>
 		</dict>
 		<key>Resources/core/engine.py</key>
@@ -3582,6 +3754,13 @@
 			<key>hash2</key>
 			<data>
 			N/7c/79zxOufBY9HZ3yzMgOkNv+TkOTTio4BydrSjgs=
+			</data>
+		</dict>
+		<key>Resources/version.py</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			g02wYH4n+D/mpa3oUBc9TXOHFea5q5/XQ0MSTQjiVm8=
 			</data>
 		</dict>
 	</dict>

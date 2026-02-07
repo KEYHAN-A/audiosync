@@ -1,0 +1,165 @@
+# AudioSync Pro — Automated Release Builds
+#
+# Triggers on version tags (e.g. v2.1.0).
+# Builds standalone binaries for macOS, Windows, and Linux using PyInstaller.
+# Uploads them as GitHub Release assets.
+#
+# To use:
+#   git tag v2.1.0
+#   git push origin v2.1.0
+#
+# NOTE: This workflow is a scaffold. Review and adjust before enabling.
+# macOS builds require macos-latest runner; cross-platform builds take ~10-15 min.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Install ffmpeg
+        run: brew install ffmpeg
+
+      - name: Build macOS app
+        run: |
+          chmod +x build_app.sh
+          ./build_app.sh
+
+      - name: Package artifact
+        run: |
+          cd dist
+          zip -r "../AudioSync-Pro-macOS.zip" "AudioSync Pro.app"
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AudioSync-Pro-macOS
+          path: AudioSync-Pro-macOS.zip
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Install ffmpeg
+        run: choco install ffmpeg -y
+
+      - name: Build Windows exe
+        run: build_windows.bat
+
+      - name: Package artifact
+        run: |
+          cd dist
+          Compress-Archive -Path "AudioSync Pro" -DestinationPath "../AudioSync-Pro-Windows.zip"
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AudioSync-Pro-Windows
+          path: AudioSync-Pro-Windows.zip
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libgl1-mesa-glx libegl1
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build Linux binary
+        run: |
+          chmod +x build_linux.sh
+          ./build_linux.sh
+
+      - name: Package artifact
+        run: |
+          cd dist
+          tar -czf "../AudioSync-Pro-Linux.tar.gz" "AudioSync Pro"
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AudioSync-Pro-Linux
+          path: AudioSync-Pro-Linux.tar.gz
+
+  create-release:
+    needs: [build-macos, build-windows, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: AudioSync Pro ${{ steps.version.outputs.VERSION }}
+          body: |
+            ## AudioSync Pro ${{ steps.version.outputs.VERSION }}
+
+            ### Downloads
+            - **macOS**: `AudioSync-Pro-macOS.zip` — Extract and run `AudioSync Pro.app`
+            - **Windows**: `AudioSync-Pro-Windows.zip` — Extract and run `AudioSync Pro.exe`
+            - **Linux**: `AudioSync-Pro-Linux.tar.gz` — Extract and run `AudioSync Pro`
+
+            > Requires [FFmpeg](https://ffmpeg.org) installed on your system for video file support.
+
+            See [CHANGELOG.md](https://github.com/KEYHAN-A/audiosync/blob/main/CHANGELOG.md) for details.
+          files: |
+            artifacts/AudioSync-Pro-macOS/AudioSync-Pro-macOS.zip
+            artifacts/AudioSync-Pro-Windows/AudioSync-Pro-Windows.zip
+            artifacts/AudioSync-Pro-Linux/AudioSync-Pro-Linux.tar.gz
+          draft: false
+          prerelease: false

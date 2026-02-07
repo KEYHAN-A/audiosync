@@ -1,56 +1,65 @@
-"""macOS Tahoe "Liquid Glass" theme for AudioSync Pro — dark mode."""
+"""AudioSync Pro — Dark Navy + Electric Blue theme (icon-inspired)."""
 
 from __future__ import annotations
 
 # ---------------------------------------------------------------------------
-#  Color Palette — Apple macOS 26 Tahoe Liquid Glass (dark mode)
+#  Color Palette — Dark Navy with Cyan / Purple accents
+#  Inspired by the icon: deep navy background with luminous blue waveforms
 # ---------------------------------------------------------------------------
 
 COLORS = {
-    # Backgrounds — deep, layered glass
-    "bg_dark":          "#0d0d0f",
-    "bg_panel":         "rgba(255, 255, 255, 0.05)",
-    "bg_panel_solid":   "#141416",
+    # Backgrounds — deep navy, layered glass
+    "bg_dark":          "#0a0e1a",
+    "bg_panel":         "rgba(255, 255, 255, 0.04)",
+    "bg_panel_solid":   "#111827",
     "bg_input":         "rgba(255, 255, 255, 0.06)",
-    "bg_hover":         "rgba(255, 255, 255, 0.09)",
-    "bg_selected":      "rgba(10, 132, 255, 0.20)",
+    "bg_hover":         "rgba(56, 189, 248, 0.10)",
+    "bg_selected":      "rgba(56, 189, 248, 0.18)",
 
-    # Borders — subtle glass edges
-    "border":           "rgba(255, 255, 255, 0.08)",
-    "border_light":     "rgba(255, 255, 255, 0.14)",
+    # Card glass
+    "card_bg":          "rgba(21, 28, 46, 0.7)",
+    "card_border":      "rgba(56, 189, 248, 0.12)",
 
-    # Text
-    "text":             "#f5f5f7",
-    "text_dim":         "rgba(255, 255, 255, 0.55)",
-    "text_bright":      "#ffffff",
-    "text_tertiary":    "rgba(255, 255, 255, 0.35)",
+    # Borders — subtle blue-tinted glass edges
+    "border":           "rgba(56, 189, 248, 0.08)",
+    "border_light":     "rgba(56, 189, 248, 0.18)",
 
-    # Apple system colors
-    "accent":           "#0A84FF",
-    "accent_hover":     "#409CFF",
-    "accent_pressed":   "#0071E3",
-    "accent_subtle":    "rgba(10, 132, 255, 0.15)",
-    "danger":           "#FF453A",
-    "danger_hover":     "#FF6961",
-    "warning":          "#FF9F0A",
-    "success":          "#30D158",
+    # Text — bright on dark navy
+    "text":             "#e0e7ff",
+    "text_dim":         "rgba(224, 231, 255, 0.60)",
+    "text_bright":      "#f0f4ff",
+    "text_tertiary":    "rgba(224, 231, 255, 0.35)",
 
-    # Track palette — Apple system colors
+    # Accent — cyan-blue primary, purple secondary
+    "accent":           "#38bdf8",
+    "accent_hover":     "#7dd3fc",
+    "accent_pressed":   "#0ea5e9",
+    "accent_subtle":    "rgba(56, 189, 248, 0.15)",
+    "secondary":        "#a78bfa",
+    "secondary_hover":  "#c4b5fd",
+
+    # Status colors
+    "danger":           "#f87171",
+    "danger_hover":     "#fca5a5",
+    "warning":          "#fbbf24",
+    "success":          "#34d399",
+
+    # Track palette — vivid, cool-toned
     "track_colors": [
-        "#0A84FF",   # Blue
-        "#BF5AF2",   # Purple
-        "#FF375F",   # Pink
-        "#FF9F0A",   # Orange
-        "#30D158",   # Green
-        "#5E5CE6",   # Indigo
-        "#64D2FF",   # Teal
-        "#FFD60A",   # Yellow
+        "#38bdf8",   # Cyan
+        "#a78bfa",   # Violet
+        "#2dd4bf",   # Teal
+        "#fb7185",   # Rose
+        "#fbbf24",   # Amber
+        "#818cf8",   # Indigo
+        "#34d399",   # Emerald
+        "#e879f9",   # Fuchsia
     ],
 }
 
 
 # ---------------------------------------------------------------------------
-#  QSS Stylesheet — Liquid Glass
+#  QSS Stylesheet — Navy Glass (minimal card-based layout)
 # ---------------------------------------------------------------------------
 
 STYLESHEET = f"""
@@ -72,12 +81,14 @@ QMainWindow {{
 /* ===== Menu Bar — glass panel ===== */
 QMenuBar {{
     background-color: {COLORS['bg_panel_solid']};
+    color: {COLORS['text']};
     border-bottom: 1px solid {COLORS['border']};
     padding: 3px 0;
     font-size: 12px;
 }}
 
 QMenuBar::item {{
+    color: {COLORS['text']};
     padding: 5px 14px;
     border-radius: 8px;
     margin: 1px 2px;
@@ -85,16 +96,19 @@ QMenuBar::item {{
 
 QMenuBar::item:selected {{
     background-color: {COLORS['bg_hover']};
+    color: {COLORS['text_bright']};
 }}
 
 QMenu {{
     background-color: {COLORS['bg_panel_solid']};
-    border: 1px solid {COLORS['border']};
+    color: {COLORS['text']};
+    border: 1px solid {COLORS['border_light']};
     border-radius: 12px;
     padding: 6px 0;
 }}
 
 QMenu::item {{
+    color: {COLORS['text']};
     padding: 7px 32px 7px 16px;
     border-radius: 6px;
     margin: 0 4px;
@@ -102,6 +116,11 @@ QMenu::item {{
 
 QMenu::item:selected {{
     background-color: {COLORS['bg_hover']};
+    color: {COLORS['text_bright']};
+}}
+
+QMenu::item:disabled {{
+    color: {COLORS['text_tertiary']};
 }}
 
 QMenu::separator {{
@@ -110,25 +129,11 @@ QMenu::separator {{
     margin: 6px 12px;
 }}
 
-/* ===== Toolbar — glass bar ===== */
-QToolBar {{
-    background-color: {COLORS['bg_panel_solid']};
-    border-bottom: 1px solid {COLORS['border']};
-    padding: 6px 12px;
-    spacing: 8px;
-}}
-
-QToolBar::separator {{
-    width: 1px;
-    background: {COLORS['border']};
-    margin: 6px 4px;
-}}
-
 /* ===== Buttons — glass pill style ===== */
 QPushButton {{
     background-color: {COLORS['bg_input']};
     color: {COLORS['text']};
-    border: 1px solid {COLORS['border']};
+    border: 1px solid {COLORS['border_light']};
     border-radius: 12px;
     padding: 7px 18px;
     font-weight: 500;
@@ -138,11 +143,12 @@ QPushButton {{
 
 QPushButton:hover {{
     background-color: {COLORS['bg_hover']};
-    border-color: {COLORS['border_light']};
+    border-color: {COLORS['accent']};
+    color: {COLORS['text_bright']};
 }}
 
 QPushButton:pressed {{
-    background-color: {COLORS['bg_dark']};
+    background-color: rgba(56, 189, 248, 0.06);
 }}
 
 QPushButton:disabled {{
@@ -151,10 +157,10 @@ QPushButton:disabled {{
     border-color: {COLORS['border']};
 }}
 
-/* Accent buttons — solid Apple Blue pill */
+/* Accent buttons — solid cyan pill */
 QPushButton[cssClass="accent"] {{
     background-color: {COLORS['accent']};
-    color: #ffffff;
+    color: #0a0e1a;
     border: none;
     font-weight: 600;
     border-radius: 12px;
@@ -177,7 +183,7 @@ QPushButton[cssClass="accent"]:disabled {{
 /* Primary action button — larger, solid accent */
 QPushButton[cssClass="primary"] {{
     background-color: {COLORS['accent']};
-    color: #ffffff;
+    color: #0a0e1a;
     border: none;
     font-weight: 700;
     font-size: 13px;
@@ -199,7 +205,7 @@ QPushButton[cssClass="primary"]:disabled {{
     color: {COLORS['text_tertiary']};
 }}
 
-/* Danger buttons — ghost style, Apple Red */
+/* Danger buttons — ghost style, red */
 QPushButton[cssClass="danger"] {{
     background-color: transparent;
     color: {COLORS['danger']};
@@ -208,40 +214,62 @@ QPushButton[cssClass="danger"] {{
 }}
 
 QPushButton[cssClass="danger"]:hover {{
-    background-color: rgba(255, 69, 58, 0.12);
+    background-color: rgba(248, 113, 113, 0.12);
     border-color: {COLORS['danger']};
+    color: {COLORS['danger_hover']};
 }}
 
 QPushButton[cssClass="danger"]:pressed {{
-    background-color: rgba(255, 69, 58, 0.2);
+    background-color: rgba(248, 113, 113, 0.2);
 }}
 
-/* ===== Tree Widget — glass panel ===== */
-QTreeWidget {{
+/* ===== Scroll Area — transparent glass ===== */
+QScrollArea {{
+    background-color: transparent;
+    border: none;
+}}
+
+QScrollArea > QWidget > QWidget {{
+    background-color: transparent;
+}}
+
+/* ===== Splitter ===== */
+QSplitter::handle {{
+    background-color: {COLORS['border']};
+}}
+
+QSplitter::handle:vertical {{
+    height: 3px;
+    margin: 0 12px;
+}}
+
+QSplitter::handle:horizontal {{
+    width: 1px;
+}}
+
+/* ===== Table Widget — glass panel ===== */
+QTableWidget {{
     background-color: {COLORS['bg_panel_solid']};
-    border: 1px solid {COLORS['border']};
+    color: {COLORS['text']};
+    border: 1px solid {COLORS['border_light']};
     border-radius: 14px;
+    gridline-color: {COLORS['border']};
     outline: none;
-    padding: 6px;
 }}
 
-QTreeWidget::item {{
-    padding: 5px 8px;
-    border-radius: 8px;
-    min-height: 24px;
+QTableWidget::item {{
+    color: {COLORS['text']};
+    padding: 4px 8px;
+    border-bottom: 1px solid {COLORS['border']};
 }}
 
-QTreeWidget::item:hover {{
-    background-color: {COLORS['bg_hover']};
-}}
-
-QTreeWidget::item:selected {{
+QTableWidget::item:selected {{
     background-color: {COLORS['bg_selected']};
     color: {COLORS['text_bright']};
 }}
 
-QTreeWidget::branch {{
-    background-color: transparent;
+QTableWidgetItem {{
+    color: {COLORS['text']};
 }}
 
 QHeaderView::section {{
@@ -254,20 +282,6 @@ QHeaderView::section {{
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-}}
-
-/* ===== Table Widget — glass panel ===== */
-QTableWidget {{
-    background-color: {COLORS['bg_panel_solid']};
-    border: 1px solid {COLORS['border']};
-    border-radius: 14px;
-    gridline-color: {COLORS['border']};
-    outline: none;
-}}
-
-QTableWidget::item {{
-    padding: 4px 8px;
-    border-bottom: 1px solid {COLORS['border']};
 }}
 
 /* ===== Scroll Bar — ultra-thin, near-invisible ===== */
@@ -285,7 +299,7 @@ QScrollBar::handle:vertical {{
 }}
 
 QScrollBar::handle:vertical:hover {{
-    background-color: {COLORS['text_dim']};
+    background-color: {COLORS['accent']};
 }}
 
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,
@@ -308,22 +322,13 @@ QScrollBar::handle:horizontal {{
 }}
 
 QScrollBar::handle:horizontal:hover {{
-    background-color: {COLORS['text_dim']};
+    background-color: {COLORS['accent']};
 }}
 
 QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal,
 QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {{
     width: 0;
     background: transparent;
-}}
-
-/* ===== Splitter ===== */
-QSplitter::handle {{
-    background-color: {COLORS['border']};
-}}
-
-QSplitter::handle:horizontal {{
-    width: 1px;
 }}
 
 /* ===== Status Bar — glass ===== */
@@ -335,10 +340,15 @@ QStatusBar {{
     padding: 4px 12px;
 }}
 
+QStatusBar QLabel {{
+    color: {COLORS['text_dim']};
+}}
+
 /* ===== Combo Box — glass ===== */
 QComboBox {{
     background-color: {COLORS['bg_input']};
-    border: 1px solid {COLORS['border']};
+    color: {COLORS['text']};
+    border: 1px solid {COLORS['border_light']};
     border-radius: 12px;
     padding: 6px 12px;
     min-height: 18px;
@@ -346,7 +356,7 @@ QComboBox {{
 }}
 
 QComboBox:hover {{
-    border-color: {COLORS['border_light']};
+    border-color: {COLORS['accent']};
 }}
 
 QComboBox::drop-down {{
@@ -356,9 +366,11 @@ QComboBox::drop-down {{
 
 QComboBox QAbstractItemView {{
     background-color: {COLORS['bg_panel_solid']};
-    border: 1px solid {COLORS['border']};
+    color: {COLORS['text']};
+    border: 1px solid {COLORS['border_light']};
     border-radius: 10px;
     selection-background-color: {COLORS['bg_hover']};
+    selection-color: {COLORS['text_bright']};
     padding: 4px;
 }}
 
@@ -383,7 +395,7 @@ QLabel[cssClass="dim"] {{
 /* ===== Line Edit — glass input ===== */
 QLineEdit {{
     background-color: {COLORS['bg_input']};
-    border: 1px solid {COLORS['border']};
+    border: 1px solid {COLORS['border_light']};
     border-radius: 12px;
     padding: 6px 12px;
     color: {COLORS['text']};
@@ -394,7 +406,7 @@ QLineEdit:focus {{
     border-color: {COLORS['accent']};
 }}
 
-/* ===== Progress Bar — Apple Blue ===== */
+/* ===== Progress Bar — Cyan accent ===== */
 QProgressBar {{
     background-color: {COLORS['bg_input']};
     border: none;
@@ -413,30 +425,61 @@ QProgressBar::chunk {{
 /* ===== Dialog — glass ===== */
 QDialog {{
     background-color: {COLORS['bg_dark']};
+    color: {COLORS['text']};
+}}
+
+/* ===== Message Box — ensure text is light ===== */
+QMessageBox {{
+    background-color: {COLORS['bg_dark']};
+    color: {COLORS['text']};
+}}
+
+QMessageBox QLabel {{
+    color: {COLORS['text']};
+}}
+
+/* ===== Input Dialog ===== */
+QInputDialog {{
+    background-color: {COLORS['bg_dark']};
+    color: {COLORS['text']};
+}}
+
+QInputDialog QLabel {{
+    color: {COLORS['text']};
+}}
+
+QInputDialog QLineEdit {{
+    color: {COLORS['text']};
+}}
+
+/* ===== Dialog Button Box ===== */
+QDialogButtonBox QPushButton {{
+    color: {COLORS['text']};
 }}
 
 /* ===== Group Box — glass card ===== */
 QGroupBox {{
-    border: 1px solid {COLORS['border']};
+    border: 1px solid {COLORS['border_light']};
     border-radius: 14px;
     margin-top: 14px;
     padding: 16px 12px 12px;
     font-weight: 600;
     font-size: 12px;
+    color: {COLORS['text']};
 }}
 
 QGroupBox::title {{
     subcontrol-origin: margin;
     left: 14px;
     padding: 0 8px;
-    color: {COLORS['text']};
+    color: {COLORS['text_bright']};
 }}
 
 /* ===== Tool Tips — glass ===== */
 QToolTip {{
     background-color: {COLORS['bg_panel_solid']};
     color: {COLORS['text']};
-    border: 1px solid {COLORS['border']};
+    border: 1px solid {COLORS['border_light']};
     border-radius: 10px;
     padding: 6px 10px;
     font-size: 11px;
@@ -446,6 +489,11 @@ QToolTip {{
 QWidget[cssClass="workflow-bar"] {{
     background-color: {COLORS['bg_panel_solid']};
     border-bottom: 1px solid {COLORS['border']};
+}}
+
+/* ===== Form Layout Labels ===== */
+QFormLayout QLabel {{
+    color: {COLORS['text']};
 }}
 """
 
