@@ -82,7 +82,6 @@ if exist build rmdir /s /q build 2>nul
 if exist dist rmdir /s /q dist 2>nul
 
 REM --- Read version ---
-for /f "tokens=2 delims='\"" %%a in ('python -c "from version import __version__; print(__version__)"') do set VERSION=%%a
 python -c "from version import __version__; print(__version__)" > _ver.tmp
 set /p VERSION=<_ver.tmp
 del _ver.tmp 2>nul
