@@ -40,6 +40,9 @@ Desktop.ini
 .env
 .env.local
 
+# Deployment docs (contains server-specific config)
+DEPLOY-SETUP.md
+
 # Logs
 *.log
 

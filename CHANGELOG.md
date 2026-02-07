@@ -5,6 +5,14 @@ All notable changes to AudioSync Pro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.2] - 2026-02-08
+
+### Changed
+- Website download buttons now link to GitHub latest release assets (macOS, Windows, Linux)
+- Added GitHub Actions workflow for automatic website deployment via SSH + rsync
+- Updated README with live website link and automated deploy documentation
+- Updated version references across website, README, and version.py
+
 ## [2.2.1] - 2026-02-08
 
 ### Fixed
@@ -69,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Processing dialog with real-time progress and ETA
 - macOS .app bundle build script
 
+[2.2.2]: https://github.com/KEYHAN-A/audiosync/releases/tag/v2.2.2
 [2.2.1]: https://github.com/KEYHAN-A/audiosync/releases/tag/v2.2.1
 [2.2.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v2.2.0
 [2.1.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v2.1.0

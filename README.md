@@ -2,7 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub](https://img.shields.io/badge/GitHub-KEYHAN--A%2Faudiosync-181717?logo=github)](https://github.com/KEYHAN-A/audiosync)
-[![Version](https://img.shields.io/badge/version-2.2.1-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
+[![Version](https://img.shields.io/badge/version-2.2.2-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-a78bfa)]()
 
 Multi-device audio/video synchronization tool with high-quality audio processing. Syncs recordings from multiple cameras, microphones, and recorders using FFT cross-correlation.
@@ -175,7 +175,7 @@ build scripts, and the About dialog read from this single source.
 
 ```python
 # version.py
-__version__ = "2.2.1"
+__version__ = "2.2.2"
 ```
 
 ---
@@ -260,9 +260,11 @@ audiosync/
 
 ## Website
 
-The `website/` folder contains a static landing page ready for
-deployment on any web server or subdomain. No build step required —
-just copy the files and serve.
+Live at **[audiosync.keyhan.info](https://audiosync.keyhan.info)**
+
+The `website/` folder contains a static landing page that is
+automatically deployed via GitHub Actions on every push to `main`.
+No build step required.
 
 ---
 
@@ -276,25 +278,14 @@ MP4, MOV, MKV, AVI, WEBM, MTS, M4V, MXF
 
 ---
 
-## Deploy (Manual)
+## Deploy
 
-To update the website on your server after pushing to GitHub:
+The website is **automatically deployed** via GitHub Actions whenever
+changes are pushed to the `website/` folder on `main`. The workflow
+uses SSH + rsync to sync files to the production server.
 
-```bash
-# SSH into your server
-ssh your-server
-
-# Navigate to the website directory
-cd /path/to/audiosync-website
-
-# Pull latest changes
-git pull origin main
-
-# Only the website/ folder is needed for serving
-```
-
-Builds (macOS/Windows/Linux) are done locally and uploaded as
-[GitHub Releases](https://github.com/KEYHAN-A/audiosync/releases).
+Builds (macOS/Windows/Linux) are created automatically on version
+tags and uploaded as [GitHub Releases](https://github.com/KEYHAN-A/audiosync/releases).
 
 ---
 

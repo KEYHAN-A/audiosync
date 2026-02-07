@@ -1,0 +1,56 @@
+# GitHub Actions — Deploy Website to Production Server
+#
+# Deploys the website/ folder to /var/www/audiosync via SSH + rsync.
+# Triggers on pushes to main/master that change website files.
+#
+# Required GitHub Secrets:
+#   SSH_PRIVATE_KEY         — SSH private key (ed25519) for server access
+#   PRODUCTION_SSH_HOST     — Server IP or hostname
+
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'website/**'
+
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+env:
+  DEPLOY_PATH: /var/www/audiosync
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n" > ~/.ssh/config
+
+      - name: Deploy website files
+        run: |
+          echo "Deploying AudioSync website"
+          echo "========================="
+
+          rsync -avz --delete \
+            --exclude '.DS_Store' \
+            ./website/ root@${{ secrets.PRODUCTION_SSH_HOST }}:${{ env.DEPLOY_PATH }}/
+
+          echo ""
+          echo "Deployment completed!"
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "========================="
