@@ -77,6 +77,7 @@ jobs:
         run: choco install ffmpeg -y
 
       - name: Build Windows exe
+        shell: cmd
         run: build_windows.bat
 
       - name: Package artifact
@@ -103,7 +104,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg libgl1-mesa-glx libegl1
+          sudo apt-get install -y ffmpeg libgl1 libegl1
 
       - name: Install Python dependencies
         run: |
