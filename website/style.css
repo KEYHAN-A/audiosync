@@ -1,0 +1,362 @@
+/* ============================================================================
+   AudioSync Pro — Landing Page Custom Styles
+   Dark navy + electric blue theme inspired by the app icon
+   ============================================================================ */
+
+/* --- CSS Variables --- */
+:root {
+    --navy-deep: #050816;
+    --navy: #0a0e1a;
+    --navy-light: #111827;
+    --navy-card: #151c2e;
+    --cyan: #38bdf8;
+    --cyan-bright: #7dd3fc;
+    --cyan-dim: #0ea5e9;
+    --purple: #a78bfa;
+    --purple-bright: #c4b5fd;
+    --text: #e0e7ff;
+    --text-dim: rgba(224, 231, 255, 0.6);
+    --text-bright: #f0f4ff;
+    --border: rgba(56, 189, 248, 0.08);
+    --border-light: rgba(56, 189, 248, 0.18);
+    --glow-cyan: rgba(56, 189, 248, 0.3);
+    --glow-purple: rgba(167, 139, 250, 0.3);
+}
+
+/* --- Reset & Base --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    background-color: var(--navy-deep);
+    color: var(--text);
+    font-family: "Inter", "SF Pro Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* --- Background Grid --- */
+.bg-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --- Glow Orbs (background decoration) --- */
+.glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.glow-orb-cyan {
+    background: var(--glow-cyan);
+}
+
+.glow-orb-purple {
+    background: var(--glow-purple);
+}
+
+/* --- Glass Card --- */
+.glass-card {
+    background: rgba(21, 28, 46, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.08);
+    transform: translateY(-2px);
+}
+
+/* --- Waveform Animation (Hero) --- */
+.waveform-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    height: 120px;
+    margin: 0 auto;
+}
+
+.waveform-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.waveform-line {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.waveform-line-1 {
+    stroke: var(--cyan);
+    opacity: 0.9;
+    animation: waveMove1 4s ease-in-out infinite;
+}
+
+.waveform-line-2 {
+    stroke: var(--purple);
+    opacity: 0.5;
+    animation: waveMove2 5s ease-in-out infinite;
+}
+
+.waveform-line-3 {
+    stroke: var(--cyan-bright);
+    opacity: 0.3;
+    animation: waveMove3 6s ease-in-out infinite;
+}
+
+.waveform-glow {
+    fill: none;
+    stroke: var(--cyan);
+    stroke-width: 8;
+    opacity: 0.15;
+    filter: blur(6px);
+    animation: waveMove1 4s ease-in-out infinite;
+}
+
+@keyframes waveMove1 {
+    0%, 100% { d: path("M0,60 C50,20 100,100 150,60 C200,20 250,100 300,60 C350,20 400,100 450,60 C500,20 550,100 600,60"); }
+    50% { d: path("M0,60 C50,90 100,30 150,60 C200,90 250,30 300,60 C350,90 400,30 450,60 C500,90 550,30 600,60"); }
+}
+
+@keyframes waveMove2 {
+    0%, 100% { d: path("M0,60 C60,40 120,80 180,60 C240,40 300,80 360,60 C420,40 480,80 540,60 C560,50 580,70 600,60"); }
+    50% { d: path("M0,60 C60,80 120,40 180,60 C240,80 300,40 360,60 C420,80 480,40 540,60 C560,70 580,50 600,60"); }
+}
+
+@keyframes waveMove3 {
+    0%, 100% { d: path("M0,60 C75,45 150,75 225,60 C300,45 375,75 450,60 C525,45 575,70 600,60"); }
+    50% { d: path("M0,60 C75,75 150,45 225,60 C300,75 375,45 450,60 C525,75 575,50 600,60"); }
+}
+
+/* --- Animated Gradient Text --- */
+.gradient-text {
+    background: linear-gradient(135deg, var(--cyan), var(--purple), var(--cyan-bright));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 6s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* --- Step Connector Line --- */
+.step-connector {
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--cyan), transparent);
+    margin: 0 auto;
+}
+
+/* --- Platform Badge --- */
+.platform-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    background: rgba(21, 28, 46, 0.8);
+    border: 1px solid var(--border-light);
+    color: var(--text);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.platform-badge:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+    transform: translateY(-2px);
+    color: var(--text-bright);
+}
+
+/* --- Format Tag --- */
+.format-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    color: var(--cyan);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.format-tag-video {
+    background: rgba(167, 139, 250, 0.1);
+    border-color: rgba(167, 139, 250, 0.15);
+    color: var(--purple);
+}
+
+/* --- Scroll Fade-in Animation --- */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Staggered delays for grids */
+.fade-delay-1 { transition-delay: 0.1s; }
+.fade-delay-2 { transition-delay: 0.2s; }
+.fade-delay-3 { transition-delay: 0.3s; }
+.fade-delay-4 { transition-delay: 0.4s; }
+.fade-delay-5 { transition-delay: 0.5s; }
+.fade-delay-6 { transition-delay: 0.6s; }
+
+/* --- Email Input --- */
+.email-input-group {
+    display: flex;
+    gap: 0;
+    max-width: 480px;
+    margin: 0 auto;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+    background: rgba(21, 28, 46, 0.8);
+    backdrop-filter: blur(16px);
+    transition: border-color 0.3s ease;
+}
+
+.email-input-group:focus-within {
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+}
+
+.email-input-group input {
+    flex: 1;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+}
+
+.email-input-group input::placeholder {
+    color: var(--text-dim);
+}
+
+.email-input-group button {
+    padding: 14px 28px;
+    background: var(--cyan);
+    color: var(--navy);
+    border: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    white-space: nowrap;
+}
+
+.email-input-group button:hover {
+    background: var(--cyan-bright);
+}
+
+.email-input-group button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* --- Notification Toast --- */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    padding: 14px 28px;
+    border-radius: 12px;
+    background: rgba(21, 28, 46, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-light);
+    color: var(--text);
+    font-size: 0.9rem;
+    z-index: 1000;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast.success {
+    border-color: rgba(52, 211, 153, 0.4);
+}
+
+.toast.error {
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+/* --- Section Divider --- */
+.section-divider {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    border-radius: 1px;
+    margin: 0 auto;
+}
+
+/* --- Icon Pulse --- */
+.icon-pulse {
+    animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.3)); }
+    50% { filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.5)); }
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .waveform-container {
+        height: 80px;
+    }
+
+    .email-input-group {
+        flex-direction: column;
+        border-radius: 14px;
+    }
+
+    .email-input-group button {
+        border-radius: 0;
+    }
+}

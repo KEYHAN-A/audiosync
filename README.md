@@ -76,23 +76,25 @@ python main.py
 
 ### Workflow
 
-1. **Create tracks** — Click **+ Track** for each recording device
-   (e.g. "Camera A", "Camera B", "Zoom H6").
+1. **Create tracks** — Click **+ Track** for each recording device.
+   A loading screen shows progress while importing files.
 
 2. **Import files** — Select a track, click **+ Files**, and add all
-   audio/video files from that device. You can also drag-and-drop files
-   directly onto a track. Supports WAV, AIFF, FLAC, MP3, MP4, MOV, MKV,
-   AVI, WEBM, and more.
+   audio/video files from that device. Drag-and-drop also works.
+   Video audio is extracted automatically via ffmpeg. Supports WAV,
+   AIFF, FLAC, MP3, MP4, MOV, MKV, AVI, WEBM, and more.
 
-3. **Analyze** — Click **Analyze**. The engine uses FFT cross-correlation
-   to detect where each clip sits on a global timeline. You'll see offsets
-   and confidence scores for every clip.
+3. **Analyze** — Click **Analyze**. A processing screen shows live
+   progress, per-clip results, elapsed time, and ETA. Analysis runs
+   at 8 kHz for speed (~36x faster than full resolution). Cancel
+   anytime with the Cancel button.
 
-4. **Sync** — Click **Sync**. Each track's clips are stitched into a
-   single continuous audio array, with silence filling any gaps.
+4. **Sync** — Click **Sync**. Each track's clips are stitched into
+   a single continuous audio array at full resolution, with silence
+   filling gaps.
 
-5. **Export** — Click **Export** to save one synced audio file per track.
-   Choose output format (WAV/AIFF/FLAC) and bit depth (16/24/32-bit).
+5. **Export** — Click **Export** to save one synced audio file per
+   track. Choose format (WAV/AIFF/FLAC) and bit depth (16/24/32).
 
 6. **Reset** — Click **Reset** to clear analysis results and start over.
 
@@ -114,36 +116,88 @@ To override, right-click a track and select **Set as Reference**.
 
 ---
 
+## Build
+
+### macOS (.app)
+
+```bash
+pip install pyinstaller
+./build_app.sh
+# Output: dist/AudioSync Pro.app
+```
+
+### Windows (.exe)
+
+```batch
+pip install pyinstaller
+build_windows.bat
+# Output: dist\AudioSync Pro\AudioSync Pro.exe
+```
+
+### Linux (portable binary / AppImage)
+
+```bash
+pip install pyinstaller
+./build_linux.sh
+# Output: dist/AudioSync Pro
+# Optional: AppImage if appimagetool is installed
+```
+
+> **Note:** ffmpeg must be installed on the system for video file
+> support to work in the bundled application.
+
+---
+
+## Versioning
+
+Version information is centralized in `version.py`. All modules,
+build scripts, and the About dialog read from this single source.
+
+```python
+# version.py
+__version__ = "2.1.0"
+```
+
+---
+
+## Performance (v2.1)
+
+- **Analysis at 8 kHz**: Cross-correlation runs on 8 kHz mono audio,
+  using ~36x less memory and CPU than 48 kHz. Temporal precision is
+  ~0.125ms — more than enough for multi-device sync.
+
+- **Minimal memory**: Only lightweight 8 kHz analysis data lives in
+  memory. Full-resolution audio is re-read on demand during export.
+
+- **Background processing**: All heavy operations (import, analyze,
+  sync) run in background threads with cancel support.
+
+- **Smart caching**: Cross-platform cache directory with LRU eviction
+  (2 GB limit), per-session tracking for multi-instance safety, and
+  automatic stale file cleanup on startup.
+
+---
+
 ## How It Works
 
-The core sync algorithm uses **FFT-based cross-correlation** to find
-the precise time offset between recordings:
-
-1. **Reference selection** — The track with the longest total audio
-   becomes the reference (user can override).
-
-2. **Reference timeline** — If the reference has multiple files, they
-   are cross-correlated against each other to build a continuous
-   reference array.
-
-3. **Clip placement** — Every clip from every non-reference track is
-   cross-correlated against the reference. The correlation peak reveals
-   the exact sample offset where the clip belongs on the timeline.
-
-4. **Stitching** — Each track's clips are placed at their detected
-   positions in a silence array spanning the full timeline.
-
-5. **Export** — All tracks are exported at the same length, perfectly
-   aligned.
+1. **Metadata extraction** — Creation timestamps extracted via ffprobe
+   for accurate chronological ordering
+2. **Reference selection** — Track with widest time coverage becomes
+   reference (user can override via right-click)
+3. **Reference timeline** — Built using metadata timestamp gaps (not
+   cross-correlation), correctly handling sequential same-device clips
+4. **Pass 1 — Cross-correlation** — Every non-reference clip is
+   cross-correlated against the full reference timeline
+5. **Pass 2 — Enhanced timeline** — Low-confidence clips retried against
+   an enhanced timeline that includes all successfully placed clips
+6. **Stitching** — Clips placed at detected positions with silence gaps
+7. **Export** — All tracks exported at same length, perfectly aligned
 
 ### Confidence Score
 
-Each clip gets a confidence score (peak-to-mean ratio of the
-cross-correlation). Higher is better:
-
 - **> 10**: Strong match, reliable alignment
 - **3–10**: Moderate match, likely correct
-- **< 3**: Weak match — the clip may not overlap with the reference
+- **< 3**: Weak match — may not overlap with reference
 
 ---
 
@@ -151,22 +205,40 @@ cross-correlation). Higher is better:
 
 ```
 ├── main.py              Entry point
+├── version.py           Centralized version info
 ├── requirements.txt     Python dependencies
+├── build_app.sh         macOS .app build script
+├── build_windows.bat    Windows .exe build script
+├── build_linux.sh       Linux build script
+├── icon.icns            macOS app icon
+├── icon.png             App icon (PNG)
 ├── core/                Reusable DSP library (no GUI dependencies)
 │   ├── models.py        Data models (Track, Clip, SyncResult, SyncConfig)
-│   ├── audio_io.py      Audio/video file loading and export
-│   └── engine.py        Cross-correlation, timeline builder, stitcher
-└── app/                 PyQt6 desktop application
-    ├── main_window.py   Main window, toolbar, orchestration
-    ├── track_panel.py   Track/file tree widget
-    ├── waveform_view.py Timeline waveform display
-    ├── theme.py         Dark pro-audio theme
-    └── dialogs.py       Export and about dialogs
+│   ├── audio_io.py      Audio/video loading, caching, export
+│   ├── engine.py        Metadata-aware analysis, cross-correlation, stitcher
+│   ├── metadata.py      ffprobe-based creation time extraction
+│   └── grouping.py      Auto-grouping files by device name
+├── app/                 PyQt6 desktop application
+│   ├── main_window.py   Main window, toolbar, worker threads
+│   ├── track_panel.py   Card-style track/file display
+│   ├── waveform_view.py Timeline waveform display
+│   ├── workflow_bar.py  Step indicator (Import→Analyze→Sync→Export)
+│   ├── theme.py         Dark navy + cyan/purple theme
+│   └── dialogs.py       Processing, import, export, about dialogs
+├── website/             Landing page for web deployment
+│   ├── index.html       Single-page landing
+│   ├── style.css        Custom animations and glassmorphism
+│   └── icon.png         App icon
+└── AudioSync.js         Max for Live plugin for Ableton Live
 ```
 
-The `core/` library has zero GUI dependencies (only numpy, scipy,
-soundfile). It can be reused in a CLI tool or ported to C++ for a
-VST plugin.
+---
+
+## Website
+
+The `website/` folder contains a static landing page ready for
+deployment on any web server or subdomain. No build step required —
+just copy the files and serve.
 
 ---
 

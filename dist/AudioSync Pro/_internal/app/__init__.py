@@ -1,0 +1,1 @@
+"""AudioSync Pro — Desktop application."""
