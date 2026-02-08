@@ -44,7 +44,7 @@
             "price": "0",
             "priceCurrency": "USD"
         },
-        "softwareVersion": "2.3.0",
+        "softwareVersion": "2.4.0",
         "author": {
             "@type": "Person",
             "name": "Keyhan",
@@ -197,7 +197,7 @@
                 </div>
 
                 <!-- Version badge -->
-                <p class="mt-6 text-xs text-white/30 font-mono">v2.3.0 &middot; Free &amp; Open Source</p>
+                <p class="mt-6 text-xs text-white/30 font-mono"><span id="hero-version">v2.4.0</span> &middot; Free &amp; Open Source</p>
             </div>
         </section>
 
@@ -703,7 +703,7 @@
                     <span>&copy; 2026 AudioSync Pro</span>
                 </div>
                 <div class="flex items-center gap-6">
-                    <span class="font-mono text-xs">v2.3.0</span>
+                    <span id="footer-version" class="font-mono text-xs">v2.4.0</span>
                     <a href="https://github.com/KEYHAN-A/audiosync" target="_blank" rel="noopener"
                         class="hover:text-white transition-colors" aria-label="GitHub repository">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -795,6 +795,28 @@
                 }
             });
         });
+
+        // --- Dynamic version from GitHub latest release ---
+        fetch('https://api.github.com/repos/KEYHAN-A/audiosync/releases/latest')
+            .then(r => r.json())
+            .then(data => {
+                if (data.tag_name) {
+                    const ver = data.tag_name;
+                    const heroEl = document.getElementById('hero-version');
+                    const footerEl = document.getElementById('footer-version');
+                    const schemaEl = document.querySelector('script[type="application/ld+json"]');
+                    if (heroEl) heroEl.textContent = ver;
+                    if (footerEl) footerEl.textContent = ver;
+                    if (schemaEl) {
+                        try {
+                            const schema = JSON.parse(schemaEl.textContent);
+                            schema.softwareVersion = ver.replace(/^v/, '');
+                            schemaEl.textContent = JSON.stringify(schema);
+                        } catch (_) {}
+                    }
+                }
+            })
+            .catch(() => {}); // silently keep hardcoded fallback
     </script>
 </body>
 
