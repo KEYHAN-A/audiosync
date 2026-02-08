@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AudioSync Pro — Multi-Device Audio &amp; Video Synchronization</title>
     <meta name="description"
-        content="Free, open-source multi-device audio and video synchronization with high-quality 24-bit audio processing. Sync cameras, mics, and recorders with sample-accurate FFT cross-correlation. Export timelines for DaVinci Resolve, Final Cut Pro, and Premiere.">
+        content="Free, open-source multi-device audio and video synchronization with high-quality 24-bit audio processing. Sync cameras, mics, and recorders with sample-accurate FFT cross-correlation. Export WAV, AIFF, FLAC, or MP3 files and NLE timelines for DaVinci Resolve, Final Cut Pro, and Premiere.">
     <meta name="theme-color" content="#0a0e1a">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Keyhan">
@@ -44,7 +44,7 @@
             "price": "0",
             "priceCurrency": "USD"
         },
-        "softwareVersion": "2.4.0",
+        "softwareVersion": "2.4.1",
         "author": {
             "@type": "Person",
             "name": "Keyhan",
@@ -165,7 +165,7 @@
                 <!-- Subtitle -->
                 <p class="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed">
                     Multi-device audio and video synchronization with sample-accurate FFT cross-correlation.
-                    Import, analyze, sync, and export — all in one beautiful tool.
+                    Import, analyze &amp; sync, and export — three steps to perfectly aligned audio.
                 </p>
 
                 <!-- CTA Buttons -->
@@ -206,7 +206,8 @@
                 </div>
 
                 <!-- Version badge -->
-                <p class="mt-6 text-xs text-white/30 font-mono"><span id="hero-version">v2.4.0</span> &middot; Free &amp; Open Source</p>
+                <p class="mt-6 text-xs text-white/30 font-mono"><span id="hero-version">v2.4.1</span> &middot; Free
+                    &amp; Open Source</p>
             </div>
         </section>
 
@@ -311,7 +312,7 @@
             <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-16 fade-in">
                     <p class="text-purple text-sm font-semibold tracking-widest uppercase mb-3">Workflow</p>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Four Steps to Perfect Sync</h2>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Three Steps to Perfect Sync</h2>
                     <div class="section-divider mt-6"></div>
                 </div>
 
@@ -342,11 +343,11 @@
                                 <span class="text-purple font-bold text-xl">2</span>
                             </div>
                             <div>
-                                <h3 class="text-xl font-semibold text-white mb-2">Analyze</h3>
+                                <h3 class="text-xl font-semibold text-white mb-2">Analyze &amp; Sync</h3>
                                 <p class="text-white/50 leading-relaxed">One click runs FFT cross-correlation at 8 kHz —
-                                    36x
-                                    faster than full resolution while maintaining sub-millisecond precision. Watch live
-                                    progress with per-clip confidence scores and ETA.</p>
+                                    36x faster than full resolution while maintaining sub-millisecond precision. Watch
+                                    live progress with per-clip confidence scores and ETA. All clips are synced to a
+                                    shared timeline automatically.</p>
                             </div>
                         </div>
                     </div>
@@ -360,30 +361,11 @@
                                 <span class="text-cyan font-bold text-xl">3</span>
                             </div>
                             <div>
-                                <h3 class="text-xl font-semibold text-white mb-2">Sync</h3>
-                                <p class="text-white/50 leading-relaxed">Each track's clips are stitched into a single
-                                    continuous audio stream at full resolution. Silence fills the gaps between clips,
-                                    and
-                                    crossfades smooth the transitions.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="step-connector"></div>
-
-                    <!-- Step 4 -->
-                    <div class="fade-in fade-delay-4">
-                        <div class="glass-card p-8 flex items-start gap-6">
-                            <div
-                                class="flex-shrink-0 w-14 h-14 rounded-2xl bg-purple/15 flex items-center justify-center">
-                                <span class="text-purple font-bold text-xl">4</span>
-                            </div>
-                            <div>
                                 <h3 class="text-xl font-semibold text-white mb-2">Export</h3>
                                 <p class="text-white/50 leading-relaxed">Export one synced audio file per track — all
-                                    the
-                                    same length and perfectly aligned. Choose WAV, AIFF, or FLAC with 16/24/32-bit
-                                    depth.
-                                    Drop the files into any DAW or video editor.</p>
+                                    the same length and perfectly aligned. Choose WAV, AIFF, FLAC, or MP3 with
+                                    configurable quality. Or export an NLE timeline (OTIO/FCPXML/EDL) for DaVinci
+                                    Resolve, Final Cut Pro, or Premiere.</p>
                             </div>
                         </div>
                     </div>
@@ -539,9 +521,9 @@
                                     d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-white mb-2">Lossless Formats</h3>
-                        <p class="text-white/50 text-sm leading-relaxed">Native WAV, AIFF, and FLAC export. No lossy
-                            re-encoding anywhere in the pipeline.</p>
+                        <h3 class="text-lg font-semibold text-white mb-2">Flexible Export</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Lossless WAV, AIFF, and FLAC export, plus MP3
+                            with configurable bitrate (128–320 kbps) for smaller deliverables.</p>
                     </div>
 
                     <div class="glass-card p-7 fade-in fade-delay-4">
@@ -823,7 +805,7 @@
                     <span>&copy; 2026 AudioSync Pro</span>
                 </div>
                 <div class="flex items-center gap-6">
-                    <span id="footer-version" class="font-mono text-xs">v2.4.0</span>
+                    <span id="footer-version" class="font-mono text-xs">v2.4.1</span>
                     <a href="https://github.com/KEYHAN-A/audiosync" target="_blank" rel="noopener"
                         class="hover:text-white transition-colors" aria-label="GitHub repository">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -932,11 +914,11 @@
                             const schema = JSON.parse(schemaEl.textContent);
                             schema.softwareVersion = ver.replace(/^v/, '');
                             schemaEl.textContent = JSON.stringify(schema);
-                        } catch (_) {}
+                        } catch (_) { }
                     }
                 }
             })
-            .catch(() => {}); // silently keep hardcoded fallback
+            .catch(() => { }); // silently keep hardcoded fallback
     </script>
 </body>
 

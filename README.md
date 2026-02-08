@@ -2,12 +2,12 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub](https://img.shields.io/badge/GitHub-KEYHAN--A%2Faudiosync-181717?logo=github)](https://github.com/KEYHAN-A/audiosync)
-[![Version](https://img.shields.io/badge/version-2.3.0-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
+[![Version](https://img.shields.io/badge/version-2.4.1-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-a78bfa)]()
 [![Website](https://img.shields.io/badge/website-audiosync.keyhan.info-38bdf8)](https://audiosync.keyhan.info)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-keyhan--a.github.io%2Faudiosync-222?logo=github)](https://keyhan-a.github.io/audiosync/)
 
-Multi-device audio/video synchronization tool with high-quality audio processing. Syncs recordings from multiple cameras, microphones, and recorders using FFT cross-correlation. Export synced audio files or NLE timelines for DaVinci Resolve, Final Cut Pro, and Premiere.
+Multi-device audio/video synchronization tool with high-quality audio processing. Syncs recordings from multiple cameras, microphones, and recorders using FFT cross-correlation. Export synced audio files (WAV, AIFF, FLAC, MP3) or NLE timelines for DaVinci Resolve, Final Cut Pro, and Premiere. Optional cloud sync via Keyhan Studio account.
 
 **Free and open source.** [Website](https://audiosync.keyhan.info) | [GitHub Pages](https://keyhan-a.github.io/audiosync/) | [Download](https://github.com/KEYHAN-A/audiosync/releases) | [Report Issue](https://github.com/KEYHAN-A/audiosync/issues)
 
@@ -32,7 +32,7 @@ Track 1 "Camera A":  2 files  (full-length video)
 Track 2 "Camera B": 12 files  (short B-roll clips)
 Track 3 "Zoom H6":   3 files  (audio recordings)
 
--> Exports 3 aligned WAV files, all the same length:
+-> Exports 3 aligned audio files (WAV/AIFF/FLAC/MP3), all the same length:
 
   Track 1: |=audio==silence==audio========================|
   Track 2: |==c1=c2==silence==c3=c4=...=silence==c12=====|
@@ -48,8 +48,8 @@ AudioSync Pro is designed for professional audio workflows where quality matters
 - **24-bit PCM / 32-bit float** — Full bit-depth preservation throughout the pipeline
 - **Polyphase resampling** — SciPy-powered sample rate conversion with minimal artifacts
 - **Lossless format support** — Native WAV, AIFF, and FLAC export
+- **MP3 export** — Lossy export via FFmpeg with configurable bitrate (128–320 kbps)
 - **Sample-rate preservation** — Exports at your project's highest native sample rate
-- **No lossy re-encoding** — Audio data passes through without lossy compression
 - **Analysis at 8 kHz** — Cross-correlation runs on downsampled copies; your original files are never modified
 
 ---
@@ -101,29 +101,24 @@ python main.py
 
 ### Workflow
 
-1. **Create tracks** — Click **+ Add Track** for each recording device,
-   or drag-and-drop files to auto-group by device.
+1. **Import** — Create tracks for each recording device (click **+ Add Track**
+   or drag-and-drop files to auto-group by device). Add audio or video files to
+   each track. Supports WAV, AIFF, FLAC, MP3, MP4, MOV, MKV, AVI, WEBM, and more.
 
-2. **Import files** — Click **+ Files** on a track card, or drag files
-   directly onto a card. Video audio is extracted automatically via FFmpeg.
-   Supports WAV, AIFF, FLAC, MP3, MP4, MOV, MKV, AVI, WEBM, and more.
+2. **Analyze & Sync** — Click **Analyze & Sync**. FFT cross-correlation
+   runs at 8 kHz for speed, placing every clip on a shared timeline. A processing
+   screen shows live progress, per-clip results, elapsed time, and ETA.
+   Cancel anytime. After analysis, all clips are synced and shown on the timeline.
 
-3. **Analyze** — Click the **Analyze** button. A processing screen shows
-   live progress, per-clip results, elapsed time, and ETA. Analysis runs
-   at 8 kHz for speed. Cancel anytime.
+3. **Export** — Two export options are available after analysis:
+   - **Export Audio** — Save one synced audio file per track. Choose format
+     (WAV / AIFF / FLAC / MP3) and quality (bit depth for lossless, bitrate
+     for MP3). Full-resolution stitching runs automatically before export.
+   - **Export Timeline for NLE** (Ctrl+Shift+T) — Export an `.otio`, `.fcpxml`,
+     or `.edl` file. Open it in DaVinci Resolve, Final Cut Pro, or Premiere
+     with all clips pre-arranged on a multi-track timeline.
 
-4. **Sync** — Click **Sync**. Each track's clips are stitched into a
-   single continuous audio array at full resolution, with silence filling gaps.
-
-5. **Export** — Click **Export** to save one synced audio file per track.
-   Choose format (WAV/AIFF/FLAC) and bit depth (16/24/32-bit float).
-
-6. **Export Timeline for NLE** — After Analyze, use **File → Export Timeline
-   for NLE** (Ctrl+Shift+T) to export an `.otio`, `.fcpxml`, or `.edl` file.
-   Open it in DaVinci Resolve, Final Cut Pro, or Premiere to get all your
-   clips pre-arranged on a multi-track timeline with original media linked.
-
-7. **Reset** — Click **Reset** to clear analysis results and start over.
+4. **Reset** — Click **Reset** to clear analysis results and start over.
 
 ### Reference Track
 
@@ -183,7 +178,7 @@ build scripts, and the About dialog read from this single source.
 
 ```python
 # version.py
-__version__ = "2.3.0"
+__version__ = "2.4.1"
 ```
 
 ---
@@ -231,8 +226,8 @@ __version__ = "2.3.0"
 
 ## DaVinci Resolve / NLE Export
 
-After running **Analyze**, you can export the timeline directly for your
-video editor — no need to run Sync first.
+After running **Analyze & Sync**, you can export the timeline directly for
+your video editor.
 
 **File → Export Timeline for NLE** (Ctrl+Shift+T) opens a dialog where
 you choose:
@@ -258,6 +253,20 @@ Also works with Final Cut Pro (`.fcpxml`) and legacy EDL workflows.
 
 ---
 
+## Cloud Sync (Optional)
+
+AudioSync Pro optionally integrates with [Keyhan Studio](https://studio.keyhan.info)
+for cloud-synced projects:
+
+- **Sign in** via the Account menu with your Google account
+- **Save** projects to the cloud — all tracks, clips, offsets, and analysis results
+- **Load** projects from any device running AudioSync Pro
+- **100% optional** — the app works fully offline with no account required
+
+Create a free account at [studio.keyhan.info/register](https://studio.keyhan.info/register).
+
+---
+
 ## Project Structure
 
 ```
@@ -279,14 +288,15 @@ audiosync/
 │   ├── engine.py        Metadata-aware analysis, cross-correlation, stitcher
 │   ├── timeline_export.py  OTIO/FCPXML/EDL export for DaVinci Resolve / NLEs
 │   ├── metadata.py      ffprobe-based creation time extraction
+│   ├── cloud.py         Cloud API client (Keyhan Studio integration)
 │   └── grouping.py      Auto-grouping files by device name
 ├── app/                 PyQt6 desktop application
 │   ├── main_window.py   Main window layout and worker threads
 │   ├── track_card.py    Card-based track/file display
 │   ├── waveform_view.py Timeline waveform display
-│   ├── workflow_bar.py  Step indicator (Import->Analyze->Sync->Export)
+│   ├── workflow_bar.py  Step indicator (Import->Analyze & Sync->Export)
 │   ├── theme.py         Dark navy + cyan/purple theme
-│   └── dialogs.py       Processing, import, export, about dialogs
+│   └── dialogs.py       Processing, import, export, about, sign-in dialogs
 ├── website/             Landing page for web deployment
 │   ├── index.html       Single-page landing
 │   ├── style.css        Custom animations and glassmorphism
