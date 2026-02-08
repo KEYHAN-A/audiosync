@@ -5,6 +5,26 @@ All notable changes to AudioSync Pro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-02-08
+
+### Fixed
+- DaVinci Resolve NLE export: FCPXML now default format (best media relinking)
+- DaVinci Resolve media relinking — stores absolute paths in metadata for NLEs
+- FFmpeg error messages now show actual errors instead of truncated version banner
+- FFmpeg full-quality extraction falls back to 16-bit if 24-bit fails (Sony A7IV fix)
+- NLE export button now visible in workflow bar after Analyze (was hidden in File menu only)
+- Defensive import of opentimelineio — app starts even if OTIO isn't available
+- PyInstaller bundling of OTIO plugin manifest and data files
+
+### Changed
+- Complete UI overhaul: frosted-glass theme matching website brand identity
+- Track cards redesigned as media-folder cards with folder icons and emoji badges
+- Workflow bar with larger circular indicators and cyan glow effects
+- Gradient progress bar (cyan-to-purple), rounded 16px cards and buttons
+- QPalette override forces all text to be light — no more black text on dark backgrounds
+- Every Qt widget type explicitly styled (QSpinBox, QComboBox, QCheckBox, etc.)
+- Better Resolve import instructions in export success dialog
+
 ## [2.3.0] - 2026-02-08
 
 ### Added

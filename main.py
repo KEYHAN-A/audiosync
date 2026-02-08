@@ -55,9 +55,44 @@ def main() -> None:
     app.setOrganizationName("AudioSync")
     app.setApplicationVersion(__version__)
 
-    from app.main_window import MainWindow
-    from app.theme import STYLESHEET
+    from PyQt6.QtGui import QPalette, QColor
 
+    from app.main_window import MainWindow
+    from app.theme import STYLESHEET, COLORS
+
+    # Force dark palette globally — ensures ALL widgets have light text
+    palette = QPalette()
+    palette.setColor(QPalette.ColorRole.Window, QColor(COLORS["bg_deep"]))
+    palette.setColor(QPalette.ColorRole.WindowText, QColor(COLORS["text"]))
+    palette.setColor(QPalette.ColorRole.Base, QColor(COLORS["bg_dark"]))
+    palette.setColor(QPalette.ColorRole.AlternateBase, QColor(COLORS["bg_card"]))
+    palette.setColor(QPalette.ColorRole.Text, QColor(COLORS["text"]))
+    palette.setColor(QPalette.ColorRole.BrightText, QColor(COLORS["text_bright"]))
+    palette.setColor(QPalette.ColorRole.Button, QColor(COLORS["bg_dark"]))
+    palette.setColor(QPalette.ColorRole.ButtonText, QColor(COLORS["text"]))
+    palette.setColor(QPalette.ColorRole.Highlight, QColor(COLORS["accent"]))
+    palette.setColor(QPalette.ColorRole.HighlightedText, QColor("#ffffff"))
+    palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(COLORS["bg_card"]))
+    palette.setColor(QPalette.ColorRole.ToolTipText, QColor(COLORS["text"]))
+    palette.setColor(QPalette.ColorRole.PlaceholderText, QColor(COLORS["text_muted"]))
+    palette.setColor(QPalette.ColorRole.Link, QColor(COLORS["accent"]))
+    palette.setColor(QPalette.ColorRole.LinkVisited, QColor(COLORS["secondary"]))
+
+    # Disabled state
+    palette.setColor(
+        QPalette.ColorGroup.Disabled,
+        QPalette.ColorRole.WindowText, QColor(COLORS["text_muted"])
+    )
+    palette.setColor(
+        QPalette.ColorGroup.Disabled,
+        QPalette.ColorRole.Text, QColor(COLORS["text_muted"])
+    )
+    palette.setColor(
+        QPalette.ColorGroup.Disabled,
+        QPalette.ColorRole.ButtonText, QColor(COLORS["text_muted"])
+    )
+
+    app.setPalette(palette)
     app.setStyleSheet(STYLESHEET)
 
     window = MainWindow()

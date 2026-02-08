@@ -39,15 +39,22 @@ from core.audio_io import (
 from core.engine import analyze, sync
 from core.grouping import group_files_by_device
 from core.models import CancelledError, SyncConfig, SyncResult, Track
-from core.timeline_export import export_timeline
+# Defensive import — opentimelineio may not be available in all builds
+try:
+    from core.timeline_export import export_timeline
+    TIMELINE_EXPORT_AVAILABLE = True
+except ImportError:
+    TIMELINE_EXPORT_AVAILABLE = False
+    export_timeline = None
 
 from .dialogs import (
     AboutDialog,
     ExportDialog,
     ImportProgressDialog,
     ProcessingDialog,
-    TimelineExportDialog,
 )
+if TIMELINE_EXPORT_AVAILABLE:
+    from .dialogs import TimelineExportDialog
 from .theme import COLORS
 from .track_card import TrackPanel
 from .waveform_view import WaveformView
@@ -313,9 +320,10 @@ class MainWindow(QMainWindow):
         act.setShortcut(QKeySequence("Ctrl+E"))
         act.triggered.connect(self._on_export)
 
-        act = file_menu.addAction("Export &Timeline for NLE...")
-        act.setShortcut(QKeySequence("Ctrl+Shift+T"))
-        act.triggered.connect(self._on_export_timeline)
+        if TIMELINE_EXPORT_AVAILABLE:
+            act = file_menu.addAction("Export &Timeline for NLE...")
+            act.setShortcut(QKeySequence("Ctrl+Shift+T"))
+            act.triggered.connect(self._on_export_timeline)
 
         file_menu.addSeparator()
 
@@ -350,8 +358,10 @@ class MainWindow(QMainWindow):
         central_layout.setSpacing(0)
 
         # Workflow bar at top
-        self._workflow_bar = WorkflowBar()
+        self._workflow_bar = WorkflowBar(nle_available=TIMELINE_EXPORT_AVAILABLE)
         self._workflow_bar.action_triggered.connect(self._on_workflow_action)
+        if TIMELINE_EXPORT_AVAILABLE:
+            self._workflow_bar.nle_export_triggered.connect(self._on_export_timeline)
         central_layout.addWidget(self._workflow_bar)
 
         # Vertical splitter: track cards (top) | timeline (bottom)
@@ -373,8 +383,8 @@ class MainWindow(QMainWindow):
 
         timeline_header = QLabel("TIMELINE")
         timeline_header.setStyleSheet(
-            f"color: {COLORS['text_dim']}; font-size: 10px; font-weight: 600; "
-            f"letter-spacing: 1.5px; padding: 6px 4px 2px;"
+            f"color: {COLORS['text_muted']}; font-size: 10px; font-weight: 600; "
+            f"letter-spacing: 1.5px; padding: 6px 12px 2px; background: transparent;"
         )
         timeline_layout.addWidget(timeline_header)
 
@@ -706,12 +716,29 @@ class MainWindow(QMainWindow):
                 frame_rate=dlg.frame_rate,
             )
             self._set_status(f"Timeline exported to {out}")
+            ext = os.path.splitext(out)[1].lower()
+            if ext == ".fcpxml":
+                resolve_hint = (
+                    "In DaVinci Resolve:\n"
+                    "File → Import → Timeline… → select this file.\n\n"
+                    "Make sure the original media files are in your\n"
+                    "Media Pool first so Resolve can auto-relink them."
+                )
+            elif ext == ".otio":
+                resolve_hint = (
+                    "In DaVinci Resolve 18+:\n"
+                    "File → Import → Timeline… → select this file.\n\n"
+                    "If clips show as offline, right-click a clip →\n"
+                    "Relink Selected Clips → point to your media folder."
+                )
+            else:
+                resolve_hint = "Import this file into your NLE."
+
             QMessageBox.information(
                 self, "Timeline Exported",
                 f"Timeline exported successfully.\n\n"
                 f"File: {out}\n\n"
-                f"Open this file in DaVinci Resolve via:\n"
-                f"File → Import → Timeline",
+                f"{resolve_hint}",
             )
         except Exception as exc:
             QMessageBox.critical(

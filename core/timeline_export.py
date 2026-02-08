@@ -85,8 +85,8 @@ def export_timeline(
 def get_supported_formats() -> dict[str, str]:
     """Return a dict of {extension: description} for supported export formats."""
     return {
-        ".otio": "OpenTimelineIO (recommended for DaVinci Resolve)",
-        ".fcpxml": "Final Cut Pro XML (Resolve / Premiere / FCP)",
+        ".fcpxml": "Final Cut Pro XML (best for DaVinci Resolve / FCP / Premiere)",
+        ".otio": "OpenTimelineIO (universal interchange)",
         ".edl": "Edit Decision List (legacy, single-track)",
     }
 
@@ -207,11 +207,19 @@ def _make_media_reference(
     clip: Clip,
     frame_rate: float,
 ) -> otio.schema.ExternalReference:
-    """Create an OTIO ExternalReference pointing to the original media file."""
+    """Create an OTIO ExternalReference pointing to the original media file.
+
+    Uses ``file://`` URI with proper encoding for spaces and special chars.
+    DaVinci Resolve requires ``file://`` scheme URIs with the *exact* absolute
+    path (including volume mounts like /Volumes/…).
+    """
     file_path = os.path.abspath(clip.file_path)
+
+    # Build a proper file URI — Path.as_uri() handles encoding correctly
+    # but we also store the raw path in metadata for manual relinking
     file_url = Path(file_path).as_uri()
 
-    return otio.schema.ExternalReference(
+    ref = otio.schema.ExternalReference(
         target_url=file_url,
         available_range=otio.opentime.TimeRange(
             start_time=otio.opentime.RationalTime(0, frame_rate),
@@ -220,3 +228,11 @@ def _make_media_reference(
             ),
         ),
     )
+
+    # Store the raw absolute path in metadata for NLEs that prefer plain paths
+    ref.metadata["audiosync"] = {
+        "absolute_path": file_path,
+        "filename": clip.name,
+    }
+
+    return ref

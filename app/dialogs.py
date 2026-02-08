@@ -28,8 +28,17 @@ from PyQt6.QtWidgets import (
 )
 
 from core.models import SyncConfig
-from core.timeline_export import get_supported_formats
 from version import __version__, APP_NAME, GITHUB_URL
+
+# Defensive import — opentimelineio may not be available in all builds
+try:
+    from core.timeline_export import get_supported_formats
+    TIMELINE_EXPORT_AVAILABLE = True
+except ImportError:
+    TIMELINE_EXPORT_AVAILABLE = False
+
+    def get_supported_formats():
+        return {}  # fallback
 
 
 # ---------------------------------------------------------------------------
@@ -451,7 +460,7 @@ class TimelineExportDialog(QDialog):
 
         default_path = os.path.join(
             os.path.expanduser("~/Desktop"),
-            "AudioSync Pro Timeline.otio",
+            "AudioSync Pro Timeline.fcpxml",
         )
         self._file_edit = QLineEdit(default_path)
         self._file_edit.setReadOnly(True)

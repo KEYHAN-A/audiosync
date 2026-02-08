@@ -351,7 +351,14 @@ def _extract_audio_from_video(
 
     if proc.returncode != 0:
         stderr = proc.stderr.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"ffmpeg failed for {video_path}:\n{stderr[:500]}")
+        # Skip the version banner to show the actual error
+        error_lines = [
+            line for line in stderr.splitlines()
+            if not line.startswith(("ffmpeg version", "  built with", "  configuration:",
+                                    "  libav", "  libsw", "  libpost"))
+        ]
+        error_msg = "\n".join(error_lines[-20:]) if error_lines else stderr[-1000:]
+        raise RuntimeError(f"ffmpeg failed for {video_path}:\n{error_msg}")
 
 
 def _get_original_audio_info(path: str) -> tuple[int, int]:
@@ -508,31 +515,52 @@ def _extract_audio_full_quality(
     target_sr: int,
     cancel: Optional[Event] = None,
 ) -> None:
-    """Extract full-quality audio from video for export."""
-    ffmpeg = _find_ffmpeg()
-    cmd = [
-        ffmpeg, "-y",
-        "-i", video_path,
-        "-vn",
-        "-ar", str(target_sr),
-        "-acodec", "pcm_s24le",
-        output_wav,
-    ]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    while proc.poll() is None:
-        if cancel and cancel.is_set():
-            proc.kill()
-            proc.wait()
-            try:
-                os.remove(output_wav)
-            except OSError:
-                pass
-            raise CancelledError("Export cancelled")
-        time.sleep(0.1)
+    """Extract full-quality audio from video for export.
 
-    if proc.returncode != 0:
+    Tries 24-bit PCM first, falls back to 16-bit if the codec or
+    container doesn't support 24-bit output.
+    """
+    ffmpeg = _find_ffmpeg()
+
+    # Try 24-bit first, then fall back to 16-bit
+    attempts = [
+        [ffmpeg, "-y", "-i", video_path, "-vn",
+         "-ar", str(target_sr), "-acodec", "pcm_s24le", "-f", "wav", output_wav],
+        [ffmpeg, "-y", "-i", video_path, "-vn",
+         "-ar", str(target_sr), "-acodec", "pcm_s16le", "-f", "wav", output_wav],
+    ]
+
+    last_error = ""
+    for cmd in attempts:
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        while proc.poll() is None:
+            if cancel and cancel.is_set():
+                proc.kill()
+                proc.wait()
+                try:
+                    os.remove(output_wav)
+                except OSError:
+                    pass
+                raise CancelledError("Export cancelled")
+            time.sleep(0.1)
+
+        if proc.returncode == 0 and os.path.exists(output_wav):
+            return  # Success
+
         stderr = proc.stderr.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"ffmpeg export failed for {video_path}:\n{stderr[:500]}")
+        error_lines = [
+            line for line in stderr.splitlines()
+            if not line.startswith(("ffmpeg version", "  built with", "  configuration:",
+                                    "  libav", "  libsw", "  libpost"))
+        ]
+        last_error = "\n".join(error_lines[-20:]) if error_lines else stderr[-1000:]
+        # Clean up partial file before retry
+        try:
+            os.remove(output_wav)
+        except OSError:
+            pass
+
+    raise RuntimeError(f"ffmpeg export failed for {video_path}:\n{last_error}")
 
 
 # ---------------------------------------------------------------------------

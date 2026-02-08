@@ -1,12 +1,18 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+from PyInstaller.utils.hooks import collect_submodules, collect_data_files
+
+# Collect ALL opentimelineio submodules so adapters (.otio, .fcpxml, .edl) work
+otio_hidden = collect_submodules('opentimelineio')
+# Collect OTIO data files (plugin manifests, adapter configs)
+otio_datas = collect_data_files('opentimelineio')
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('core', 'core'), ('app', 'app'), ('version.py', '.')],
-    hiddenimports=['scipy.signal', 'scipy.fft', 'scipy.fft._pocketfft', 'numpy', 'soundfile', 'PyQt6.QtCore', 'PyQt6.QtGui', 'PyQt6.QtWidgets'],
+    datas=[('core', 'core'), ('app', 'app'), ('version.py', '.')] + otio_datas,
+    hiddenimports=otio_hidden + ['scipy.signal', 'scipy.fft', 'scipy.fft._pocketfft', 'numpy', 'soundfile', 'PyQt6.QtCore', 'PyQt6.QtGui', 'PyQt6.QtWidgets'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

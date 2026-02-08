@@ -84,11 +84,13 @@ class WaveformView(QWidget):
         w = self.width()
         h = self.height()
 
-        # Rounded background matching card aesthetic
-        painter.fillRect(0, 0, w, h, QColor(COLORS["bg_dark"]))
-        border_pen = QPen(QColor(COLORS["border"]), 1)
+        # Rounded glass background
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor(COLORS["bg_dark"]))
+        painter.drawRoundedRect(0, 0, w, h, 14, 14)
+        border_pen = QPen(QColor(COLORS["border_subtle"]), 1)
         painter.setPen(border_pen)
-        painter.drawRoundedRect(0, 0, w - 1, h - 1, 12, 12)
+        painter.drawRoundedRect(0, 0, w - 1, h - 1, 14, 14)
 
         if not self._tracks:
             self._draw_empty_state(painter, w, h, "no_tracks")
@@ -139,8 +141,8 @@ class WaveformView(QWidget):
         painter.drawText(sub_rect, Qt.AlignmentFlag.AlignCenter, subtitle)
 
     def _draw_ruler(self, painter: QPainter, w: int) -> None:
-        painter.fillRect(0, 0, w, self.RULER_HEIGHT, QColor(COLORS["bg_panel_solid"]))
-        painter.setPen(QPen(QColor(COLORS["border"]), 1))
+        painter.fillRect(0, 0, w, self.RULER_HEIGHT, QColor(COLORS["bg_panel"]))
+        painter.setPen(QPen(QColor(COLORS["border_subtle"]), 1))
         painter.drawLine(0, self.RULER_HEIGHT - 1, w, self.RULER_HEIGHT - 1)
 
         if self._total_samples == 0:
@@ -179,7 +181,7 @@ class WaveformView(QWidget):
         color = QColor(track_color(track_idx))
 
         # Glass lane background with rounded edges
-        lane_bg = QColor(COLORS["bg_panel_solid"])
+        lane_bg = QColor(COLORS["bg_panel"])
         lane_bg.setAlpha(80)
         lane_rect = QRectF(4, y, w - 8, h)
         painter.setBrush(lane_bg)
