@@ -261,10 +261,14 @@ audiosync/
 ## Website
 
 Live at **[audiosync.keyhan.info](https://audiosync.keyhan.info)**
+Mirror at **[keyhan-a.github.io/audiosync](https://keyhan-a.github.io/audiosync/)**
 
 The `website/` folder contains a static landing page that is
 automatically deployed via GitHub Actions on every push to `main`.
 No build step required.
+
+- **Production** — Deployed to `audiosync.keyhan.info` via SSH + rsync (`deploy.yml`)
+- **GitHub Pages** — Deployed to `keyhan-a.github.io/audiosync` via GitHub Pages (`pages.yml`)
 
 ---
 
@@ -281,8 +285,10 @@ MP4, MOV, MKV, AVI, WEBM, MTS, M4V, MXF
 ## Deploy
 
 The website is **automatically deployed** via GitHub Actions whenever
-changes are pushed to the `website/` folder on `main`. The workflow
-uses SSH + rsync to sync files to the production server.
+changes are pushed to the `website/` folder on `main`:
+
+- **Production server** — `deploy.yml` syncs files via SSH + rsync to `audiosync.keyhan.info`
+- **GitHub Pages** — `pages.yml` deploys to `keyhan-a.github.io/audiosync`
 
 Builds (macOS/Windows/Linux) are created automatically on version
 tags and uploaded as [GitHub Releases](https://github.com/KEYHAN-A/audiosync/releases).
