@@ -2,3 +2,4 @@ PyQt6>=6.6.0
 numpy>=1.24.0
 scipy>=1.11.0
 soundfile>=0.12.0
+opentimelineio>=0.17.0

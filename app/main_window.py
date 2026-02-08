@@ -39,8 +39,15 @@ from core.audio_io import (
 from core.engine import analyze, sync
 from core.grouping import group_files_by_device
 from core.models import CancelledError, SyncConfig, SyncResult, Track
+from core.timeline_export import export_timeline
 
-from .dialogs import AboutDialog, ExportDialog, ImportProgressDialog, ProcessingDialog
+from .dialogs import (
+    AboutDialog,
+    ExportDialog,
+    ImportProgressDialog,
+    ProcessingDialog,
+    TimelineExportDialog,
+)
 from .theme import COLORS
 from .track_card import TrackPanel
 from .waveform_view import WaveformView
@@ -305,6 +312,10 @@ class MainWindow(QMainWindow):
         act = file_menu.addAction("&Export...")
         act.setShortcut(QKeySequence("Ctrl+E"))
         act.triggered.connect(self._on_export)
+
+        act = file_menu.addAction("Export &Timeline for NLE...")
+        act.setShortcut(QKeySequence("Ctrl+Shift+T"))
+        act.triggered.connect(self._on_export_timeline)
 
         file_menu.addSeparator()
 
@@ -658,6 +669,55 @@ class MainWindow(QMainWindow):
             dlg.finish("Export cancelled")
 
         self._update_button_states()
+
+    # ----- Export Timeline for NLE -------------------------------------------
+
+    def _on_export_timeline(self) -> None:
+        """Export the analysed timeline as an OTIO/FCPXML/EDL file for NLEs."""
+        if self._sync_result is None:
+            QMessageBox.information(
+                self, "Analyze First",
+                "Run Analyze before exporting a timeline.\n\n"
+                "The timeline export only needs analysis results — "
+                "you do not need to run Sync first.",
+            )
+            return
+
+        tracks = self._track_panel.tracks
+        total_clips = sum(
+            sum(1 for c in t.clips if c.analyzed) for t in tracks
+        )
+
+        dlg = TimelineExportDialog(
+            track_count=len(tracks),
+            clip_count=total_clips,
+            timeline_s=self._sync_result.total_timeline_s,
+            parent=self,
+        )
+        if dlg.exec() != TimelineExportDialog.DialogCode.Accepted:
+            return
+
+        try:
+            out = export_timeline(
+                tracks=tracks,
+                sync_result=self._sync_result,
+                output_path=dlg.output_path,
+                timeline_name=dlg.timeline_name,
+                frame_rate=dlg.frame_rate,
+            )
+            self._set_status(f"Timeline exported to {out}")
+            QMessageBox.information(
+                self, "Timeline Exported",
+                f"Timeline exported successfully.\n\n"
+                f"File: {out}\n\n"
+                f"Open this file in DaVinci Resolve via:\n"
+                f"File → Import → Timeline",
+            )
+        except Exception as exc:
+            QMessageBox.critical(
+                self, "Export Failed",
+                f"Failed to export timeline:\n\n{exc}",
+            )
 
     # ----- Workflow bar actions ----------------------------------------------
 

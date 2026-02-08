@@ -2,12 +2,12 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub](https://img.shields.io/badge/GitHub-KEYHAN--A%2Faudiosync-181717?logo=github)](https://github.com/KEYHAN-A/audiosync)
-[![Version](https://img.shields.io/badge/version-2.2.2-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
+[![Version](https://img.shields.io/badge/version-2.3.0-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-a78bfa)]()
 [![Website](https://img.shields.io/badge/website-audiosync.keyhan.info-38bdf8)](https://audiosync.keyhan.info)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-keyhan--a.github.io%2Faudiosync-222?logo=github)](https://keyhan-a.github.io/audiosync/)
 
-Multi-device audio/video synchronization tool with high-quality audio processing. Syncs recordings from multiple cameras, microphones, and recorders using FFT cross-correlation.
+Multi-device audio/video synchronization tool with high-quality audio processing. Syncs recordings from multiple cameras, microphones, and recorders using FFT cross-correlation. Export synced audio files or NLE timelines for DaVinci Resolve, Final Cut Pro, and Premiere.
 
 **Free and open source.** [Website](https://audiosync.keyhan.info) | [GitHub Pages](https://keyhan-a.github.io/audiosync/) | [Download](https://github.com/KEYHAN-A/audiosync/releases) | [Report Issue](https://github.com/KEYHAN-A/audiosync/issues)
 
@@ -118,7 +118,12 @@ python main.py
 5. **Export** — Click **Export** to save one synced audio file per track.
    Choose format (WAV/AIFF/FLAC) and bit depth (16/24/32-bit float).
 
-6. **Reset** — Click **Reset** to clear analysis results and start over.
+6. **Export Timeline for NLE** — After Analyze, use **File → Export Timeline
+   for NLE** (Ctrl+Shift+T) to export an `.otio`, `.fcpxml`, or `.edl` file.
+   Open it in DaVinci Resolve, Final Cut Pro, or Premiere to get all your
+   clips pre-arranged on a multi-track timeline with original media linked.
+
+7. **Reset** — Click **Reset** to clear analysis results and start over.
 
 ### Reference Track
 
@@ -127,14 +132,15 @@ To override, click the menu on a track card and select **Set as Reference**.
 
 ### Keyboard Shortcuts
 
-| Shortcut | Action          |
-|----------|-----------------|
-| Ctrl+T   | Add Track       |
-| Ctrl+O   | Add Files       |
-| Ctrl+E   | Export          |
-| Ctrl+Z   | Reset           |
-| Delete   | Remove Selected |
-| Ctrl+Q   | Quit            |
+| Shortcut       | Action                   |
+|----------------|--------------------------|
+| Ctrl+T         | Add Track                |
+| Ctrl+O         | Add Files                |
+| Ctrl+E         | Export Audio             |
+| Ctrl+Shift+T   | Export Timeline for NLE  |
+| Ctrl+Z         | Reset                    |
+| Delete         | Remove Selected          |
+| Ctrl+Q         | Quit                     |
 
 ---
 
@@ -177,7 +183,7 @@ build scripts, and the About dialog read from this single source.
 
 ```python
 # version.py
-__version__ = "2.2.2"
+__version__ = "2.3.0"
 ```
 
 ---
@@ -223,6 +229,35 @@ __version__ = "2.2.2"
 
 ---
 
+## DaVinci Resolve / NLE Export
+
+After running **Analyze**, you can export the timeline directly for your
+video editor — no need to run Sync first.
+
+**File → Export Timeline for NLE** (Ctrl+Shift+T) opens a dialog where
+you choose:
+
+- **Format**: `.otio` (recommended), `.fcpxml`, or `.edl`
+- **Frame rate**: 24, 25, 30, etc.
+- **Timeline name**: appears inside the NLE
+
+The exported file contains:
+- One track per device with all clips positioned at their detected offsets
+- References to your **original media files** (video and audio)
+- Gaps (silence) between clips matching the analysed timeline
+
+### Import in DaVinci Resolve
+
+1. Open DaVinci Resolve
+2. Go to **File → Import → Timeline**
+3. Select the `.otio` file
+4. Resolve will create a timeline with all tracks and clips pre-arranged
+5. Relink media if prompted (Resolve auto-detects files by name)
+
+Also works with Final Cut Pro (`.fcpxml`) and legacy EDL workflows.
+
+---
+
 ## Project Structure
 
 ```
@@ -242,6 +277,7 @@ audiosync/
 │   ├── models.py        Data models (Track, Clip, SyncResult, SyncConfig)
 │   ├── audio_io.py      Audio/video loading, caching, export
 │   ├── engine.py        Metadata-aware analysis, cross-correlation, stitcher
+│   ├── timeline_export.py  OTIO/FCPXML/EDL export for DaVinci Resolve / NLEs
 │   ├── metadata.py      ffprobe-based creation time extraction
 │   └── grouping.py      Auto-grouping files by device name
 ├── app/                 PyQt6 desktop application
@@ -299,13 +335,14 @@ tags and uploaded as [GitHub Releases](https://github.com/KEYHAN-A/audiosync/rel
 
 ## Dependencies
 
-| Package    | Purpose                                  |
-|------------|------------------------------------------|
-| PyQt6      | Desktop GUI framework                    |
-| numpy      | Array operations                         |
-| scipy      | FFT-based cross-correlation, resampling  |
-| soundfile  | Audio file I/O (WAV, AIFF, FLAC)        |
-| FFmpeg     | Video audio extraction (system install)  |
+| Package          | Purpose                                         |
+|------------------|-------------------------------------------------|
+| PyQt6            | Desktop GUI framework                           |
+| numpy            | Array operations                                |
+| scipy            | FFT-based cross-correlation, resampling         |
+| soundfile        | Audio file I/O (WAV, AIFF, FLAC)               |
+| opentimelineio   | NLE timeline export (OTIO, FCPXML, EDL)         |
+| FFmpeg           | Video audio extraction (system install)         |
 
 ---
 

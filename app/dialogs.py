@@ -1,4 +1,4 @@
-"""Dialogs — processing screen, export settings, about."""
+"""Dialogs — processing screen, export settings, timeline export, about."""
 
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QProgressBar,
     QPushButton,
+    QSpinBox,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
@@ -27,6 +28,7 @@ from PyQt6.QtWidgets import (
 )
 
 from core.models import SyncConfig
+from core.timeline_export import get_supported_formats
 from version import __version__, APP_NAME, GITHUB_URL
 
 
@@ -376,6 +378,147 @@ class ExportDialog(QDialog):
     @property
     def config(self) -> SyncConfig:
         return self._config
+
+
+# ---------------------------------------------------------------------------
+#  Timeline Export Dialog — export for DaVinci Resolve / NLEs
+# ---------------------------------------------------------------------------
+
+class TimelineExportDialog(QDialog):
+    """Dialog for exporting the analysed timeline for DaVinci Resolve / NLEs."""
+
+    def __init__(
+        self,
+        track_count: int,
+        clip_count: int,
+        timeline_s: float,
+        parent: Optional[QWidget] = None,
+    ) -> None:
+        super().__init__(parent)
+        self.setWindowTitle("Export Timeline for NLE")
+        self.setMinimumWidth(480)
+        self._output_path: str = ""
+        self._frame_rate: float = 24.0
+        self._timeline_name: str = "AudioSync Pro"
+
+        self._build_ui(track_count, clip_count, timeline_s)
+
+    def _build_ui(self, track_count: int, clip_count: int, timeline_s: float) -> None:
+        layout = QVBoxLayout(self)
+        layout.setSpacing(16)
+        layout.setContentsMargins(24, 20, 24, 20)
+
+        # Info
+        dur_str = f"{timeline_s:.1f}s"
+        info = QLabel(
+            f"Export {track_count} track(s) with {clip_count} analysed clip(s) "
+            f"({dur_str} timeline) as an NLE timeline file.\n\n"
+            "Clips will reference your original media files so DaVinci Resolve, "
+            "Final Cut Pro, or Premiere can relink and arrange them on a timeline."
+        )
+        info.setWordWrap(True)
+        layout.addWidget(info)
+
+        # Timeline name
+        name_group = QGroupBox("Timeline Name")
+        name_layout = QHBoxLayout(name_group)
+        self._name_edit = QLineEdit("AudioSync Pro")
+        name_layout.addWidget(self._name_edit)
+        layout.addWidget(name_group)
+
+        # Format selection
+        fmt_group = QGroupBox("Format")
+        fmt_layout = QFormLayout(fmt_group)
+
+        self._format_combo = QComboBox()
+        formats = get_supported_formats()
+        for ext, desc in formats.items():
+            self._format_combo.addItem(f"{ext}  —  {desc}", ext)
+        self._format_combo.setCurrentIndex(0)  # .otio default
+        fmt_layout.addRow("Format:", self._format_combo)
+
+        self._fps_spin = QSpinBox()
+        self._fps_spin.setRange(1, 120)
+        self._fps_spin.setValue(24)
+        self._fps_spin.setSuffix(" fps")
+        fmt_layout.addRow("Frame Rate:", self._fps_spin)
+
+        layout.addWidget(fmt_group)
+
+        # Output file
+        file_group = QGroupBox("Output File")
+        file_layout = QHBoxLayout(file_group)
+
+        default_path = os.path.join(
+            os.path.expanduser("~/Desktop"),
+            "AudioSync Pro Timeline.otio",
+        )
+        self._file_edit = QLineEdit(default_path)
+        self._file_edit.setReadOnly(True)
+
+        file_btn = QPushButton("Browse...")
+        file_btn.clicked.connect(self._browse_file)
+
+        file_layout.addWidget(self._file_edit, stretch=1)
+        file_layout.addWidget(file_btn)
+        layout.addWidget(file_group)
+
+        # Update filename extension when format changes
+        self._format_combo.currentIndexChanged.connect(self._on_format_changed)
+
+        # Buttons
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText("Export Timeline")
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setProperty("cssClass", "accent")
+        buttons.accepted.connect(self._on_accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+    def _browse_file(self) -> None:
+        ext = self._format_combo.currentData()
+        filters = {
+            ".otio": "OpenTimelineIO (*.otio)",
+            ".fcpxml": "Final Cut Pro XML (*.fcpxml)",
+            ".edl": "Edit Decision List (*.edl)",
+        }
+        selected_filter = filters.get(ext, "All Files (*)")
+
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Timeline",
+            self._file_edit.text(),
+            ";;".join(filters.values()),
+            selected_filter,
+        )
+        if path:
+            self._file_edit.setText(path)
+
+    def _on_format_changed(self) -> None:
+        ext = self._format_combo.currentData()
+        current = self._file_edit.text()
+        if current:
+            base = os.path.splitext(current)[0]
+            self._file_edit.setText(base + ext)
+
+    def _on_accept(self) -> None:
+        self._output_path = self._file_edit.text()
+        self._frame_rate = float(self._fps_spin.value())
+        self._timeline_name = self._name_edit.text() or "AudioSync Pro"
+        self.accept()
+
+    @property
+    def output_path(self) -> str:
+        return self._output_path
+
+    @property
+    def frame_rate(self) -> float:
+        return self._frame_rate
+
+    @property
+    def timeline_name(self) -> str:
+        return self._timeline_name
 
 
 # ---------------------------------------------------------------------------
