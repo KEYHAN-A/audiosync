@@ -11,9 +11,11 @@ from typing import Optional
 from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal
 from PyQt6.QtWidgets import (
     QApplication,
+    QCheckBox,
     QComboBox,
     QDialog,
     QDialogButtonBox,
+    QDoubleSpinBox,
     QFileDialog,
     QFormLayout,
     QGroupBox,
@@ -24,6 +26,7 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QProgressBar,
     QPushButton,
+    QRadioButton,
     QSpinBox,
     QTableWidget,
     QTableWidgetItem,
@@ -430,6 +433,390 @@ class ExportDialog(QDialog):
     @property
     def output_dir(self) -> str:
         return self._output_dir
+
+    @property
+    def config(self) -> SyncConfig:
+        return self._config
+
+
+# ---------------------------------------------------------------------------
+#  Drift Fix Dialog — standalone drift correction tool
+# ---------------------------------------------------------------------------
+
+_AUDIO_VIDEO_FILTER = (
+    "Audio/Video Files (*.wav *.aiff *.aif *.flac *.mp3 *.ogg *.opus "
+    "*.mp4 *.mov *.mkv *.avi *.webm *.mts *.m4v *.mxf);;"
+    "All Files (*)"
+)
+
+
+class _MeasureDriftWorker(QThread):
+    """Background thread to measure drift between two audio files."""
+
+    finished = pyqtSignal(float, float)   # drift_ppm, r_squared
+    error = pyqtSignal(str)
+
+    def __init__(
+        self,
+        drifted_path: str,
+        reference_path: str,
+        parent: Optional[QWidget] = None,
+    ) -> None:
+        super().__init__(parent)
+        self._drifted_path = drifted_path
+        self._reference_path = reference_path
+
+    def run(self) -> None:
+        try:
+            from core.audio_io import load_clip
+            from core.engine import measure_drift, compute_delay
+            from core.models import ANALYSIS_SR
+
+            ref_clip = load_clip(self._reference_path)
+            drifted_clip = load_clip(self._drifted_path)
+
+            # Find initial offset via cross-correlation
+            delay, _conf = compute_delay(ref_clip.samples, drifted_clip.samples, ANALYSIS_SR)
+            drifted_clip.timeline_offset_samples = delay
+            drifted_clip.timeline_offset_s = delay / ANALYSIS_SR
+            drifted_clip.analyzed = True
+
+            # Measure drift
+            drift_ppm, r_sq = measure_drift(ref_clip.samples, drifted_clip, ANALYSIS_SR)
+            self.finished.emit(drift_ppm, r_sq)
+        except Exception as exc:
+            self.error.emit(str(exc))
+
+
+class DriftFixDialog(QDialog):
+    """Standalone tool to measure and correct clock drift on a single file."""
+
+    def __init__(
+        self,
+        config: SyncConfig,
+        parent: Optional[QWidget] = None,
+    ) -> None:
+        super().__init__(parent)
+        self.setWindowTitle("Fix Clock Drift")
+        self.setMinimumWidth(520)
+        self._config = SyncConfig(
+            export_format=config.export_format,
+            export_bit_depth=config.export_bit_depth,
+            export_bitrate_kbps=config.export_bitrate_kbps,
+            export_sr=config.export_sr,
+        )
+        self._drift_ppm: float = 0.0
+        self._input_path: str = ""
+        self._reference_path: str = ""
+        self._output_path: str = ""
+        self._measure_worker: Optional[_MeasureDriftWorker] = None
+        self._build_ui()
+
+    # ---- UI ---------------------------------------------------------------
+
+    def _build_ui(self) -> None:
+        layout = QVBoxLayout(self)
+        layout.setSpacing(12)
+
+        # Mode selector
+        mode_group = QGroupBox("Mode")
+        mode_layout = QVBoxLayout(mode_group)
+        self._compare_radio = QRadioButton("Compare with reference file")
+        self._manual_radio = QRadioButton("Manual drift rate")
+        self._compare_radio.setChecked(True)
+        self._compare_radio.toggled.connect(self._on_mode_changed)
+        mode_layout.addWidget(self._compare_radio)
+        mode_layout.addWidget(self._manual_radio)
+        layout.addWidget(mode_group)
+
+        # Compare mode — drifted file + reference file
+        self._compare_group = QGroupBox("Files")
+        cmp_layout = QFormLayout(self._compare_group)
+
+        self._drifted_edit = QLineEdit()
+        self._drifted_edit.setPlaceholderText("Select the audio/video file to correct...")
+        self._drifted_edit.setReadOnly(True)
+        drifted_btn = QPushButton("Browse...")
+        drifted_btn.clicked.connect(self._browse_drifted)
+        drifted_row = QHBoxLayout()
+        drifted_row.addWidget(self._drifted_edit, stretch=1)
+        drifted_row.addWidget(drifted_btn)
+        cmp_layout.addRow("Drifted file:", drifted_row)
+
+        self._ref_edit = QLineEdit()
+        self._ref_edit.setPlaceholderText("Select the reference file (correct clock)...")
+        self._ref_edit.setReadOnly(True)
+        ref_btn = QPushButton("Browse...")
+        ref_btn.clicked.connect(self._browse_reference)
+        ref_row = QHBoxLayout()
+        ref_row.addWidget(self._ref_edit, stretch=1)
+        ref_row.addWidget(ref_btn)
+        cmp_layout.addRow("Reference file:", ref_row)
+
+        self._measure_btn = QPushButton("Measure Drift")
+        self._measure_btn.setProperty("cssClass", "accent")
+        self._measure_btn.clicked.connect(self._on_measure)
+        self._measure_result = QLabel("")
+        self._measure_result.setWordWrap(True)
+        cmp_layout.addRow("", self._measure_btn)
+        cmp_layout.addRow("", self._measure_result)
+
+        layout.addWidget(self._compare_group)
+
+        # Manual mode — single file + ppm input
+        self._manual_group = QGroupBox("File & Drift Rate")
+        man_layout = QFormLayout(self._manual_group)
+
+        self._manual_file_edit = QLineEdit()
+        self._manual_file_edit.setPlaceholderText("Select the audio/video file to correct...")
+        self._manual_file_edit.setReadOnly(True)
+        manual_btn = QPushButton("Browse...")
+        manual_btn.clicked.connect(self._browse_manual_file)
+        manual_row = QHBoxLayout()
+        manual_row.addWidget(self._manual_file_edit, stretch=1)
+        manual_row.addWidget(manual_btn)
+        man_layout.addRow("Audio file:", manual_row)
+
+        self._ppm_spin = QDoubleSpinBox()
+        self._ppm_spin.setRange(-100.0, 100.0)
+        self._ppm_spin.setDecimals(2)
+        self._ppm_spin.setSingleStep(0.1)
+        self._ppm_spin.setValue(0.0)
+        self._ppm_spin.setSuffix(" ppm")
+        man_layout.addRow("Drift rate:", self._ppm_spin)
+
+        hint = QLabel("Positive = file runs fast, Negative = file runs slow")
+        hint.setProperty("cssClass", "dim")
+        man_layout.addRow("", hint)
+
+        self._manual_group.setVisible(False)
+        layout.addWidget(self._manual_group)
+
+        # Output settings
+        out_group = QGroupBox("Output")
+        out_layout = QFormLayout(out_group)
+
+        self._format_combo = QComboBox()
+        self._format_combo.addItems(["WAV", "AIFF", "FLAC", "MP3"])
+        idx = {"wav": 0, "aiff": 1, "flac": 2, "mp3": 3}.get(
+            self._config.export_format.lower(), 0
+        )
+        self._format_combo.setCurrentIndex(idx)
+        self._format_combo.currentIndexChanged.connect(self._on_format_changed)
+        out_layout.addRow("Format:", self._format_combo)
+
+        self._depth_combo = QComboBox()
+        self._depth_combo.addItems(["16-bit", "24-bit", "32-bit float"])
+        depth_idx = {16: 0, 24: 1, 32: 2}.get(self._config.export_bit_depth, 1)
+        self._depth_combo.setCurrentIndex(depth_idx)
+        self._depth_label = QLabel("Bit Depth:")
+        out_layout.addRow(self._depth_label, self._depth_combo)
+
+        self._bitrate_combo = QComboBox()
+        self._bitrate_combo.addItems(["128 kbps", "192 kbps", "256 kbps", "320 kbps"])
+        br_idx = {128: 0, 192: 1, 256: 2, 320: 3}.get(
+            self._config.export_bitrate_kbps, 3
+        )
+        self._bitrate_combo.setCurrentIndex(br_idx)
+        self._bitrate_label = QLabel("Bitrate:")
+        out_layout.addRow(self._bitrate_label, self._bitrate_combo)
+
+        self._output_edit = QLineEdit()
+        self._output_edit.setPlaceholderText("Output file path...")
+        out_browse = QPushButton("Browse...")
+        out_browse.clicked.connect(self._browse_output)
+        out_row = QHBoxLayout()
+        out_row.addWidget(self._output_edit, stretch=1)
+        out_row.addWidget(out_browse)
+        out_layout.addRow("Save to:", out_row)
+
+        layout.addWidget(out_group)
+        self._on_format_changed(self._format_combo.currentIndex())
+
+        # Note about video
+        note = QLabel("Video files: audio track will be extracted and corrected.")
+        note.setProperty("cssClass", "dim")
+        layout.addWidget(note)
+
+        # Buttons
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        self._ok_btn = buttons.button(QDialogButtonBox.StandardButton.Ok)
+        self._ok_btn.setText("Fix && Export")
+        self._ok_btn.setProperty("cssClass", "accent")
+        buttons.accepted.connect(self._on_accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+    # ---- Mode toggle ------------------------------------------------------
+
+    def _on_mode_changed(self, compare_checked: bool) -> None:
+        self._compare_group.setVisible(compare_checked)
+        self._manual_group.setVisible(not compare_checked)
+
+    # ---- File browsing ----------------------------------------------------
+
+    def _browse_drifted(self) -> None:
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Select Drifted File", "", _AUDIO_VIDEO_FILTER
+        )
+        if path:
+            self._drifted_edit.setText(path)
+            self._input_path = path
+            self._update_default_output()
+
+    def _browse_reference(self) -> None:
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Select Reference File", "", _AUDIO_VIDEO_FILTER
+        )
+        if path:
+            self._ref_edit.setText(path)
+            self._reference_path = path
+
+    def _browse_manual_file(self) -> None:
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Select Audio File", "", _AUDIO_VIDEO_FILTER
+        )
+        if path:
+            self._manual_file_edit.setText(path)
+            self._input_path = path
+            self._update_default_output()
+
+    def _browse_output(self) -> None:
+        fmt = self._format_combo.currentText().lower()
+        path, _ = QFileDialog.getSaveFileName(
+            self, "Save Corrected Audio",
+            self._output_edit.text(),
+            f"{fmt.upper()} Files (*.{fmt})",
+        )
+        if path:
+            self._output_edit.setText(path)
+            self._output_path = path
+
+    def _update_default_output(self) -> None:
+        """Set a sensible default output path based on input file."""
+        if not self._input_path:
+            return
+        from pathlib import Path
+        p = Path(self._input_path)
+        fmt = self._format_combo.currentText().lower()
+        default = str(p.parent / f"{p.stem}_corrected.{fmt}")
+        self._output_edit.setText(default)
+        self._output_path = default
+
+    # ---- Format toggle ----------------------------------------------------
+
+    def _on_format_changed(self, index: int) -> None:
+        is_mp3 = index == 3
+        self._depth_label.setVisible(not is_mp3)
+        self._depth_combo.setVisible(not is_mp3)
+        self._bitrate_label.setVisible(is_mp3)
+        self._bitrate_combo.setVisible(is_mp3)
+        # Update default output extension
+        if self._input_path:
+            self._update_default_output()
+
+    # ---- Measure drift (compare mode) ------------------------------------
+
+    def _on_measure(self) -> None:
+        drifted = self._drifted_edit.text().strip()
+        ref = self._ref_edit.text().strip()
+        if not drifted or not ref:
+            self._measure_result.setText("Please select both files first.")
+            return
+
+        self._measure_btn.setEnabled(False)
+        self._measure_btn.setText("Measuring...")
+        self._measure_result.setText("Loading files and measuring drift...")
+
+        self._measure_worker = _MeasureDriftWorker(drifted, ref, self)
+        self._measure_worker.finished.connect(self._on_measure_done)
+        self._measure_worker.error.connect(self._on_measure_error)
+        self._measure_worker.start()
+
+    def _on_measure_done(self, drift_ppm: float, r_squared: float) -> None:
+        self._measure_worker = None
+        self._measure_btn.setEnabled(True)
+        self._measure_btn.setText("Measure Drift")
+        self._drift_ppm = drift_ppm
+
+        if abs(drift_ppm) < 0.3:
+            self._measure_result.setText(
+                f"No significant drift detected ({drift_ppm:+.2f} ppm, "
+                f"R²={r_squared:.3f}). Below 0.3 ppm threshold — "
+                f"you can still proceed if needed."
+            )
+        else:
+            self._measure_result.setText(
+                f"Detected drift: {drift_ppm:+.2f} ppm (R²={r_squared:.3f})"
+            )
+
+    def _on_measure_error(self, msg: str) -> None:
+        self._measure_worker = None
+        self._measure_btn.setEnabled(True)
+        self._measure_btn.setText("Measure Drift")
+        self._measure_result.setText(f"Error: {msg}")
+
+    # ---- Accept -----------------------------------------------------------
+
+    def _on_accept(self) -> None:
+        # Determine input path
+        if self._compare_radio.isChecked():
+            self._input_path = self._drifted_edit.text().strip()
+            if not self._input_path:
+                QMessageBox.warning(self, "Missing File", "Please select the drifted file.")
+                return
+        else:
+            self._input_path = self._manual_file_edit.text().strip()
+            self._drift_ppm = self._ppm_spin.value()
+            if not self._input_path:
+                QMessageBox.warning(self, "Missing File", "Please select an audio file.")
+                return
+
+        if abs(self._drift_ppm) < 1e-6 and self._compare_radio.isChecked():
+            QMessageBox.warning(
+                self, "No Drift Measured",
+                "Click 'Measure Drift' first, or switch to Manual mode.",
+            )
+            return
+
+        self._output_path = self._output_edit.text().strip()
+        if not self._output_path:
+            QMessageBox.warning(self, "Missing Output", "Please specify an output file path.")
+            return
+
+        # Prevent overwriting input
+        if os.path.abspath(self._output_path) == os.path.abspath(self._input_path):
+            QMessageBox.warning(
+                self, "Same File",
+                "Output path cannot be the same as the input file.",
+            )
+            return
+
+        # Save config
+        fmt_map = {0: "wav", 1: "aiff", 2: "flac", 3: "mp3"}
+        self._config.export_format = fmt_map[self._format_combo.currentIndex()]
+        depth_map = {0: 16, 1: 24, 2: 32}
+        self._config.export_bit_depth = depth_map[self._depth_combo.currentIndex()]
+        bitrate_map = {0: 128, 1: 192, 2: 256, 3: 320}
+        self._config.export_bitrate_kbps = bitrate_map[self._bitrate_combo.currentIndex()]
+
+        self.accept()
+
+    # ---- Properties -------------------------------------------------------
+
+    @property
+    def input_path(self) -> str:
+        return self._input_path
+
+    @property
+    def drift_ppm(self) -> float:
+        return self._drift_ppm
+
+    @property
+    def output_path(self) -> str:
+        return self._output_path
 
     @property
     def config(self) -> SyncConfig:

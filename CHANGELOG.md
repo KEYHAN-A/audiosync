@@ -5,6 +5,18 @@ All notable changes to AudioSync Pro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.1] - 2026-02-08
+
+### Added
+- **Standalone Drift Fix tool** (Tools > Fix Drift, Ctrl+Shift+D) — Correct clock drift on individual audio/video files without running the full sync workflow. Two modes:
+  - **Compare mode**: Import a drifted file and a reference file; drift is measured automatically using the same windowed cross-correlation algorithm.
+  - **Manual mode**: Enter a known drift rate (ppm) and the app resamples the file to compensate.
+- Export corrected audio as WAV, AIFF, FLAC, or MP3 directly from the drift fix dialog.
+
+### Fixed
+- Website "Sign In" links now go directly to the login page (`studio.keyhan.info/login`) instead of the homepage.
+- Dashboard user email no longer overflows the stat card container — long emails are truncated with ellipsis and the card minimum width is increased.
+
 ## [2.5.0] - 2026-02-08
 
 ### Added

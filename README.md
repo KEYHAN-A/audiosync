@@ -2,7 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub](https://img.shields.io/badge/GitHub-KEYHAN--A%2Faudiosync-181717?logo=github)](https://github.com/KEYHAN-A/audiosync)
-[![Version](https://img.shields.io/badge/version-2.5.0-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
+[![Version](https://img.shields.io/badge/version-2.5.1-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-a78bfa)]()
 [![Website](https://img.shields.io/badge/website-audiosync.keyhan.info-38bdf8)](https://audiosync.keyhan.info)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-keyhan--a.github.io%2Faudiosync-222?logo=github)](https://keyhan-a.github.io/audiosync/)
@@ -49,7 +49,7 @@ AudioSync Pro is designed for professional audio workflows where quality matters
 - **Polyphase resampling** — SciPy-powered sample rate conversion with minimal artifacts
 - **Lossless format support** — Native WAV, AIFF, and FLAC export
 - **MP3 export** — Lossy export via FFmpeg with configurable bitrate (128–320 kbps)
-- **Clock drift correction** — Automatic detection and compensation of sample clock differences between devices, keeping audio aligned for the entire recording duration
+- **Clock drift correction** — Automatic detection and compensation of sample clock differences between devices, keeping audio aligned for the entire recording duration. Also available as a standalone tool (Tools > Fix Drift) for correcting individual files
 - **Sample-rate preservation** — Exports at your project's highest native sample rate
 - **Analysis at 8 kHz** — Cross-correlation runs on downsampled copies; your original files are never modified
 
@@ -136,6 +136,7 @@ To override, click the menu on a track card and select **Set as Reference**.
 | Ctrl+O         | Add Files                |
 | Ctrl+E         | Export Audio             |
 | Ctrl+Shift+T   | Export Timeline for NLE  |
+| Ctrl+Shift+D   | Fix Drift (standalone)   |
 | Ctrl+Z         | Reset                    |
 | Delete         | Remove Selected          |
 | Ctrl+Q         | Quit                     |
@@ -181,7 +182,7 @@ build scripts, and the About dialog read from this single source.
 
 ```python
 # version.py
-__version__ = "2.5.0"
+__version__ = "2.5.1"
 ```
 
 ---

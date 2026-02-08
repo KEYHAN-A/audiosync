@@ -61,6 +61,7 @@ from .dialogs import (
     AboutDialog,
     CloudProjectsDialog,
     DeviceAuthDialog,
+    DriftFixDialog,
     ExportDialog,
     ImportProgressDialog,
     ProcessingDialog,
@@ -235,6 +236,72 @@ class _ExportWorker(QThread):
         self.finished.emit(exported, errors)
 
 
+class _DriftFixWorker(QThread):
+    """Apply drift correction to a single file and write output."""
+
+    progress = pyqtSignal(int, int, str)
+    finished = pyqtSignal(str)            # output_path
+    error = pyqtSignal(str)
+
+    def __init__(
+        self,
+        input_path: str,
+        drift_ppm: float,
+        output_path: str,
+        config: SyncConfig,
+    ) -> None:
+        super().__init__()
+        self._input_path = input_path
+        self._drift_ppm = drift_ppm
+        self._output_path = output_path
+        self._config = config
+
+    def run(self) -> None:
+        try:
+            import soundfile as sf
+            from core.audio_io import load_clip, read_clip_full_res, _export_track_mp3
+            from core.engine import apply_drift_correction
+
+            self.progress.emit(1, 3, "Loading audio at full resolution...")
+
+            # Load clip metadata at 8 kHz to get original_sr / channels info
+            clip = load_clip(self._input_path)
+            target_sr = self._config.export_sr or clip.original_sr
+
+            # Read full-resolution audio
+            audio = read_clip_full_res(clip, target_sr)
+
+            self.progress.emit(2, 3, f"Correcting drift ({self._drift_ppm:+.2f} ppm)...")
+            audio = apply_drift_correction(audio, self._drift_ppm)
+
+            # Clip to [-1, 1]
+            import numpy as np
+            audio = np.clip(audio, -1.0, 1.0)
+
+            self.progress.emit(3, 3, "Writing output file...")
+
+            os.makedirs(os.path.dirname(os.path.abspath(self._output_path)), exist_ok=True)
+
+            if self._config.is_lossy:
+                # Flatten to mono or keep multi-channel for MP3
+                _export_track_mp3(
+                    audio, self._output_path, target_sr,
+                    self._config.export_bitrate_kbps,
+                )
+            else:
+                sf.write(
+                    self._output_path,
+                    audio,
+                    target_sr,
+                    subtype=self._config.subtype,
+                    format=self._config.format_str,
+                )
+
+            self.finished.emit(self._output_path)
+        except Exception as exc:
+            self.error.emit(f"{exc}\n{traceback.format_exc()}")
+
+
 class _GroupedImportWorker(QThread):
     """Import files grouped by device into multiple tracks."""
 
@@ -380,6 +447,13 @@ class MainWindow(QMainWindow):
         act = edit_menu.addAction("R&emove Selected")
         act.setShortcut(QKeySequence("Delete"))
         act.triggered.connect(self._on_remove)
+
+        # ----- Tools menu -----
+        tools_menu = mb.addMenu("&Tools")
+
+        act = tools_menu.addAction("Fix &Drift...")
+        act.setShortcut(QKeySequence("Ctrl+Shift+D"))
+        act.triggered.connect(self._on_fix_drift)
 
         # ----- Account menu -----
         self._account_menu = mb.addMenu("&Account")
@@ -1118,6 +1192,52 @@ class MainWindow(QMainWindow):
                 self, "Export Failed",
                 f"Failed to export timeline:\n\n{exc}",
             )
+
+    # ----- Fix Drift (standalone tool) ---------------------------------------
+
+    def _on_fix_drift(self) -> None:
+        """Open the standalone drift fix tool."""
+        dlg = DriftFixDialog(self._config, self)
+        if dlg.exec() != DriftFixDialog.DialogCode.Accepted:
+            return
+
+        cancel = Event()
+        self._cancel_event = cancel
+
+        proc_dlg = ProcessingDialog("Fixing Drift", self)
+        self._processing_dlg = proc_dlg
+
+        worker = _DriftFixWorker(
+            dlg.input_path, dlg.drift_ppm, dlg.output_path, dlg.config,
+        )
+        worker.progress.connect(proc_dlg.update_progress)
+        worker.finished.connect(
+            lambda path: self._on_drift_fix_done(path, proc_dlg)
+        )
+        worker.error.connect(lambda e: self._on_worker_error(e, proc_dlg))
+
+        proc_dlg._cancel_btn.clicked.disconnect()
+        proc_dlg._cancel_btn.clicked.connect(lambda: (
+            cancel.set(),
+            proc_dlg._cancel_btn.setEnabled(False),
+            proc_dlg._cancel_btn.setText("Cancelling..."),
+        ))
+
+        self._worker = worker
+        self._set_busy(True, f"Correcting drift ({dlg.drift_ppm:+.2f} ppm)...")
+        worker.start()
+        proc_dlg.exec()
+
+    def _on_drift_fix_done(self, output_path: str, dlg: "ProcessingDialog") -> None:
+        self._worker = None
+        self._cancel_event = None
+        self._set_busy(False)
+        self._set_status(f"Drift-corrected audio saved to {output_path}")
+        dlg.finish("Drift correction complete")
+        QMessageBox.information(
+            self, "Drift Fixed",
+            f"Corrected audio saved to:\n\n{output_path}",
+        )
 
     # ----- Workflow bar actions ----------------------------------------------
 

@@ -364,7 +364,7 @@ def sync(
                     and clip.drift_confidence > 0.5):
                 _progress(step, total_steps,
                           f"Correcting drift ({clip.drift_ppm:+.1f} ppm) for '{clip.name}'...")
-                audio = _apply_drift_correction(audio, clip.drift_ppm)
+                audio = apply_drift_correction(audio, clip.drift_ppm)
                 clip.drift_corrected = True
                 logger.info("Applied drift correction %.2f ppm to '%s'",
                             clip.drift_ppm, clip.name)
@@ -620,7 +620,7 @@ def measure_drift(
     return drift_ppm, r_squared
 
 
-def _apply_drift_correction(
+def apply_drift_correction(
     audio: np.ndarray,
     drift_ppm: float,
 ) -> np.ndarray:
