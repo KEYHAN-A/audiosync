@@ -130,6 +130,7 @@ jobs:
 
   create-release:
     needs: [build-macos, build-windows, build-linux]
+    if: always() && needs.build-macos.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -142,6 +143,18 @@ jobs:
       - name: Extract version from tag
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Collect release files
+        id: files
+        run: |
+          FILES=""
+          for f in artifacts/AudioSync-Pro-macOS/AudioSync-Pro-macOS.zip \
+                   artifacts/AudioSync-Pro-Windows/AudioSync-Pro-Windows.zip \
+                   artifacts/AudioSync-Pro-Linux/AudioSync-Pro-Linux.tar.gz; do
+            [ -f "$f" ] && FILES="$FILES$f\n"
+          done
+          echo -e "$FILES" > /tmp/release_files.txt
+          cat /tmp/release_files.txt
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -162,5 +175,6 @@ jobs:
             artifacts/AudioSync-Pro-macOS/AudioSync-Pro-macOS.zip
             artifacts/AudioSync-Pro-Windows/AudioSync-Pro-Windows.zip
             artifacts/AudioSync-Pro-Linux/AudioSync-Pro-Linux.tar.gz
+          fail_on_unmatched_files: false
           draft: false
           prerelease: false

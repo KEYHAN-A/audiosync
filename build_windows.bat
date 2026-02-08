@@ -113,6 +113,7 @@ pyinstaller ^
     --exclude-module "PIL" ^
     --exclude-module "IPython" ^
     --exclude-module "jupyter" ^
+    --exclude-module "opentimelineio" ^
     --noconfirm ^
     --clean ^
     main.py
