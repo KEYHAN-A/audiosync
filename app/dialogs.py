@@ -1,13 +1,16 @@
-"""Dialogs — processing screen, export settings, timeline export, about."""
+"""Dialogs — processing, export, timeline export, device auth, cloud projects, about."""
 
 from __future__ import annotations
 
+import logging
 import os
 import time
+import webbrowser
 from typing import Optional
 
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal
 from PyQt6.QtWidgets import (
+    QApplication,
     QComboBox,
     QDialog,
     QDialogButtonBox,
@@ -18,6 +21,7 @@ from PyQt6.QtWidgets import (
     QHeaderView,
     QLabel,
     QLineEdit,
+    QMessageBox,
     QProgressBar,
     QPushButton,
     QSpinBox,
@@ -29,6 +33,8 @@ from PyQt6.QtWidgets import (
 
 from core.models import SyncConfig
 from version import __version__, APP_NAME, GITHUB_URL
+
+logger = logging.getLogger("audiosync.dialogs")
 
 # Defensive import — opentimelineio may not be available in all builds
 try:
@@ -577,6 +583,409 @@ class AboutDialog(QDialog):
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
         buttons.accepted.connect(self.accept)
         layout.addWidget(buttons)
+
+
+# ---------------------------------------------------------------------------
+#  Device Auth Dialog — sign in from the desktop via device-code flow
+# ---------------------------------------------------------------------------
+
+class _DevicePollWorker(QThread):
+    """Background thread that polls the device token endpoint."""
+
+    success = pyqtSignal(dict)   # {token, user}
+    error = pyqtSignal(str)
+
+    def __init__(self, cloud_client, device_code: str, interval: int) -> None:
+        super().__init__()
+        self._cloud = cloud_client
+        self._device_code = device_code
+        self._interval = interval
+        self._stop = False
+
+    def stop(self) -> None:
+        self._stop = True
+
+    def run(self) -> None:
+        from core.cloud import CloudError
+        try:
+            start = time.time()
+            while not self._stop and (time.time() - start) < 600:
+                result = self._cloud._request("POST", "/auth/device/token", body={
+                    "device_code": self._device_code,
+                })
+                if result.get("success") and result.get("token"):
+                    self._cloud.set_token(result["token"])
+                    self.success.emit(result)
+                    return
+                error = result.get("error", "")
+                if error == "expired":
+                    self.error.emit("Device code expired. Please try again.")
+                    return
+                if error == "authorization_pending":
+                    time.sleep(self._interval)
+                    continue
+                self.error.emit(f"Unexpected: {error}")
+                return
+            if not self._stop:
+                self.error.emit("Timed out waiting for authorization.")
+        except CloudError as exc:
+            self.error.emit(str(exc))
+        except Exception as exc:
+            self.error.emit(f"Error: {exc}")
+
+
+class DeviceAuthDialog(QDialog):
+    """
+    Modal dialog for the device-code OAuth flow.
+
+    Shows the user_code prominently, offers a button to open the browser,
+    and polls for authorization in a background thread.
+    """
+
+    auth_success = pyqtSignal(dict)  # emits user info on successful auth
+
+    def __init__(self, cloud_client, parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+        self.setWindowTitle("Sign In to AudioSync Cloud")
+        self.setMinimumSize(420, 320)
+        self.setModal(True)
+        self._cloud = cloud_client
+        self._worker: Optional[_DevicePollWorker] = None
+        self._device_code: Optional[str] = None
+        self._verification_uri: Optional[str] = None
+
+        self._build_ui()
+        self._start_flow()
+
+    def _build_ui(self) -> None:
+        layout = QVBoxLayout(self)
+        layout.setSpacing(16)
+        layout.setContentsMargins(32, 28, 32, 24)
+
+        title = QLabel("Sign In")
+        title.setProperty("cssClass", "heading")
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(title)
+
+        desc = QLabel(
+            "Enter this code on the web to authorize\n"
+            "your desktop app with your Google account."
+        )
+        desc.setWordWrap(True)
+        desc.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        desc.setProperty("cssClass", "dim")
+        layout.addWidget(desc)
+
+        # User code — large and prominent
+        self._code_label = QLabel("--------")
+        self._code_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._code_label.setTextInteractionFlags(
+            Qt.TextInteractionFlag.TextSelectableByMouse
+        )
+        self._code_label.setStyleSheet(
+            "font-size: 32px; font-weight: 700; letter-spacing: 6px; "
+            "color: #67e8f9; padding: 16px; "
+            "background: rgba(6, 182, 212, 0.08); "
+            "border: 1px solid rgba(6, 182, 212, 0.20); "
+            "border-radius: 16px;"
+        )
+        layout.addWidget(self._code_label)
+
+        # Copy + Open browser buttons
+        btn_row = QHBoxLayout()
+        self._copy_btn = QPushButton("Copy Code")
+        self._copy_btn.clicked.connect(self._copy_code)
+        self._copy_btn.setEnabled(False)
+        btn_row.addWidget(self._copy_btn)
+
+        self._open_btn = QPushButton("Open Browser")
+        self._open_btn.setProperty("cssClass", "accent")
+        self._open_btn.clicked.connect(self._open_browser)
+        self._open_btn.setEnabled(False)
+        btn_row.addWidget(self._open_btn)
+        layout.addLayout(btn_row)
+
+        # Status
+        self._status_label = QLabel("Requesting code...")
+        self._status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._status_label.setProperty("cssClass", "dim")
+        layout.addWidget(self._status_label)
+
+        layout.addStretch()
+
+        # Cancel
+        cancel_row = QHBoxLayout()
+        cancel_row.addStretch()
+        self._cancel_btn = QPushButton("Cancel")
+        self._cancel_btn.setProperty("cssClass", "danger")
+        self._cancel_btn.clicked.connect(self._on_cancel)
+        cancel_row.addWidget(self._cancel_btn)
+        layout.addLayout(cancel_row)
+
+    def _start_flow(self) -> None:
+        """Request a device code from the API."""
+        try:
+            result = self._cloud.start_device_flow()
+            self._device_code = result.get("device_code")
+            user_code = result.get("user_code", "????-????")
+            self._verification_uri = result.get("verification_uri", "")
+
+            self._code_label.setText(user_code)
+            self._copy_btn.setEnabled(True)
+            self._open_btn.setEnabled(True)
+            self._status_label.setText("Waiting for authorization...")
+
+            # Start polling
+            interval = result.get("interval", 5)
+            self._worker = _DevicePollWorker(self._cloud, self._device_code, interval)
+            self._worker.success.connect(self._on_auth_success)
+            self._worker.error.connect(self._on_auth_error)
+            self._worker.start()
+
+        except Exception as exc:
+            self._status_label.setText(f"Error: {exc}")
+            logger.error("Device flow start failed: %s", exc)
+
+    def _copy_code(self) -> None:
+        code = self._code_label.text()
+        clipboard = QApplication.clipboard()
+        if clipboard:
+            clipboard.setText(code)
+        self._copy_btn.setText("Copied!")
+        QTimer.singleShot(2000, lambda: self._copy_btn.setText("Copy Code"))
+
+    def _open_browser(self) -> None:
+        if self._verification_uri:
+            code = self._code_label.text()
+            url = f"{self._verification_uri}?code={code}"
+            webbrowser.open(url)
+
+    def _on_auth_success(self, result: dict) -> None:
+        user = result.get("user", {})
+        name = user.get("name", user.get("email", "User"))
+        self._status_label.setText(f"Signed in as {name}")
+        self._status_label.setStyleSheet("color: #34d399; font-size: 13px; font-weight: 600;")
+        self._code_label.setText("\u2713")
+        self._code_label.setStyleSheet(
+            "font-size: 48px; font-weight: 700; color: #34d399; padding: 16px; "
+            "background: rgba(52, 211, 153, 0.08); "
+            "border: 1px solid rgba(52, 211, 153, 0.20); "
+            "border-radius: 16px;"
+        )
+        self._copy_btn.setVisible(False)
+        self._open_btn.setVisible(False)
+        self._cancel_btn.setText("Done")
+        self._cancel_btn.setProperty("cssClass", "accent")
+        self._cancel_btn.style().unpolish(self._cancel_btn)
+        self._cancel_btn.style().polish(self._cancel_btn)
+        self._cancel_btn.clicked.disconnect()
+        self._cancel_btn.clicked.connect(self.accept)
+        self.auth_success.emit(user)
+
+    def _on_auth_error(self, message: str) -> None:
+        self._status_label.setText(message)
+        self._status_label.setStyleSheet("color: #f87171;")
+
+    def _on_cancel(self) -> None:
+        if self._worker:
+            self._worker.stop()
+            self._worker.wait(2000)
+        self.reject()
+
+    def closeEvent(self, event) -> None:
+        if self._worker:
+            self._worker.stop()
+            self._worker.wait(2000)
+        event.accept()
+
+
+# ---------------------------------------------------------------------------
+#  Cloud Projects Dialog — list / open / delete / save cloud projects
+# ---------------------------------------------------------------------------
+
+class _CloudWorker(QThread):
+    """Background thread for cloud operations."""
+
+    result = pyqtSignal(object)   # result data
+    error = pyqtSignal(str)
+
+    def __init__(self, func, *args) -> None:
+        super().__init__()
+        self._func = func
+        self._args = args
+
+    def run(self) -> None:
+        try:
+            r = self._func(*self._args)
+            self.result.emit(r)
+        except Exception as exc:
+            self.error.emit(str(exc))
+
+
+class CloudProjectsDialog(QDialog):
+    """
+    Dialog for managing cloud projects.
+
+    - Table showing all projects (name, description, updated_at)
+    - Open / Delete / Save buttons
+    """
+
+    project_opened = pyqtSignal(dict)   # emits full project data when user opens one
+
+    def __init__(
+        self,
+        cloud_client,
+        has_current_project: bool = False,
+        parent: Optional[QWidget] = None,
+    ) -> None:
+        super().__init__(parent)
+        self.setWindowTitle("Cloud Projects")
+        self.setMinimumSize(620, 440)
+        self.setModal(True)
+        self._cloud = cloud_client
+        self._has_current = has_current_project
+        self._projects: list[dict] = []
+        self._worker: Optional[_CloudWorker] = None
+
+        self._build_ui()
+        self._load_projects()
+
+    def _build_ui(self) -> None:
+        layout = QVBoxLayout(self)
+        layout.setSpacing(12)
+        layout.setContentsMargins(24, 20, 24, 20)
+
+        title = QLabel("Cloud Projects")
+        title.setProperty("cssClass", "heading")
+        layout.addWidget(title)
+
+        # Table
+        self._table = QTableWidget(0, 3)
+        self._table.setHorizontalHeaderLabels(["Name", "Description", "Last Updated"])
+        header = self._table.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        self._table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self._table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self._table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        layout.addWidget(self._table, stretch=1)
+
+        # Status
+        self._status_label = QLabel("Loading...")
+        self._status_label.setProperty("cssClass", "dim")
+        layout.addWidget(self._status_label)
+
+        # Buttons
+        btn_row = QHBoxLayout()
+
+        self._open_btn = QPushButton("Open")
+        self._open_btn.setProperty("cssClass", "accent")
+        self._open_btn.setEnabled(False)
+        self._open_btn.clicked.connect(self._on_open)
+        btn_row.addWidget(self._open_btn)
+
+        self._delete_btn = QPushButton("Delete")
+        self._delete_btn.setProperty("cssClass", "danger")
+        self._delete_btn.setEnabled(False)
+        self._delete_btn.clicked.connect(self._on_delete)
+        btn_row.addWidget(self._delete_btn)
+
+        btn_row.addStretch()
+
+        self._refresh_btn = QPushButton("Refresh")
+        self._refresh_btn.clicked.connect(self._load_projects)
+        btn_row.addWidget(self._refresh_btn)
+
+        close_btn = QPushButton("Close")
+        close_btn.clicked.connect(self.accept)
+        btn_row.addWidget(close_btn)
+
+        layout.addLayout(btn_row)
+
+        # Selection change
+        self._table.itemSelectionChanged.connect(self._on_selection_changed)
+
+    def _load_projects(self) -> None:
+        self._status_label.setText("Loading projects...")
+        self._table.setRowCount(0)
+        self._open_btn.setEnabled(False)
+        self._delete_btn.setEnabled(False)
+
+        self._worker = _CloudWorker(self._cloud.list_projects)
+        self._worker.result.connect(self._on_projects_loaded)
+        self._worker.error.connect(self._on_load_error)
+        self._worker.start()
+
+    def _on_projects_loaded(self, projects) -> None:
+        self._projects = projects if projects else []
+        self._table.setRowCount(len(self._projects))
+
+        for i, proj in enumerate(self._projects):
+            self._table.setItem(i, 0, QTableWidgetItem(proj.get("name", "")))
+            self._table.setItem(i, 1, QTableWidgetItem(proj.get("description", "")))
+            updated = proj.get("updated_at", "")
+            if updated:
+                # Show just date + time
+                updated = updated.replace("T", " ").split(".")[0]
+            self._table.setItem(i, 2, QTableWidgetItem(updated))
+
+        count = len(self._projects)
+        self._status_label.setText(
+            f"{count} project{'s' if count != 1 else ''}" if count > 0
+            else "No cloud projects yet"
+        )
+
+    def _on_load_error(self, message: str) -> None:
+        self._status_label.setText(f"Error: {message}")
+
+    def _on_selection_changed(self) -> None:
+        has_selection = len(self._table.selectedItems()) > 0
+        self._open_btn.setEnabled(has_selection)
+        self._delete_btn.setEnabled(has_selection)
+
+    def _on_open(self) -> None:
+        row = self._table.currentRow()
+        if row < 0 or row >= len(self._projects):
+            return
+
+        project_id = self._projects[row].get("id")
+        self._status_label.setText("Downloading project...")
+        self._open_btn.setEnabled(False)
+
+        self._worker = _CloudWorker(self._cloud.load_project, project_id)
+        self._worker.result.connect(self._on_project_downloaded)
+        self._worker.error.connect(self._on_load_error)
+        self._worker.start()
+
+    def _on_project_downloaded(self, project: dict) -> None:
+        self._status_label.setText("Project loaded.")
+        self.project_opened.emit(project)
+        self.accept()
+
+    def _on_delete(self) -> None:
+        row = self._table.currentRow()
+        if row < 0 or row >= len(self._projects):
+            return
+
+        name = self._projects[row].get("name", "this project")
+        reply = QMessageBox.question(
+            self, "Delete Project",
+            f"Are you sure you want to delete \"{name}\" from the cloud?\n\n"
+            "This action cannot be undone.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        project_id = self._projects[row].get("id")
+        self._status_label.setText("Deleting...")
+
+        self._worker = _CloudWorker(self._cloud.delete_project, project_id)
+        self._worker.result.connect(lambda _: self._load_projects())
+        self._worker.error.connect(self._on_load_error)
+        self._worker.start()
 
 
 # ---------------------------------------------------------------------------

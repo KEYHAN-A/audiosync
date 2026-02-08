@@ -9,12 +9,13 @@ from threading import Event
 from typing import Optional
 
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QSize
-from PyQt6.QtGui import QKeySequence
+from PyQt6.QtGui import QAction, QKeySequence
 from PyQt6.QtWidgets import (
     QApplication,
     QFileDialog,
     QFrame,
     QHBoxLayout,
+    QInputDialog,
     QLabel,
     QMainWindow,
     QMessageBox,
@@ -36,9 +37,17 @@ from core.audio_io import (
     is_supported_file,
     load_clip,
 )
+from core.cloud import CloudClient, CloudError
 from core.engine import analyze, sync
 from core.grouping import group_files_by_device
 from core.models import CancelledError, SyncConfig, SyncResult, Track
+from core.project_io import (
+    FILE_EXTENSION,
+    deserialize_project,
+    load_project,
+    save_project,
+    serialize_project,
+)
 # Defensive import — opentimelineio may not be available in all builds
 try:
     from core.timeline_export import export_timeline
@@ -49,6 +58,8 @@ except ImportError:
 
 from .dialogs import (
     AboutDialog,
+    CloudProjectsDialog,
+    DeviceAuthDialog,
     ExportDialog,
     ImportProgressDialog,
     ProcessingDialog,
@@ -277,6 +288,13 @@ class MainWindow(QMainWindow):
         self._cancel_event: Optional[Event] = None
         self._processing_dlg: Optional[ProcessingDialog] = None
 
+        # Project state
+        self._project_path: Optional[str] = None
+        self._cloud_project_id: Optional[int] = None
+
+        # Cloud client
+        self._cloud = CloudClient()
+
         # Clean stale cache on startup
         cleanup_cache(max_age_hours=24)
 
@@ -284,6 +302,7 @@ class MainWindow(QMainWindow):
         self._build_central()
         self._build_statusbar()
         self._update_button_states()
+        self._update_account_menu()
 
         self.setAcceptDrops(True)
 
@@ -294,6 +313,7 @@ class MainWindow(QMainWindow):
     def _build_menubar(self) -> None:
         mb = self.menuBar()
 
+        # ----- File menu -----
         file_menu = mb.addMenu("&File")
 
         act = file_menu.addAction("Add &Track")
@@ -306,12 +326,25 @@ class MainWindow(QMainWindow):
 
         file_menu.addSeparator()
 
+        act = file_menu.addAction("Open &Project...")
+        act.setShortcut(QKeySequence("Ctrl+Shift+O"))
+        act.triggered.connect(self._on_open_project)
+
+        act = file_menu.addAction("&Save Project")
+        act.setShortcut(QKeySequence("Ctrl+S"))
+        act.triggered.connect(self._on_save_project)
+
+        act = file_menu.addAction("Save Project &As...")
+        act.setShortcut(QKeySequence("Ctrl+Shift+S"))
+        act.triggered.connect(self._on_save_project_as)
+
+        file_menu.addSeparator()
+
         act = file_menu.addAction("&Analyze")
         act.setShortcut(QKeySequence("Ctrl+Shift+A"))
         act.triggered.connect(self._on_analyze)
 
-        act = file_menu.addAction("&Sync")
-        act.setShortcut(QKeySequence("Ctrl+Shift+S"))
+        act = file_menu.addAction("S&ync")
         act.triggered.connect(self._on_sync)
 
         file_menu.addSeparator()
@@ -336,6 +369,7 @@ class MainWindow(QMainWindow):
         act.setShortcut(QKeySequence("Ctrl+Q"))
         act.triggered.connect(self.close)
 
+        # ----- Edit menu -----
         edit_menu = mb.addMenu("&Edit")
 
         act = edit_menu.addAction("&Reset")
@@ -346,6 +380,11 @@ class MainWindow(QMainWindow):
         act.setShortcut(QKeySequence("Delete"))
         act.triggered.connect(self._on_remove)
 
+        # ----- Account menu -----
+        self._account_menu = mb.addMenu("&Account")
+        # Actions are populated dynamically by _update_account_menu
+
+        # ----- Help menu -----
         help_menu = mb.addMenu("&Help")
         act = help_menu.addAction("&About AudioSync Pro")
         act.triggered.connect(lambda: AboutDialog(self).exec())
@@ -419,6 +458,270 @@ class MainWindow(QMainWindow):
         self._progress_bar.setFixedHeight(14)
         self._progress_bar.setVisible(False)
         sb.addPermanentWidget(self._progress_bar)
+
+        # Right: account indicator
+        self._account_label = QLabel("")
+        self._account_label.setProperty("cssClass", "dim")
+        self._account_label.setStyleSheet(
+            f"color: {COLORS['text_muted']}; font-size: 11px; padding: 0 8px;"
+        )
+        sb.addPermanentWidget(self._account_label)
+        self._update_account_indicator()
+
+    # =====================================================================
+    #  Account / Cloud
+    # =====================================================================
+
+    def _update_account_menu(self) -> None:
+        """Rebuild the Account menu based on current auth state."""
+        menu = self._account_menu
+        menu.clear()
+
+        if self._cloud.is_authenticated():
+            act = menu.addAction("My Account")
+            act.triggered.connect(self._on_my_account)
+
+            act = menu.addAction("Sign Out")
+            act.triggered.connect(self._on_sign_out)
+
+            menu.addSeparator()
+
+            act = menu.addAction("Save to Cloud...")
+            act.triggered.connect(self._on_save_to_cloud)
+
+            act = menu.addAction("Open from Cloud...")
+            act.triggered.connect(self._on_open_from_cloud)
+        else:
+            act = menu.addAction("Sign In...")
+            act.triggered.connect(self._on_sign_in)
+
+    def _update_account_indicator(self) -> None:
+        """Update the status bar account indicator."""
+        if self._cloud.is_authenticated():
+            try:
+                user = self._cloud.get_user()
+                name = user.get("name", user.get("email", "Signed in"))
+                self._account_label.setText(f"\u2601  {name}")
+                self._account_label.setStyleSheet(
+                    f"color: {COLORS['accent']}; font-size: 11px; padding: 0 8px;"
+                )
+            except Exception:
+                self._account_label.setText("\u2601  Signed in")
+                self._account_label.setStyleSheet(
+                    f"color: {COLORS['accent']}; font-size: 11px; padding: 0 8px;"
+                )
+        else:
+            self._account_label.setText("Not signed in")
+            self._account_label.setStyleSheet(
+                f"color: {COLORS['text_muted']}; font-size: 11px; padding: 0 8px;"
+            )
+
+    def _on_sign_in(self) -> None:
+        dlg = DeviceAuthDialog(self._cloud, self)
+        dlg.auth_success.connect(self._on_auth_complete)
+        dlg.exec()
+
+    def _on_auth_complete(self, user: dict) -> None:
+        self._update_account_menu()
+        self._update_account_indicator()
+        name = user.get("name", user.get("email", ""))
+        self._set_status(f"Signed in as {name}")
+
+    def _on_my_account(self) -> None:
+        try:
+            user = self._cloud.get_user()
+            name = user.get("name", "N/A")
+            email = user.get("email", "N/A")
+            role = user.get("role", "free")
+            QMessageBox.information(
+                self, "My Account",
+                f"Name: {name}\nEmail: {email}\nPlan: {role.title()}\n"
+            )
+        except CloudError as exc:
+            if exc.status_code == 401:
+                self._cloud.logout()
+                self._update_account_menu()
+                self._update_account_indicator()
+                self._set_status("Session expired. Please sign in again.")
+            else:
+                QMessageBox.warning(self, "Error", str(exc))
+
+    def _on_sign_out(self) -> None:
+        self._cloud.logout()
+        self._cloud_project_id = None
+        self._update_account_menu()
+        self._update_account_indicator()
+        self._set_status("Signed out.")
+
+    def _on_save_to_cloud(self) -> None:
+        tracks = self._track_panel.tracks
+        if not tracks:
+            QMessageBox.information(
+                self, "Nothing to Save",
+                "Add some tracks and clips before saving to the cloud.",
+            )
+            return
+
+        # Ask for project name
+        default_name = "Untitled Project"
+        if self._project_path:
+            default_name = os.path.splitext(os.path.basename(self._project_path))[0]
+
+        name, ok = QInputDialog.getText(
+            self, "Save to Cloud", "Project name:", text=default_name
+        )
+        if not ok or not name.strip():
+            return
+
+        try:
+            data = serialize_project(tracks, self._sync_result, self._config)
+            result = self._cloud.save_project(
+                name=name.strip(),
+                data=data,
+                project_id=self._cloud_project_id,
+            )
+            self._cloud_project_id = result.get("id", self._cloud_project_id)
+            self._set_status(f"Project \"{name.strip()}\" saved to cloud.")
+        except CloudError as exc:
+            if exc.status_code == 401:
+                self._cloud.logout()
+                self._update_account_menu()
+                self._update_account_indicator()
+                QMessageBox.warning(self, "Session Expired",
+                    "Your session has expired. Please sign in again.")
+            else:
+                QMessageBox.warning(self, "Cloud Error", str(exc))
+
+    def _on_open_from_cloud(self) -> None:
+        has_tracks = len(self._track_panel.tracks) > 0
+        dlg = CloudProjectsDialog(self._cloud, has_current_project=has_tracks, parent=self)
+        dlg.project_opened.connect(self._on_cloud_project_opened)
+        dlg.exec()
+
+    def _on_cloud_project_opened(self, project: dict) -> None:
+        """Load a project downloaded from the cloud."""
+        try:
+            project_data = project.get("data", project)
+            if isinstance(project_data, str):
+                import json
+                project_data = json.loads(project_data)
+
+            tracks, sync_result, config = deserialize_project(project_data)
+
+            # Clear current state
+            self._track_panel.clear_all()
+            self._sync_result = None
+
+            # Load tracks
+            for track in tracks:
+                idx = self._track_panel.add_track(name=track.name)
+                if track.clips:
+                    self._track_panel.add_clips_to_track(idx, track.clips)
+
+            self._sync_result = sync_result
+            self._config = config
+            self._cloud_project_id = project.get("id")
+            self._project_path = None
+
+            self._update_waveform(analyzed=sync_result is not None)
+            self._update_button_states()
+
+            name = project.get("name", "Cloud Project")
+            self.setWindowTitle(f"AudioSync Pro — {name}")
+            self._set_status(f"Opened cloud project: {name}")
+
+        except Exception as exc:
+            logger.error("Failed to open cloud project: %s", exc)
+            QMessageBox.critical(self, "Error", f"Failed to open project:\n{exc}")
+
+    # =====================================================================
+    #  Local Project Save / Open
+    # =====================================================================
+
+    def _on_save_project(self) -> None:
+        """Save project to current path, or prompt for new path."""
+        if self._project_path:
+            self._save_to_path(self._project_path)
+        else:
+            self._on_save_project_as()
+
+    def _on_save_project_as(self) -> None:
+        """Prompt for path and save project."""
+        tracks = self._track_panel.tracks
+        if not tracks:
+            QMessageBox.information(
+                self, "Nothing to Save",
+                "Add some tracks and clips before saving.",
+            )
+            return
+
+        default_name = "Untitled Project" + FILE_EXTENSION
+        if self._project_path:
+            default_name = os.path.basename(self._project_path)
+
+        path, _ = QFileDialog.getSaveFileName(
+            self, "Save Project",
+            os.path.join(os.path.expanduser("~/Desktop"), default_name),
+            f"AudioSync Projects (*{FILE_EXTENSION});;All Files (*)",
+        )
+        if not path:
+            return
+
+        if not path.endswith(FILE_EXTENSION):
+            path += FILE_EXTENSION
+
+        self._save_to_path(path)
+
+    def _save_to_path(self, path: str) -> None:
+        """Save project to the given file path."""
+        try:
+            tracks = self._track_panel.tracks
+            save_project(path, tracks, self._sync_result, self._config)
+            self._project_path = path
+            name = os.path.splitext(os.path.basename(path))[0]
+            self.setWindowTitle(f"AudioSync Pro — {name}")
+            self._set_status(f"Project saved to {path}")
+        except Exception as exc:
+            logger.error("Failed to save project: %s", exc)
+            QMessageBox.critical(self, "Save Error", f"Failed to save:\n{exc}")
+
+    def _on_open_project(self) -> None:
+        """Open a local .audiosync project file."""
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Open Project", "",
+            f"AudioSync Projects (*{FILE_EXTENSION});;All Files (*)",
+        )
+        if not path:
+            return
+
+        try:
+            tracks, sync_result, config = load_project(path)
+
+            # Clear current state
+            self._track_panel.clear_all()
+            self._sync_result = None
+
+            # Load tracks
+            for track in tracks:
+                idx = self._track_panel.add_track(name=track.name)
+                if track.clips:
+                    self._track_panel.add_clips_to_track(idx, track.clips)
+
+            self._sync_result = sync_result
+            self._config = config
+            self._project_path = path
+            self._cloud_project_id = None
+
+            self._update_waveform(analyzed=sync_result is not None)
+            self._update_button_states()
+
+            name = os.path.splitext(os.path.basename(path))[0]
+            self.setWindowTitle(f"AudioSync Pro — {name}")
+            self._set_status(f"Opened project: {name}")
+
+        except Exception as exc:
+            logger.error("Failed to open project: %s", exc)
+            QMessageBox.critical(self, "Open Error", f"Failed to open project:\n{exc}")
 
     # =====================================================================
     #  Actions

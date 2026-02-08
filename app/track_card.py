@@ -598,6 +598,13 @@ class TrackPanel(QWidget):
     def refresh(self) -> None:
         self._rebuild()
 
+    def clear_all(self) -> None:
+        """Remove all tracks and clips."""
+        self._tracks.clear()
+        self._selected_index = -1
+        self._rebuild()
+        self.tracks_changed.emit()
+
     def reset_analysis(self) -> None:
         for track in self._tracks:
             track.synced_audio = None
