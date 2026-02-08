@@ -8,14 +8,20 @@ from __future__ import annotations
 
 import json
 import logging
+import ssl
 import time
 import urllib.error
 import urllib.request
 from typing import Any, Optional
 
+import certifi
+
 from PyQt6.QtCore import QSettings
 
 logger = logging.getLogger("audiosync.cloud")
+
+# SSL context that works inside PyInstaller bundles (bundled CA certs).
+_ssl_ctx = ssl.create_default_context(cafile=certifi.where())
 
 API_BASE = "https://api.keyhan.info"
 SETTINGS_ORG = "KeyhanStudio"
@@ -189,7 +195,7 @@ class CloudClient:
         req = urllib.request.Request(url, data=data, headers=headers, method=method)
 
         try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with urllib.request.urlopen(req, timeout=30, context=_ssl_ctx) as resp:
                 response_data = resp.read().decode("utf-8")
                 if not response_data:
                     return {"success": True}
