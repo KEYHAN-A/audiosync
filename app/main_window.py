@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import os
 import traceback
+import webbrowser
 from threading import Event
 from typing import Optional
 
@@ -495,6 +496,11 @@ class MainWindow(QMainWindow):
             act = menu.addAction("Sign In...")
             act.triggered.connect(self._on_sign_in)
 
+            act = menu.addAction("Create Account...")
+            act.triggered.connect(
+                lambda: webbrowser.open("https://studio.keyhan.info/register")
+            )
+
     def _update_account_indicator(self) -> None:
         """Update the status bar account indicator."""
         if self._cloud.is_authenticated():
@@ -826,7 +832,7 @@ class MainWindow(QMainWindow):
         cancel = Event()
         self._cancel_event = cancel
 
-        dlg = ProcessingDialog("Analyzing", self)
+        dlg = ProcessingDialog("Analyzing & Syncing", self)
         self._processing_dlg = dlg
 
         worker = _AnalyzeWorker(tracks, self._config, cancel)
@@ -859,11 +865,11 @@ class MainWindow(QMainWindow):
         n_clips = sum(t.clip_count for t in self._track_panel.tracks)
         warnings_str = f"  ({len(result.warnings)} warnings)" if result.warnings else ""
         msg = (
-            f"Analyzed {n_clips} clips — timeline {result.total_timeline_s:.1f}s, "
+            f"Synced {n_clips} clips — timeline {result.total_timeline_s:.1f}s, "
             f"avg confidence {result.avg_confidence:.1f}{warnings_str}"
         )
         self._set_status(msg)
-        dlg.finish(f"Analysis complete — {n_clips} clips placed")
+        dlg.finish(f"All clips synced — ready to export")
         self._update_button_states()
 
     # ----- Sync -------------------------------------------------------------
@@ -921,14 +927,14 @@ class MainWindow(QMainWindow):
         self._update_button_states()
 
     def _on_export(self) -> None:
-        tracks = self._track_panel.tracks
-        has_synced = any(t.synced_audio is not None for t in tracks)
-        if not has_synced:
+        if self._sync_result is None:
             QMessageBox.information(
-                self, "Sync First",
-                "Run Analyze and Sync before exporting.",
+                self, "Analyze First",
+                "Run Analyze & Sync before exporting audio.",
             )
             return
+
+        tracks = self._track_panel.tracks
 
         dlg = ExportDialog(self._config, len(tracks), self)
         if dlg.exec() != ExportDialog.DialogCode.Accepted:
@@ -938,6 +944,66 @@ class MainWindow(QMainWindow):
         config = dlg.config
         os.makedirs(output_dir, exist_ok=True)
 
+        # If full-resolution sync hasn't been run yet, do it transparently
+        has_synced = any(t.synced_audio is not None for t in tracks)
+        if not has_synced:
+            self._run_sync_then_export(tracks, output_dir, config)
+        else:
+            self._run_export(tracks, output_dir, config)
+
+    def _run_sync_then_export(
+        self, tracks: list, output_dir: str, config: SyncConfig,
+    ) -> None:
+        """Run full-resolution sync, then export — seamless combined step."""
+        cancel = Event()
+        self._cancel_event = cancel
+
+        proc_dlg = ProcessingDialog("Preparing Export", self)
+        self._processing_dlg = proc_dlg
+
+        worker = _SyncWorker(
+            tracks, self._sync_result, self._config, cancel,
+        )
+        worker.progress.connect(proc_dlg.update_progress)
+        worker.finished.connect(
+            lambda: self._on_pre_export_sync_done(
+                tracks, output_dir, config, proc_dlg, cancel
+            )
+        )
+        worker.error.connect(lambda e: self._on_worker_error(e, proc_dlg))
+
+        proc_dlg._cancel_btn.clicked.disconnect()
+        proc_dlg._cancel_btn.clicked.connect(lambda: (
+            cancel.set(),
+            proc_dlg._cancel_btn.setEnabled(False),
+            proc_dlg._cancel_btn.setText("Cancelling..."),
+        ))
+
+        self._worker = worker
+        self._set_busy(True, "Preparing full-resolution audio...")
+        worker.start()
+        proc_dlg.exec()
+
+    def _on_pre_export_sync_done(
+        self, tracks: list, output_dir: str, config: SyncConfig,
+        sync_dlg: "ProcessingDialog", cancel: Event,
+    ) -> None:
+        """Sync finished — now start the actual export."""
+        self._worker = None
+        sync_dlg.accept()
+
+        if cancel.is_set():
+            self._cancel_event = None
+            self._set_busy(False)
+            self._set_status("Export cancelled.")
+            return
+
+        self._run_export(tracks, output_dir, config)
+
+    def _run_export(
+        self, tracks: list, output_dir: str, config: SyncConfig,
+    ) -> None:
+        """Run the file export step."""
         cancel = Event()
         self._cancel_event = cancel
 
@@ -990,9 +1056,7 @@ class MainWindow(QMainWindow):
         if self._sync_result is None:
             QMessageBox.information(
                 self, "Analyze First",
-                "Run Analyze before exporting a timeline.\n\n"
-                "The timeline export only needs analysis results — "
-                "you do not need to run Sync first.",
+                "Run Analyze & Sync before exporting a timeline.",
             )
             return
 
@@ -1061,8 +1125,6 @@ class MainWindow(QMainWindow):
             self._on_add_files()
         elif step == Step.ANALYZE:
             self._on_analyze()
-        elif step == Step.SYNC:
-            self._on_sync()
         elif step == Step.EXPORT:
             self._on_export()
 
@@ -1172,11 +1234,10 @@ class MainWindow(QMainWindow):
         has_tracks = len(tracks) > 0
         total_clips = sum(t.clip_count for t in tracks)
         has_analysis = self._sync_result is not None
-        has_sync = any(t.synced_audio is not None for t in tracks)
         busy = self._worker is not None
 
         # Workflow bar
-        self._workflow_bar.update_state(total_clips, has_analysis, has_sync, busy)
+        self._workflow_bar.update_state(total_clips, has_analysis, busy)
 
         # Summary counts in status bar
         if has_tracks:

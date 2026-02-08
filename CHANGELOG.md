@@ -5,6 +5,24 @@ All notable changes to AudioSync Pro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.1] - 2026-02-08
+
+### Fixed
+- Cloud sign-in broken: Cloudflare blocked Python's default User-Agent header (error 1010). All API calls now send `AudioSyncPro/{version}` as User-Agent.
+- Sign-in dialog showed empty code placeholder and no retry option on API errors. Now hides the placeholder, shows a clear error message, and offers a Retry button.
+
+### Changed
+- Workflow simplified from 4 steps to 3: **Import → Analyze & Sync → Export**. The separate "Sync" step is removed — analysis results are presented as synced, and full-resolution audio stitching runs transparently during audio export.
+- Processing dialog title changed to "Analyzing & Syncing" with updated status messages ("All clips synced — ready to export").
+- Sign-in dialog button renamed from "Open Browser" to "Open studio.keyhan.info" for clarity.
+
+### Added
+- **MP3 export** via FFmpeg (libmp3lame). New format option in Export dialog with bitrate selector (128 / 192 / 256 / 320 kbps). Bit depth and bitrate controls toggle based on selected format.
+- Registration link in sign-in dialog: "Don't have an account? Create one free" linking to studio.keyhan.info/register.
+- Verification URL displayed in sign-in dialog so users know the destination.
+- "Create Account..." menu item in the Account menu when not signed in.
+- `ISSUES.md` — audit of 15 open issues and missing features across Critical / High / Medium / Low priority.
+
 ## [2.3.1] - 2026-02-08
 
 ### Fixed

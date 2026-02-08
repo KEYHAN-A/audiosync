@@ -341,22 +341,40 @@ class ExportDialog(QDialog):
         fmt_layout = QFormLayout(fmt_group)
 
         self._format_combo = QComboBox()
-        self._format_combo.addItems(["WAV", "AIFF", "FLAC"])
-        idx = {"wav": 0, "aiff": 1, "flac": 2}.get(self._config.export_format.lower(), 0)
+        self._format_combo.addItems(["WAV", "AIFF", "FLAC", "MP3"])
+        idx = {"wav": 0, "aiff": 1, "flac": 2, "mp3": 3}.get(
+            self._config.export_format.lower(), 0
+        )
         self._format_combo.setCurrentIndex(idx)
+        self._format_combo.currentIndexChanged.connect(self._on_format_changed)
         fmt_layout.addRow("Format:", self._format_combo)
 
+        # Bit depth (for lossless formats)
         self._depth_combo = QComboBox()
         self._depth_combo.addItems(["16-bit", "24-bit", "32-bit float"])
         idx = {16: 0, 24: 1, 32: 2}.get(self._config.export_bit_depth, 1)
         self._depth_combo.setCurrentIndex(idx)
-        fmt_layout.addRow("Bit Depth:", self._depth_combo)
+        self._depth_label = QLabel("Bit Depth:")
+        fmt_layout.addRow(self._depth_label, self._depth_combo)
+
+        # Bitrate (for lossy formats like MP3)
+        self._bitrate_combo = QComboBox()
+        self._bitrate_combo.addItems(["128 kbps", "192 kbps", "256 kbps", "320 kbps"])
+        bitrate_idx = {128: 0, 192: 1, 256: 2, 320: 3}.get(
+            self._config.export_bitrate_kbps, 3
+        )
+        self._bitrate_combo.setCurrentIndex(bitrate_idx)
+        self._bitrate_label = QLabel("Bitrate:")
+        fmt_layout.addRow(self._bitrate_label, self._bitrate_combo)
 
         sr_label = QLabel(f"{self._config.export_sr or 48000} Hz")
         sr_label.setProperty("cssClass", "dim")
         fmt_layout.addRow("Sample Rate:", sr_label)
 
         layout.addWidget(fmt_group)
+
+        # Set initial visibility based on current format
+        self._on_format_changed(self._format_combo.currentIndex())
 
         # Buttons
         buttons = QDialogButtonBox(
@@ -376,12 +394,23 @@ class ExportDialog(QDialog):
             self._dir_edit.setText(d)
             self._output_dir = d
 
+    def _on_format_changed(self, index: int) -> None:
+        """Toggle between bit depth (lossless) and bitrate (lossy) controls."""
+        is_mp3 = index == 3  # MP3
+        self._depth_label.setVisible(not is_mp3)
+        self._depth_combo.setVisible(not is_mp3)
+        self._bitrate_label.setVisible(is_mp3)
+        self._bitrate_combo.setVisible(is_mp3)
+
     def _on_accept(self) -> None:
-        fmt_map = {0: "wav", 1: "aiff", 2: "flac"}
+        fmt_map = {0: "wav", 1: "aiff", 2: "flac", 3: "mp3"}
         self._config.export_format = fmt_map[self._format_combo.currentIndex()]
 
         depth_map = {0: 16, 1: 24, 2: 32}
         self._config.export_bit_depth = depth_map[self._depth_combo.currentIndex()]
+
+        bitrate_map = {0: 128, 1: 192, 2: 256, 3: 320}
+        self._config.export_bitrate_kbps = bitrate_map[self._bitrate_combo.currentIndex()]
 
         self._output_dir = self._dir_edit.text()
         self.accept()
@@ -698,18 +727,45 @@ class DeviceAuthDialog(QDialog):
         self._copy_btn.setEnabled(False)
         btn_row.addWidget(self._copy_btn)
 
-        self._open_btn = QPushButton("Open Browser")
+        self._open_btn = QPushButton("Open studio.keyhan.info")
         self._open_btn.setProperty("cssClass", "accent")
         self._open_btn.clicked.connect(self._open_browser)
         self._open_btn.setEnabled(False)
         btn_row.addWidget(self._open_btn)
         layout.addLayout(btn_row)
 
+        # Verification URL hint
+        self._url_label = QLabel("")
+        self._url_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._url_label.setStyleSheet(
+            "font-size: 11px; color: #94a3b8; padding: 0;"
+        )
+        layout.addWidget(self._url_label)
+
+        # Retry button (hidden by default, shown on error)
+        self._retry_btn = QPushButton("Retry")
+        self._retry_btn.setProperty("cssClass", "accent")
+        self._retry_btn.clicked.connect(self._retry_flow)
+        self._retry_btn.setVisible(False)
+        layout.addWidget(self._retry_btn)
+
         # Status
         self._status_label = QLabel("Requesting code...")
         self._status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._status_label.setProperty("cssClass", "dim")
+        self._status_label.setWordWrap(True)
         layout.addWidget(self._status_label)
+
+        # Registration hint
+        self._register_label = QLabel(
+            'Don\'t have an account? '
+            '<a href="https://studio.keyhan.info/register" '
+            'style="color: #67e8f9;">Create one free</a>'
+        )
+        self._register_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._register_label.setOpenExternalLinks(True)
+        self._register_label.setStyleSheet("font-size: 12px; color: #94a3b8;")
+        layout.addWidget(self._register_label)
 
         layout.addStretch()
 
@@ -724,6 +780,25 @@ class DeviceAuthDialog(QDialog):
 
     def _start_flow(self) -> None:
         """Request a device code from the API."""
+        # Reset UI to loading state
+        self._code_label.setText("--------")
+        self._code_label.setStyleSheet(
+            "font-size: 32px; font-weight: 700; letter-spacing: 6px; "
+            "color: #67e8f9; padding: 16px; "
+            "background: rgba(6, 182, 212, 0.08); "
+            "border: 1px solid rgba(6, 182, 212, 0.20); "
+            "border-radius: 16px;"
+        )
+        self._copy_btn.setEnabled(False)
+        self._copy_btn.setVisible(True)
+        self._open_btn.setEnabled(False)
+        self._open_btn.setVisible(True)
+        self._retry_btn.setVisible(False)
+        self._url_label.setText("")
+        self._register_label.setVisible(True)
+        self._status_label.setText("Requesting code...")
+        self._status_label.setStyleSheet("")
+
         try:
             result = self._cloud.start_device_flow()
             self._device_code = result.get("device_code")
@@ -735,6 +810,14 @@ class DeviceAuthDialog(QDialog):
             self._open_btn.setEnabled(True)
             self._status_label.setText("Waiting for authorization...")
 
+            # Show the verification URL so users know the destination
+            if self._verification_uri:
+                # Strip https:// for a cleaner display
+                display_url = self._verification_uri.replace("https://", "")
+                self._url_label.setText(display_url)
+            else:
+                self._url_label.setText("")
+
             # Start polling
             interval = result.get("interval", 5)
             self._worker = _DevicePollWorker(self._cloud, self._device_code, interval)
@@ -743,7 +826,15 @@ class DeviceAuthDialog(QDialog):
             self._worker.start()
 
         except Exception as exc:
-            self._status_label.setText(f"Error: {exc}")
+            self._code_label.setVisible(False)
+            self._copy_btn.setVisible(False)
+            self._open_btn.setVisible(False)
+            self._retry_btn.setVisible(True)
+            self._status_label.setText(
+                f"Could not start sign-in: {exc}\n\n"
+                "Please check your internet connection and try again."
+            )
+            self._status_label.setStyleSheet("color: #f87171;")
             logger.error("Device flow start failed: %s", exc)
 
     def _copy_code(self) -> None:
@@ -753,6 +844,11 @@ class DeviceAuthDialog(QDialog):
             clipboard.setText(code)
         self._copy_btn.setText("Copied!")
         QTimer.singleShot(2000, lambda: self._copy_btn.setText("Copy Code"))
+
+    def _retry_flow(self) -> None:
+        """Reset UI and retry the device code flow."""
+        self._code_label.setVisible(True)
+        self._start_flow()
 
     def _open_browser(self) -> None:
         if self._verification_uri:
@@ -785,6 +881,7 @@ class DeviceAuthDialog(QDialog):
     def _on_auth_error(self, message: str) -> None:
         self._status_label.setText(message)
         self._status_label.setStyleSheet("color: #f87171;")
+        self._retry_btn.setVisible(True)
 
     def _on_cancel(self) -> None:
         if self._worker:

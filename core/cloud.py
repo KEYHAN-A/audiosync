@@ -18,6 +18,8 @@ import certifi
 
 from PyQt6.QtCore import QSettings
 
+from version import __version__
+
 logger = logging.getLogger("audiosync.cloud")
 
 # SSL context that works inside PyInstaller bundles (bundled CA certs).
@@ -182,6 +184,7 @@ class CloudClient:
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
+            "User-Agent": f"AudioSyncPro/{__version__}",
         }
 
         token = self.get_token()

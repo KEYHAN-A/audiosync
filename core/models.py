@@ -115,10 +115,16 @@ class SyncConfig:
     """Configuration for the sync engine."""
 
     max_offset_s: Optional[float] = None        # None = no cap
-    export_format: str = "wav"                   # "wav", "aiff", "flac"
+    export_format: str = "wav"                   # "wav", "aiff", "flac", "mp3"
     export_bit_depth: int = 24                   # 16, 24, or 32
+    export_bitrate_kbps: int = 320               # MP3 bitrate (128, 192, 256, 320)
     export_sr: Optional[int] = None             # None = auto (highest among files)
     crossfade_ms: float = 50.0
+
+    @property
+    def is_lossy(self) -> bool:
+        """True for lossy formats like MP3."""
+        return self.export_format.lower() in ("mp3",)
 
     @property
     def subtype(self) -> str:
@@ -128,7 +134,7 @@ class SyncConfig:
 
     @property
     def format_str(self) -> str:
-        """Soundfile format string."""
+        """Soundfile format string (for lossless formats only)."""
         mapping = {"wav": "WAV", "aiff": "AIFF", "flac": "FLAC"}
         return mapping.get(self.export_format.lower(), "WAV")
 

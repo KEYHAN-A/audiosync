@@ -24,21 +24,18 @@ from .theme import COLORS
 class Step(IntEnum):
     IMPORT = 0
     ANALYZE = 1
-    SYNC = 2
-    EXPORT = 3
+    EXPORT = 2
 
 
 _STEP_LABELS = {
     Step.IMPORT: "Import",
-    Step.ANALYZE: "Analyze",
-    Step.SYNC: "Sync",
+    Step.ANALYZE: "Analyze & Sync",
     Step.EXPORT: "Export",
 }
 
 _STEP_ACTIONS = {
     Step.IMPORT: "Add Files",
-    Step.ANALYZE: "Analyze",
-    Step.SYNC: "Sync",
+    Step.ANALYZE: "Analyze & Sync",
     Step.EXPORT: "Export Audio",
 }
 
@@ -232,13 +229,10 @@ class WorkflowBar(QWidget):
         self,
         total_clips: int,
         has_analysis: bool,
-        has_sync: bool,
         busy: bool = False,
     ) -> None:
-        if has_sync:
+        if has_analysis:
             current = Step.EXPORT
-        elif has_analysis:
-            current = Step.SYNC
         elif total_clips >= 2:
             current = Step.ANALYZE
         else:
@@ -262,7 +256,7 @@ class WorkflowBar(QWidget):
         self._action_btn.setText(f"  {action_text}  ")
         self._action_btn.setEnabled(not busy)
 
-        self._reset_btn.setVisible(has_analysis or has_sync)
+        self._reset_btn.setVisible(has_analysis)
         self._reset_btn.setEnabled(not busy)
 
         self._nle_btn.setVisible(

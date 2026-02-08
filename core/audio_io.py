@@ -595,7 +595,11 @@ def export_track(
     output_path: str,
     config: SyncConfig,
 ) -> str:
-    """Export a track's synced audio to disk."""
+    """Export a track's synced audio to disk.
+
+    Supports lossless formats (WAV, AIFF, FLAC) via soundfile and
+    lossy formats (MP3) via FFmpeg.
+    """
     if track.synced_audio is None:
         raise ValueError(f"Track '{track.name}' has no synced audio — run sync first.")
 
@@ -603,15 +607,61 @@ def export_track(
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     audio = np.clip(track.synced_audio, -1.0, 1.0)
+    sample_rate = config.export_sr or 48000
 
-    sf.write(
-        output_path,
-        audio,
-        config.export_sr or 48000,
-        subtype=config.subtype,
-        format=config.format_str,
-    )
+    if config.is_lossy:
+        _export_track_mp3(audio, output_path, sample_rate, config.export_bitrate_kbps)
+    else:
+        sf.write(
+            output_path,
+            audio,
+            sample_rate,
+            subtype=config.subtype,
+            format=config.format_str,
+        )
     return output_path
+
+
+def _export_track_mp3(
+    audio: np.ndarray,
+    output_path: str,
+    sample_rate: int,
+    bitrate_kbps: int = 320,
+) -> None:
+    """Export audio as MP3 via FFmpeg (libmp3lame)."""
+    import tempfile
+
+    ffmpeg = _find_ffmpeg()
+
+    # Write a temporary WAV file for FFmpeg to encode
+    tmp_fd, tmp_wav = tempfile.mkstemp(suffix=".wav")
+    try:
+        os.close(tmp_fd)
+        sf.write(tmp_wav, audio, sample_rate, subtype="PCM_24", format="WAV")
+
+        cmd = [
+            ffmpeg, "-y",
+            "-i", tmp_wav,
+            "-codec:a", "libmp3lame",
+            "-b:a", f"{bitrate_kbps}k",
+            output_path,
+        ]
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=300,
+        )
+        if result.returncode != 0:
+            error_lines = [
+                line for line in result.stderr.splitlines()
+                if not line.startswith(("ffmpeg version", "  built with", "  configuration:",
+                                        "  libav", "  libsw", "  libpost"))
+            ]
+            error_msg = "\n".join(error_lines[-10:]) if error_lines else result.stderr[-500:]
+            raise RuntimeError(f"FFmpeg MP3 encoding failed:\n{error_msg}")
+    finally:
+        try:
+            os.unlink(tmp_wav)
+        except OSError:
+            pass
 
 
 def detect_project_sample_rate(tracks: list[Track]) -> int:
