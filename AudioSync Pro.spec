@@ -54,4 +54,11 @@ app = BUNDLE(
     name='AudioSync Pro.app',
     icon='icon.icns',
     bundle_identifier='com.audiosync.pro',
+    info_plist={
+        'NSPrincipalClass': 'NSApplication',
+        'NSHighResolutionCapable': True,
+        'NSRequiresAquaSystemAppearance': False,
+        'LSMinimumSystemVersion': '10.15',
+        'CFBundleShortVersionString': '2.4.0',
+    },
 )

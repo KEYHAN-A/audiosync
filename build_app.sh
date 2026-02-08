@@ -37,42 +37,29 @@ else
     ICON_FLAG="--icon=icon.icns"
 fi
 
-# Clean previous builds
+# Clean previous builds (keep spec file — it has essential config)
 echo ""
 echo "→ Cleaning previous builds..."
-rm -rf build dist *.spec 2>/dev/null || true
+rm -rf build dist 2>/dev/null || true
 
-# Build with PyInstaller
+# Verify spec file exists
+SPEC_FILE="AudioSync Pro.spec"
+if [ ! -f "$SPEC_FILE" ]; then
+    echo "  ERROR: '$SPEC_FILE' not found. This file contains required"
+    echo "         build config (OTIO imports, Info.plist, etc.)."
+    exit 1
+fi
+
+# Build with PyInstaller using the spec file
 echo ""
-echo "→ Building application bundle..."
+echo "→ Building application bundle from spec file..."
 echo "  This may take a few minutes..."
 echo ""
 
 pyinstaller \
-    --name "AudioSync Pro" \
-    --windowed \
-    --onedir \
-    $ICON_FLAG \
-    --osx-bundle-identifier "com.audiosync.pro" \
-    --add-data "core:core" \
-    --add-data "app:app" \
-    --add-data "version.py:." \
-    --hidden-import "scipy.signal" \
-    --hidden-import "scipy.fft" \
-    --hidden-import "scipy.fft._pocketfft" \
-    --hidden-import "numpy" \
-    --hidden-import "soundfile" \
-    --hidden-import "PyQt6.QtCore" \
-    --hidden-import "PyQt6.QtGui" \
-    --hidden-import "PyQt6.QtWidgets" \
-    --exclude-module "tkinter" \
-    --exclude-module "matplotlib" \
-    --exclude-module "PIL" \
-    --exclude-module "IPython" \
-    --exclude-module "jupyter" \
     --noconfirm \
     --clean \
-    main.py
+    "$SPEC_FILE"
 
 echo ""
 echo "═══════════════════════════════════════════════════"

@@ -9,6 +9,7 @@ Usage:
 import logging
 import sys
 import os
+import traceback
 
 # Add project root to path so core/app imports work
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -33,72 +34,117 @@ for p in _EXTRA_PATHS:
 os.environ["PATH"] = _current_path
 
 
+def _crash_log_path() -> str:
+    """Return a writable path for the crash log file."""
+    if sys.platform == "darwin":
+        log_dir = os.path.expanduser("~/Library/Logs/AudioSync Pro")
+    else:
+        log_dir = os.path.join(os.path.expanduser("~"), ".audiosync", "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    return os.path.join(log_dir, "crash.log")
+
+
+def _show_crash_dialog(error_msg: str, log_path: str) -> None:
+    """Try to show a native error dialog before exiting."""
+    try:
+        from PyQt6.QtWidgets import QApplication, QMessageBox
+
+        # Create a minimal QApplication if one doesn't exist
+        app = QApplication.instance() or QApplication(sys.argv)
+        box = QMessageBox()
+        box.setIcon(QMessageBox.Icon.Critical)
+        box.setWindowTitle("AudioSync Pro — Fatal Error")
+        box.setText("AudioSync Pro failed to start.")
+        box.setInformativeText(
+            f"Details have been written to:\n{log_path}\n\n{error_msg}"
+        )
+        box.exec()
+    except Exception:
+        # If even Qt won't load, print to stderr as last resort
+        print(f"FATAL: {error_msg}\nLog: {log_path}", file=sys.stderr)
+
+
 def main() -> None:
+    log_path = _crash_log_path()
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
         datefmt="%H:%M:%S",
+        handlers=[
+            logging.StreamHandler(),
+            logging.FileHandler(log_path, mode="w"),
+        ],
     )
+    logger = logging.getLogger("audiosync.main")
 
-    from PyQt6.QtWidgets import QApplication
-    from PyQt6.QtCore import Qt
+    try:
+        from PyQt6.QtWidgets import QApplication
+        from PyQt6.QtCore import Qt
 
-    # High-DPI MUST be set before QApplication is created
-    QApplication.setHighDpiScaleFactorRoundingPolicy(
-        Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
-    )
+        # High-DPI MUST be set before QApplication is created
+        QApplication.setHighDpiScaleFactorRoundingPolicy(
+            Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
+        )
 
-    app = QApplication(sys.argv)
-    from version import __version__, APP_NAME
+        app = QApplication(sys.argv)
+        from version import __version__, APP_NAME
 
-    app.setApplicationName(APP_NAME)
-    app.setOrganizationName("AudioSync")
-    app.setApplicationVersion(__version__)
+        app.setApplicationName(APP_NAME)
+        app.setOrganizationName("AudioSync")
+        app.setApplicationVersion(__version__)
 
-    from PyQt6.QtGui import QPalette, QColor
+        from PyQt6.QtGui import QPalette, QColor
 
-    from app.main_window import MainWindow
-    from app.theme import STYLESHEET, COLORS
+        from app.main_window import MainWindow
+        from app.theme import STYLESHEET, COLORS
 
-    # Force dark palette globally — ensures ALL widgets have light text
-    palette = QPalette()
-    palette.setColor(QPalette.ColorRole.Window, QColor(COLORS["bg_deep"]))
-    palette.setColor(QPalette.ColorRole.WindowText, QColor(COLORS["text"]))
-    palette.setColor(QPalette.ColorRole.Base, QColor(COLORS["bg_dark"]))
-    palette.setColor(QPalette.ColorRole.AlternateBase, QColor(COLORS["bg_card"]))
-    palette.setColor(QPalette.ColorRole.Text, QColor(COLORS["text"]))
-    palette.setColor(QPalette.ColorRole.BrightText, QColor(COLORS["text_bright"]))
-    palette.setColor(QPalette.ColorRole.Button, QColor(COLORS["bg_dark"]))
-    palette.setColor(QPalette.ColorRole.ButtonText, QColor(COLORS["text"]))
-    palette.setColor(QPalette.ColorRole.Highlight, QColor(COLORS["accent"]))
-    palette.setColor(QPalette.ColorRole.HighlightedText, QColor("#ffffff"))
-    palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(COLORS["bg_card"]))
-    palette.setColor(QPalette.ColorRole.ToolTipText, QColor(COLORS["text"]))
-    palette.setColor(QPalette.ColorRole.PlaceholderText, QColor(COLORS["text_muted"]))
-    palette.setColor(QPalette.ColorRole.Link, QColor(COLORS["accent"]))
-    palette.setColor(QPalette.ColorRole.LinkVisited, QColor(COLORS["secondary"]))
+        # Force dark palette globally — ensures ALL widgets have light text
+        palette = QPalette()
+        palette.setColor(QPalette.ColorRole.Window, QColor(COLORS["bg_deep"]))
+        palette.setColor(QPalette.ColorRole.WindowText, QColor(COLORS["text"]))
+        palette.setColor(QPalette.ColorRole.Base, QColor(COLORS["bg_dark"]))
+        palette.setColor(QPalette.ColorRole.AlternateBase, QColor(COLORS["bg_card"]))
+        palette.setColor(QPalette.ColorRole.Text, QColor(COLORS["text"]))
+        palette.setColor(QPalette.ColorRole.BrightText, QColor(COLORS["text_bright"]))
+        palette.setColor(QPalette.ColorRole.Button, QColor(COLORS["bg_dark"]))
+        palette.setColor(QPalette.ColorRole.ButtonText, QColor(COLORS["text"]))
+        palette.setColor(QPalette.ColorRole.Highlight, QColor(COLORS["accent"]))
+        palette.setColor(QPalette.ColorRole.HighlightedText, QColor("#ffffff"))
+        palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(COLORS["bg_card"]))
+        palette.setColor(QPalette.ColorRole.ToolTipText, QColor(COLORS["text"]))
+        palette.setColor(QPalette.ColorRole.PlaceholderText, QColor(COLORS["text_muted"]))
+        palette.setColor(QPalette.ColorRole.Link, QColor(COLORS["accent"]))
+        palette.setColor(QPalette.ColorRole.LinkVisited, QColor(COLORS["secondary"]))
 
-    # Disabled state
-    palette.setColor(
-        QPalette.ColorGroup.Disabled,
-        QPalette.ColorRole.WindowText, QColor(COLORS["text_muted"])
-    )
-    palette.setColor(
-        QPalette.ColorGroup.Disabled,
-        QPalette.ColorRole.Text, QColor(COLORS["text_muted"])
-    )
-    palette.setColor(
-        QPalette.ColorGroup.Disabled,
-        QPalette.ColorRole.ButtonText, QColor(COLORS["text_muted"])
-    )
+        # Disabled state
+        palette.setColor(
+            QPalette.ColorGroup.Disabled,
+            QPalette.ColorRole.WindowText, QColor(COLORS["text_muted"])
+        )
+        palette.setColor(
+            QPalette.ColorGroup.Disabled,
+            QPalette.ColorRole.Text, QColor(COLORS["text_muted"])
+        )
+        palette.setColor(
+            QPalette.ColorGroup.Disabled,
+            QPalette.ColorRole.ButtonText, QColor(COLORS["text_muted"])
+        )
 
-    app.setPalette(palette)
-    app.setStyleSheet(STYLESHEET)
+        app.setPalette(palette)
+        app.setStyleSheet(STYLESHEET)
 
-    window = MainWindow()
-    window.show()
+        logger.info("Starting AudioSync Pro %s", __version__)
+        window = MainWindow()
+        window.show()
 
-    sys.exit(app.exec())
+        sys.exit(app.exec())
+
+    except Exception:
+        error_msg = traceback.format_exc()
+        logger.critical("Fatal error during startup:\n%s", error_msg)
+        _show_crash_dialog(error_msg, log_path)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
