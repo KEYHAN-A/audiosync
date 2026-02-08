@@ -2,7 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub](https://img.shields.io/badge/GitHub-KEYHAN--A%2Faudiosync-181717?logo=github)](https://github.com/KEYHAN-A/audiosync)
-[![Version](https://img.shields.io/badge/version-2.4.1-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
+[![Version](https://img.shields.io/badge/version-2.5.0-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-a78bfa)]()
 [![Website](https://img.shields.io/badge/website-audiosync.keyhan.info-38bdf8)](https://audiosync.keyhan.info)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-keyhan--a.github.io%2Faudiosync-222?logo=github)](https://keyhan-a.github.io/audiosync/)
@@ -49,6 +49,7 @@ AudioSync Pro is designed for professional audio workflows where quality matters
 - **Polyphase resampling** — SciPy-powered sample rate conversion with minimal artifacts
 - **Lossless format support** — Native WAV, AIFF, and FLAC export
 - **MP3 export** — Lossy export via FFmpeg with configurable bitrate (128–320 kbps)
+- **Clock drift correction** — Automatic detection and compensation of sample clock differences between devices, keeping audio aligned for the entire recording duration
 - **Sample-rate preservation** — Exports at your project's highest native sample rate
 - **Analysis at 8 kHz** — Cross-correlation runs on downsampled copies; your original files are never modified
 
@@ -106,7 +107,8 @@ python main.py
    each track. Supports WAV, AIFF, FLAC, MP3, MP4, MOV, MKV, AVI, WEBM, and more.
 
 2. **Analyze & Sync** — Click **Analyze & Sync**. FFT cross-correlation
-   runs at 8 kHz for speed, placing every clip on a shared timeline. A processing
+   runs at 8 kHz for speed, placing every clip on a shared timeline. Clock
+   drift between devices is automatically detected and measured. A processing
    screen shows live progress, per-clip results, elapsed time, and ETA.
    Cancel anytime. After analysis, all clips are synced and shown on the timeline.
 
@@ -114,6 +116,7 @@ python main.py
    - **Export Audio** — Save one synced audio file per track. Choose format
      (WAV / AIFF / FLAC / MP3) and quality (bit depth for lossless, bitrate
      for MP3). Full-resolution stitching runs automatically before export.
+     Clock drift is corrected transparently during export (toggle in dialog).
    - **Export Timeline for NLE** (Ctrl+Shift+T) — Export an `.otio`, `.fcpxml`,
      or `.edl` file. Open it in DaVinci Resolve, Final Cut Pro, or Premiere
      with all clips pre-arranged on a multi-track timeline.
@@ -178,7 +181,7 @@ build scripts, and the About dialog read from this single source.
 
 ```python
 # version.py
-__version__ = "2.4.1"
+__version__ = "2.5.0"
 ```
 
 ---
@@ -213,8 +216,11 @@ __version__ = "2.4.1"
    cross-correlated against the full reference timeline
 5. **Pass 2 — Enhanced timeline** — Low-confidence clips retried against
    an enhanced timeline that includes all successfully placed clips
-6. **Stitching** — Clips placed at detected positions with silence gaps
-7. **Export** — All tracks exported at same length, perfectly aligned
+6. **Drift detection** — Windowed cross-correlation measures clock drift
+   rate (ppm) per clip via linear regression, with sub-sample precision
+7. **Stitching** — Clips placed at detected positions with silence gaps;
+   drift-corrected by resampling during full-resolution export
+8. **Export** — All tracks exported at same length, perfectly aligned
 
 ### Confidence Score
 

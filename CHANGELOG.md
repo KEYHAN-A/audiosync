@@ -5,6 +5,15 @@ All notable changes to AudioSync Pro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-02-08
+
+### Added
+- **Automatic clock drift correction** — Detects sample clock differences between recording devices during analysis using windowed cross-correlation with sub-sample precision (parabolic interpolation). Measures drift rate in parts-per-million (ppm) and applies transparent resampling during export to keep audio perfectly aligned for the full recording duration.
+- Drift measurement results shown in analysis status message when drift is detected.
+- "Correct clock drift between devices" toggle in the Export dialog (enabled by default).
+- Same-track drift inheritance: short clips that can't be measured independently inherit the drift rate from a longer clip on the same track (same device = same clock).
+- Per-clip drift fields in data model: `drift_ppm`, `drift_confidence` (R²), and `drift_corrected` flag.
+
 ## [2.4.1] - 2026-02-08
 
 ### Fixed

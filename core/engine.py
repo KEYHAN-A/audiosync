@@ -30,7 +30,7 @@ from threading import Event
 from typing import Optional
 
 import numpy as np
-from scipy.signal import fftconvolve
+from scipy.signal import fftconvolve, resample
 
 from .models import (
     ANALYSIS_SR,
@@ -247,6 +247,42 @@ def analyze(
 
     avg_conf = float(np.mean(confidences)) if confidences else 0.0
 
+    # ------------------------------------------------------------------
+    # Phase 8: Clock drift detection
+    # ------------------------------------------------------------------
+    _progress(total_steps - 1, total_steps, "Measuring clock drift...")
+    _check()
+
+    # Rebuild reference timeline after normalization for drift measurement
+    ref_audio_normalized = _build_reference_from_metadata(ref_track, sr)
+
+    drift_detected = False
+    for track in tracks:
+        if track is ref_track:
+            continue
+        for clip in track.clips:
+            if not clip.analyzed:
+                continue
+            if clip.duration_s < _MIN_DRIFT_OVERLAP_S:
+                continue
+
+            drift_ppm, r_sq = measure_drift(ref_audio_normalized, clip, sr)
+
+            if r_sq > 0.5 and abs(drift_ppm) > config.drift_threshold_ppm:
+                clip.drift_ppm = drift_ppm
+                clip.drift_confidence = r_sq
+                drift_detected = True
+                logger.info(
+                    "Drift detected for '%s': %.2f ppm (R²=%.3f)",
+                    clip.name, drift_ppm, r_sq,
+                )
+
+    # Inherit drift for short clips on the same track
+    if drift_detected:
+        _inherit_drift_for_short_clips(tracks, ref_idx)
+
+    del ref_audio_normalized
+
     result = SyncResult(
         reference_track_index=ref_idx,
         total_timeline_samples=max_end,
@@ -254,14 +290,16 @@ def analyze(
         sample_rate=sr,
         clip_offsets=clip_offsets,
         avg_confidence=avg_conf,
+        drift_detected=drift_detected,
         warnings=warnings,
     )
 
     _progress(total_steps, total_steps, "Analysis complete.")
 
     logger.info(
-        "Analysis complete: %d clips, timeline %.1f s, avg confidence %.1f",
+        "Analysis complete: %d clips, timeline %.1f s, avg confidence %.1f, drift=%s",
         total_clips, result.total_timeline_s, avg_conf,
+        "detected" if drift_detected else "none",
     )
     return result
 
@@ -319,6 +357,17 @@ def sync(
 
             # Re-read at full resolution
             audio = read_clip_full_res(clip, export_sr, cancel)
+
+            # Apply clock drift correction if enabled
+            if (config.drift_correction
+                    and abs(clip.drift_ppm) >= config.drift_threshold_ppm
+                    and clip.drift_confidence > 0.5):
+                _progress(step, total_steps,
+                          f"Correcting drift ({clip.drift_ppm:+.1f} ppm) for '{clip.name}'...")
+                audio = _apply_drift_correction(audio, clip.drift_ppm)
+                clip.drift_corrected = True
+                logger.info("Applied drift correction %.2f ppm to '%s'",
+                            clip.drift_ppm, clip.name)
 
             # Convert offset from analysis SR to export SR
             start = clip.timeline_offset_at_sr(export_sr)
@@ -416,6 +465,222 @@ def compute_delay(
     del correlation, abs_corr
 
     return delay_samples, confidence
+
+
+# ---------------------------------------------------------------------------
+#  Clock drift detection
+# ---------------------------------------------------------------------------
+
+# Minimum overlap (seconds) to attempt drift measurement.
+_MIN_DRIFT_OVERLAP_S = 60.0
+# Minimum number of measurement windows for a reliable regression.
+_MIN_DRIFT_WINDOWS = 3
+
+
+def _subsample_peak(correlation: np.ndarray, peak_idx: int) -> float:
+    """
+    Parabolic interpolation around *peak_idx* for sub-sample offset
+    precision.  Returns the refined peak position as a float.
+
+    Uses three points (peak_idx-1, peak_idx, peak_idx+1) to fit a
+    parabola and find its vertex.  Falls back to *peak_idx* when the
+    peak is at an edge.
+    """
+    n = len(correlation)
+    if peak_idx <= 0 or peak_idx >= n - 1:
+        return float(peak_idx)
+
+    alpha = float(correlation[peak_idx - 1])
+    beta = float(correlation[peak_idx])
+    gamma = float(correlation[peak_idx + 1])
+
+    denom = alpha - 2.0 * beta + gamma
+    if abs(denom) < 1e-30:
+        return float(peak_idx)
+
+    adjustment = 0.5 * (alpha - gamma) / denom
+    return peak_idx + adjustment
+
+
+def _windowed_offset(
+    ref_segment: np.ndarray,
+    clip_segment: np.ndarray,
+) -> float:
+    """
+    Cross-correlate two equal-length windows and return the sub-sample
+    offset of *clip_segment* relative to *ref_segment*.
+    """
+    ref = ref_segment.astype(np.float32)
+    tgt = clip_segment.astype(np.float32)
+
+    ref_max = np.max(np.abs(ref))
+    tgt_max = np.max(np.abs(tgt))
+    if ref_max > 1e-10:
+        ref = ref / ref_max
+    if tgt_max > 1e-10:
+        tgt = tgt / tgt_max
+
+    corr = fftconvolve(ref, tgt[::-1], mode="full")
+    abs_corr = np.abs(corr)
+    peak_idx = int(np.argmax(abs_corr))
+
+    # Refine to sub-sample precision
+    refined = _subsample_peak(abs_corr, peak_idx)
+    offset = refined - (len(tgt) - 1)
+
+    del corr, abs_corr
+    return offset
+
+
+def measure_drift(
+    ref_timeline: np.ndarray,
+    clip: "Clip",
+    sr: int = ANALYSIS_SR,
+    window_s: float = 30.0,
+    stride_s: float = 15.0,
+) -> tuple[float, float]:
+    """
+    Measure clock drift of *clip* relative to the reference timeline.
+
+    Slides a window along the overlapping region, cross-correlates each
+    window, and fits a linear regression to the measured offsets.
+
+    Returns
+    -------
+    drift_ppm : float
+        Drift rate in parts-per-million.  Positive = clip runs fast.
+    r_squared : float
+        Coefficient of determination (0–1).  High = consistent linear drift.
+    """
+    win_samples = int(window_s * sr)
+    stride_samples = int(stride_s * sr)
+
+    # Region of the reference timeline that the clip overlaps
+    clip_start = clip.timeline_offset_samples
+    clip_end = clip_start + clip.length_samples
+    ref_len = len(ref_timeline)
+
+    # Clamp to valid range
+    overlap_start = max(clip_start, 0)
+    overlap_end = min(clip_end, ref_len)
+    overlap_len = overlap_end - overlap_start
+
+    if overlap_len < win_samples * 2:
+        # Not enough overlap for meaningful measurement
+        return 0.0, 0.0
+
+    # Collect (time_position, measured_offset) pairs
+    times: list[float] = []
+    offsets: list[float] = []
+
+    pos = overlap_start
+    while pos + win_samples <= overlap_end:
+        # Reference window
+        ref_win = ref_timeline[pos:pos + win_samples]
+
+        # Corresponding clip window
+        clip_local = pos - clip_start
+        if clip_local < 0 or clip_local + win_samples > clip.length_samples:
+            pos += stride_samples
+            continue
+        clip_win = clip.samples[clip_local:clip_local + win_samples]
+
+        # Skip near-silent windows (both must have energy)
+        if np.max(np.abs(ref_win)) < 1e-6 or np.max(np.abs(clip_win)) < 1e-6:
+            pos += stride_samples
+            continue
+
+        offset = _windowed_offset(ref_win, clip_win)
+        time_s = (pos - overlap_start) / sr
+        times.append(time_s)
+        offsets.append(offset)
+
+        pos += stride_samples
+
+    if len(times) < _MIN_DRIFT_WINDOWS:
+        return 0.0, 0.0
+
+    # Linear regression: offset = slope * time + intercept
+    times_arr = np.array(times)
+    offsets_arr = np.array(offsets)
+
+    coeffs = np.polyfit(times_arr, offsets_arr, 1)
+    slope = coeffs[0]  # samples per second of drift at analysis SR
+
+    # R-squared
+    predicted = np.polyval(coeffs, times_arr)
+    ss_res = np.sum((offsets_arr - predicted) ** 2)
+    ss_tot = np.sum((offsets_arr - np.mean(offsets_arr)) ** 2)
+    r_squared = 1.0 - (ss_res / (ss_tot + 1e-30))
+    r_squared = max(0.0, min(1.0, r_squared))
+
+    # Convert slope (samples/second at analysis SR) to ppm
+    drift_ppm = (slope / sr) * 1e6
+
+    return drift_ppm, r_squared
+
+
+def _apply_drift_correction(
+    audio: np.ndarray,
+    drift_ppm: float,
+) -> np.ndarray:
+    """
+    Resample *audio* to compensate for clock drift.
+
+    If *drift_ppm* is positive the clip ran fast (too many samples),
+    so we compress it.  If negative, the clip ran slow, so we stretch.
+
+    Works on 1-D (mono) or 2-D (samples × channels) arrays.
+    """
+    if abs(drift_ppm) < 1e-6:
+        return audio
+
+    original_len = audio.shape[0]
+    # Corrected length: fewer samples if clip ran fast, more if slow
+    corrected_len = int(round(original_len / (1.0 + drift_ppm * 1e-6)))
+
+    if corrected_len == original_len or corrected_len < 1:
+        return audio
+
+    if audio.ndim == 1:
+        return resample(audio, corrected_len).astype(audio.dtype)
+    else:
+        # Resample each channel independently
+        channels = []
+        for ch in range(audio.shape[1]):
+            channels.append(resample(audio[:, ch], corrected_len).astype(audio.dtype))
+        return np.column_stack(channels)
+
+
+def _inherit_drift_for_short_clips(tracks: list["Track"], ref_idx: int) -> None:
+    """
+    For clips too short to measure drift independently, inherit the
+    drift rate from a longer clip on the same track (same device = same
+    crystal oscillator).
+    """
+    for i, track in enumerate(tracks):
+        if i == ref_idx:
+            continue
+
+        # Find the best measured drift for this track
+        measured = [
+            c for c in track.clips
+            if abs(c.drift_ppm) > 1e-6 and c.drift_confidence > 0.5
+        ]
+        if not measured:
+            continue
+
+        # Use the measurement with the highest confidence
+        best = max(measured, key=lambda c: c.drift_confidence)
+
+        for clip in track.clips:
+            if abs(clip.drift_ppm) < 1e-6 and clip.drift_confidence == 0.0:
+                clip.drift_ppm = best.drift_ppm
+                clip.drift_confidence = best.drift_confidence
+                logger.debug(
+                    "Inherited drift %.2f ppm for short clip '%s' from '%s'",
+                    best.drift_ppm, clip.name, best.name,
+                )
 
 
 # ---------------------------------------------------------------------------

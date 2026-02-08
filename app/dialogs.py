@@ -376,6 +376,16 @@ class ExportDialog(QDialog):
         # Set initial visibility based on current format
         self._on_format_changed(self._format_combo.currentIndex())
 
+        # Drift correction option
+        from PyQt6.QtWidgets import QCheckBox
+        self._drift_check = QCheckBox("Correct clock drift between devices")
+        self._drift_check.setChecked(self._config.drift_correction)
+        self._drift_check.setToolTip(
+            "Automatically compensate for sample clock differences between "
+            "recording devices, keeping audio aligned for the full duration."
+        )
+        layout.addWidget(self._drift_check)
+
         # Buttons
         buttons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
@@ -411,6 +421,8 @@ class ExportDialog(QDialog):
 
         bitrate_map = {0: 128, 1: 192, 2: 256, 3: 320}
         self._config.export_bitrate_kbps = bitrate_map[self._bitrate_combo.currentIndex()]
+
+        self._config.drift_correction = self._drift_check.isChecked()
 
         self._output_dir = self._dir_edit.text()
         self.accept()

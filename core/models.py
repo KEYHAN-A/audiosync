@@ -38,6 +38,11 @@ class Clip:
     confidence: float = 0.0
     analyzed: bool = False
 
+    # Clock drift (populated after drift measurement) -----------------------
+    drift_ppm: float = 0.0                      # Clock drift rate vs reference (ppm)
+    drift_confidence: float = 0.0               # R² of drift regression (0–1)
+    drift_corrected: bool = False                # Whether correction was applied
+
     @property
     def length_samples(self) -> int:
         return len(self.samples)
@@ -103,6 +108,7 @@ class SyncResult:
     sample_rate: int                            # Analysis SR used
     clip_offsets: dict[str, int] = field(default_factory=dict)
     avg_confidence: float = 0.0
+    drift_detected: bool = False                # True if any clip has measurable drift
     warnings: list[str] = field(default_factory=list)
 
 
@@ -120,6 +126,10 @@ class SyncConfig:
     export_bitrate_kbps: int = 320               # MP3 bitrate (128, 192, 256, 320)
     export_sr: Optional[int] = None             # None = auto (highest among files)
     crossfade_ms: float = 50.0
+
+    # Clock drift correction
+    drift_correction: bool = True               # Apply drift correction on export
+    drift_threshold_ppm: float = 0.3            # Minimum drift to correct
 
     @property
     def is_lossy(self) -> bool:

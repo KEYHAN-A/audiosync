@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AudioSync Pro — Multi-Device Audio &amp; Video Synchronization</title>
     <meta name="description"
-        content="Free, open-source multi-device audio and video synchronization with high-quality 24-bit audio processing. Sync cameras, mics, and recorders with sample-accurate FFT cross-correlation. Export WAV, AIFF, FLAC, or MP3 files and NLE timelines for DaVinci Resolve, Final Cut Pro, and Premiere.">
+        content="Free, open-source multi-device audio and video synchronization with high-quality 24-bit audio processing and automatic clock drift correction. Sync cameras, mics, and recorders with sample-accurate FFT cross-correlation. Export WAV, AIFF, FLAC, or MP3 files and NLE timelines for DaVinci Resolve, Final Cut Pro, and Premiere.">
     <meta name="theme-color" content="#0a0e1a">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Keyhan">
@@ -44,7 +44,7 @@
             "price": "0",
             "priceCurrency": "USD"
         },
-        "softwareVersion": "2.4.1",
+        "softwareVersion": "2.5.0",
         "author": {
             "@type": "Person",
             "name": "Keyhan",
@@ -206,7 +206,7 @@
                 </div>
 
                 <!-- Version badge -->
-                <p class="mt-6 text-xs text-white/30 font-mono"><span id="hero-version">v2.4.1</span> &middot; Free
+                <p class="mt-6 text-xs text-white/30 font-mono"><span id="hero-version">v2.5.0</span> &middot; Free
                     &amp; Open Source</p>
             </div>
         </section>
@@ -267,12 +267,13 @@
                         <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-5">
                             <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7zm5 0v10m6-10v10M4 12h16" />
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-white mb-2">Batch Processing</h3>
-                        <p class="text-white/50 text-sm leading-relaxed">Handle dozens of clips across multiple tracks.
-                            Background processing with live progress, ETA, and cancel support.</p>
+                        <h3 class="text-lg font-semibold text-white mb-2">Clock Drift Correction</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Automatically detects and compensates for sample
+                            clock differences between devices. Audio stays perfectly aligned for the entire recording
+                            duration — not just the start.</p>
                     </div>
 
                     <!-- Feature 5 -->
@@ -345,9 +346,9 @@
                             <div>
                                 <h3 class="text-xl font-semibold text-white mb-2">Analyze &amp; Sync</h3>
                                 <p class="text-white/50 leading-relaxed">One click runs FFT cross-correlation at 8 kHz —
-                                    36x faster than full resolution while maintaining sub-millisecond precision. Watch
-                                    live progress with per-clip confidence scores and ETA. All clips are synced to a
-                                    shared timeline automatically.</p>
+                                    36x faster than full resolution while maintaining sub-millisecond precision. Clock
+                                    drift between devices is automatically detected and measured. Watch live progress
+                                    with per-clip confidence scores and ETA.</p>
                             </div>
                         </div>
                     </div>
@@ -362,9 +363,9 @@
                             </div>
                             <div>
                                 <h3 class="text-xl font-semibold text-white mb-2">Export</h3>
-                                <p class="text-white/50 leading-relaxed">Export one synced audio file per track — all
-                                    the same length and perfectly aligned. Choose WAV, AIFF, FLAC, or MP3 with
-                                    configurable quality. Or export an NLE timeline (OTIO/FCPXML/EDL) for DaVinci
+                                <p class="text-white/50 leading-relaxed">Export one drift-corrected, synced audio file
+                                    per track — perfectly aligned from start to finish. Choose WAV, AIFF, FLAC, or MP3
+                                    with configurable quality. Or export an NLE timeline (OTIO/FCPXML/EDL) for DaVinci
                                     Resolve, Final Cut Pro, or Premiere.</p>
                             </div>
                         </div>
@@ -559,7 +560,8 @@
                         </div>
                         <h3 class="text-lg font-semibold text-white mb-2">Scientific Precision</h3>
                         <p class="text-white/50 text-sm leading-relaxed">NumPy + SciPy powered DSP engine. FFT
-                            cross-correlation with sub-millisecond temporal accuracy.</p>
+                            cross-correlation with sub-sample accuracy, plus automatic clock drift detection and
+                            correction via linear regression.</p>
                     </div>
                 </div>
             </div>
@@ -805,7 +807,7 @@
                     <span>&copy; 2026 AudioSync Pro</span>
                 </div>
                 <div class="flex items-center gap-6">
-                    <span id="footer-version" class="font-mono text-xs">v2.4.1</span>
+                    <span id="footer-version" class="font-mono text-xs">v2.5.0</span>
                     <a href="https://github.com/KEYHAN-A/audiosync" target="_blank" rel="noopener"
                         class="hover:text-white transition-colors" aria-label="GitHub repository">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">

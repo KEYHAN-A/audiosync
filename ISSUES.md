@@ -54,8 +54,8 @@ JWT expiry forces full re-authentication via the device code flow. There's no re
 `core/project_io.py` logs the project version but has no migration logic for format changes between versions.
 - **Fix:** Add version migration functions that upgrade older project formats to the current version.
 
-### 10. README doesn't mention cloud features
-Cloud, account, and sync features are only described on the website. The README should mention them for GitHub visitors.
+### 10. ~~README doesn't mention cloud features~~ ✓ RESOLVED (v2.4.1)
+Cloud Sync section added to README.
 
 ---
 

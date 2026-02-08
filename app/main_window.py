@@ -864,12 +864,18 @@ class MainWindow(QMainWindow):
 
         n_clips = sum(t.clip_count for t in self._track_panel.tracks)
         warnings_str = f"  ({len(result.warnings)} warnings)" if result.warnings else ""
+        drift_str = ""
+        if result.drift_detected:
+            drift_str = "  · Clock drift detected — will be corrected on export"
         msg = (
             f"Synced {n_clips} clips — timeline {result.total_timeline_s:.1f}s, "
-            f"avg confidence {result.avg_confidence:.1f}{warnings_str}"
+            f"avg confidence {result.avg_confidence:.1f}{warnings_str}{drift_str}"
         )
         self._set_status(msg)
-        dlg.finish(f"All clips synced — ready to export")
+        finish_msg = "All clips synced — ready to export"
+        if result.drift_detected:
+            finish_msg += " (drift correction enabled)"
+        dlg.finish(finish_msg)
         self._update_button_states()
 
     # ----- Sync -------------------------------------------------------------
