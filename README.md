@@ -4,10 +4,12 @@
 [![GitHub](https://img.shields.io/badge/GitHub-KEYHAN--A%2Faudiosync-181717?logo=github)](https://github.com/KEYHAN-A/audiosync)
 [![Version](https://img.shields.io/badge/version-2.2.2-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-a78bfa)]()
+[![Website](https://img.shields.io/badge/website-audiosync.keyhan.info-38bdf8)](https://audiosync.keyhan.info)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-keyhan--a.github.io%2Faudiosync-222?logo=github)](https://keyhan-a.github.io/audiosync/)
 
 Multi-device audio/video synchronization tool with high-quality audio processing. Syncs recordings from multiple cameras, microphones, and recorders using FFT cross-correlation.
 
-**Free and open source.** [Website](https://audiosync.keyhan.info) | [Download](https://github.com/KEYHAN-A/audiosync/releases) | [Report Issue](https://github.com/KEYHAN-A/audiosync/issues)
+**Free and open source.** [Website](https://audiosync.keyhan.info) | [GitHub Pages](https://keyhan-a.github.io/audiosync/) | [Download](https://github.com/KEYHAN-A/audiosync/releases) | [Report Issue](https://github.com/KEYHAN-A/audiosync/issues)
 
 ---
 
