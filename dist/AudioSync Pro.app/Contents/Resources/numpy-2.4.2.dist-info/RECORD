@@ -1,5 +1,5 @@
-../../../bin/f2py,sha256=LYfNLYuO7QBt9p_7-qvn0SNO_mJ-oiisl_m-gsN0rpY,272
-../../../bin/numpy-config,sha256=WfbY2XqlAGcli4Yb-okWrpBuDOm5JoDSj0GOJ3F5xXk,272
+../../../bin/f2py,sha256=d3RQxEa1MgePVrhWrEMiITBmYrDqMQlBz6VwceBrDpI,224
+../../../bin/numpy-config,sha256=hoZsVbleWhHo7qUwymjH_G4i-f8OgcBpWUGD1jNuAIM,224
 numpy-2.4.2.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
 numpy-2.4.2.dist-info/METADATA,sha256=Z4I6ylNqyiVKm0ml3h-Ja0pjGziZKxOGfSz1uX7OXEY,6608
 numpy-2.4.2.dist-info/RECORD,,

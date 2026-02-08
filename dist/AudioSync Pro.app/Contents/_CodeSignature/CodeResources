@@ -426,19 +426,19 @@
 		</data>
 		<key>Resources/app/dialogs.py</key>
 		<data>
-		2XNI7eEH5B+/8nvwYWa9pas9FZA=
+		1l9uPoz65GFgBsHVeHjADORKin8=
 		</data>
 		<key>Resources/app/main_window.py</key>
 		<data>
-		tBQlHF4fQ3p/BrlcyOm3f5Si1jg=
+		APfFzDpJIAzy34GmF0e4uxKUJ1k=
 		</data>
 		<key>Resources/app/theme.py</key>
 		<data>
-		/DssHXYqdM4tkR2qW6TufRN8ylU=
+		/mCtQ6/yxei98dZFx8sFzLIAFmo=
 		</data>
 		<key>Resources/app/track_card.py</key>
 		<data>
-		UkLGRhitff5t2F0uYvx5FPUNPyE=
+		IRJsDuVMp7YrpOK90bqiDzrTvCc=
 		</data>
 		<key>Resources/app/track_panel.py</key>
 		<data>
@@ -446,15 +446,15 @@
 		</data>
 		<key>Resources/app/waveform_view.py</key>
 		<data>
-		yex0wo3Zq90sq8QR7R4V86AKdZ0=
+		mOvc57xp8marbSD+kYRx5uSSnMU=
 		</data>
 		<key>Resources/app/workflow_bar.py</key>
 		<data>
-		cb1cTn/Qh5hwZOLU+/fs4ZHP1Lk=
+		BDIdEP9VNY8KOL/0LVk2DH06n3w=
 		</data>
 		<key>Resources/base_library.zip</key>
 		<data>
-		wHMWekv3p8wG03WGrMYJ0Smv82E=
+		j69WOuPU6S7vp1m6L3k3n9x/QPA=
 		</data>
 		<key>Resources/core/__init__.py</key>
 		<data>
@@ -484,9 +484,13 @@
 		<data>
 		AB2vaJ8MnGPNHYPEJpqHe7aNvz0=
 		</data>
+		<key>Resources/core/__pycache__/timeline_export.cpython-313.pyc</key>
+		<data>
+		LjqNEQXdnz+4WbkXcGF8HYOO5Nk=
+		</data>
 		<key>Resources/core/audio_io.py</key>
 		<data>
-		Gq1mkRyhWY0HEBabCcWgLatO5S4=
+		61YerCMfmy1JmiyZ6plOjrjH+60=
 		</data>
 		<key>Resources/core/engine.py</key>
 		<data>
@@ -504,6 +508,10 @@
 		<data>
 		ijyfVMFBR5R0GZlSpXFcVwEZLnk=
 		</data>
+		<key>Resources/core/timeline_export.py</key>
+		<data>
+		1qlrdOaWw0gP3Cjy1Cqgu3otBqg=
+		</data>
 		<key>Resources/icon.icns</key>
 		<data>
 		iZ1cM6ZkI2lVjct1ZxtAMg3S1Do=
@@ -518,7 +526,7 @@
 		</data>
 		<key>Resources/numpy-2.4.2.dist-info/RECORD</key>
 		<data>
-		8uRywhUEaZxxgmEo5Pq+N09EHns=
+		xy7T0jxzG1WT/BlMdvvhpuAEG+0=
 		</data>
 		<key>Resources/numpy-2.4.2.dist-info/REQUESTED</key>
 		<data>
@@ -600,6 +608,10 @@
 		<data>
 		yrTiaNIC2eaFhNXbcnSiR1lDtTI=
 		</data>
+		<key>Resources/opentimelineio/adapters/builtin_adapters.plugin_manifest.json</key>
+		<data>
+		+9FTgodD9UQlBrVqQUCWvGB/QIg=
+		</data>
 		<key>Resources/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/INSTALLER</key>
 		<data>
 		rV3TPfqBqRUXGC9FOHnMBWqfEjA=
@@ -634,7 +646,7 @@
 		</data>
 		<key>Resources/version.py</key>
 		<data>
-		rWcuhReBWK5aJhgX+Fo/49KNxCQ=
+		fetaqeHm+yXadQUOr34zB/6oI0k=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -1173,6 +1185,29 @@
 			</data>
 			<key>requirement</key>
 			<string>cdhash H"261503a06bb362073780707c363a895e6f90fc00"</string>
+		</dict>
+		<key>Frameworks/opentimelineio/_opentime.cpython-313-darwin.so</key>
+		<dict>
+			<key>cdhash</key>
+			<data>
+			mVvdQx0TUcw6lAET/+jGO8mp5dc=
+			</data>
+			<key>requirement</key>
+			<string>cdhash H"995bdd431d1351cc3a940113ffe8c63bc9a9e5d7"</string>
+		</dict>
+		<key>Frameworks/opentimelineio/_otio.cpython-313-darwin.so</key>
+		<dict>
+			<key>cdhash</key>
+			<data>
+			gdjVf7AfzJW0hBtXHC+BqjuL7HU=
+			</data>
+			<key>requirement</key>
+			<string>cdhash H"81d8d57fb01fcc95b4841b571c2f81aa3b8bec75"</string>
+		</dict>
+		<key>Frameworks/opentimelineio/adapters</key>
+		<dict>
+			<key>symlink</key>
+			<string>../../Resources/opentimelineio/adapters</string>
 		</dict>
 		<key>Frameworks/python3.13</key>
 		<dict>
@@ -3346,28 +3381,28 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			9T1yGcMphJMRy02w5z96Df8KBQvSI1EGUEEAGixb9JI=
+			1J5URB8FDfpGP44m8z+Dd9NknCK7Cm4c/cZ7Llf/WV8=
 			</data>
 		</dict>
 		<key>Resources/app/main_window.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ziAjEkcTzU/kDbi5EH1J+iB0FsvQQ7g8CJ7wXi7s7Q0=
+			MKKldMydA4f/+hHjTCGqUL/GhZ2gtSqcpuiHQxalK00=
 			</data>
 		</dict>
 		<key>Resources/app/theme.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			3aaCbKXrxoc8FycWeaxdTwzi3ozAsHzAKHsxAO53R1M=
+			pKT78Y72QUvwCTMAo9Ap/+q48Hk/htSPI1uWKEsXyzY=
 			</data>
 		</dict>
 		<key>Resources/app/track_card.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			iTiMs9xn40Qh6kKNukJnBZKZhcOYvBaeSbuZCsfv2B0=
+			lB2UMoYVOIT20bsQ47N/HYjNUiRN9NvnG6/xHNN6x14=
 			</data>
 		</dict>
 		<key>Resources/app/track_panel.py</key>
@@ -3381,21 +3416,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			2kiZDXri+q8j74KKtXn3w2eJFxyrSHuQW1XKmxANDHs=
+			0U20PKDCCOQ5gRz+g4qXByzoZaFJXiqyTwbWspaqvf4=
 			</data>
 		</dict>
 		<key>Resources/app/workflow_bar.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			pyMQ2uYMDKaTd9JePsjjn6BIVcJTh96gRKvI5zH42Nk=
+			k+W8CBeMHRof9oGT6bqKSd0W2awAKiGOHh0oD970veg=
 			</data>
 		</dict>
 		<key>Resources/base_library.zip</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			N9WJaDlWvQYk5mmEt4vyJY4ihs57Yz/6z2LDTW4YhiU=
+			xENN0417sX9a5tHv17dKwguOXioLoyfvtHp59RPq87g=
 			</data>
 		</dict>
 		<key>Resources/core/__init__.py</key>
@@ -3447,11 +3482,18 @@
 			fn9fmWThDJlXG47qo0BOs09pTpDxM2nLaofrSq4Mxug=
 			</data>
 		</dict>
+		<key>Resources/core/__pycache__/timeline_export.cpython-313.pyc</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			U85Bxu+ibjQMK7i+OoPMoH/dJp7Z32xCaBqfA/ElXu0=
+			</data>
+		</dict>
 		<key>Resources/core/audio_io.py</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			QULCiwlUtjxHSKOJynGeTlLwJtuUaFtrV2ydjaoVxD0=
+			ZqfoczD4rDFoX6S/0XYDPag94v53tU1XYGH4W6tL20c=
 			</data>
 		</dict>
 		<key>Resources/core/engine.py</key>
@@ -3480,6 +3522,13 @@
 			<key>hash2</key>
 			<data>
 			0s3hKqBlVXbdGlvy+UcgsafdcBRpHm4ucgQZGrncZMw=
+			</data>
+		</dict>
+		<key>Resources/core/timeline_export.py</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hmbK8VzY14YxjicrxgjZKBIyYH/Cjv9rGB4eUEd6k5w=
 			</data>
 		</dict>
 		<key>Resources/icon.icns</key>
@@ -3547,7 +3596,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			dxcA2Tlzoi9+0QSxTnkVR0gqAeoJwU5B7P0rUDdSGgc=
+			t2G/HVVgm5XtZMZygQTD29DZwEGvFAcQJZG2ov3kPKM=
 			</data>
 		</dict>
 		<key>Resources/numpy-2.4.2.dist-info/REQUESTED</key>
@@ -3690,6 +3739,23 @@
 			JosMoGdZ0x6jymjdNfIOh3kW6Sexwqg15FkqPENUsfk=
 			</data>
 		</dict>
+		<key>Resources/opentimelineio/_opentime.cpython-313-darwin.so</key>
+		<dict>
+			<key>symlink</key>
+			<string>../../Frameworks/opentimelineio/_opentime.cpython-313-darwin.so</string>
+		</dict>
+		<key>Resources/opentimelineio/_otio.cpython-313-darwin.so</key>
+		<dict>
+			<key>symlink</key>
+			<string>../../Frameworks/opentimelineio/_otio.cpython-313-darwin.so</string>
+		</dict>
+		<key>Resources/opentimelineio/adapters/builtin_adapters.plugin_manifest.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AcuuxZlViugoMCJyFX2c5AU3GtTA6RkQQ2Obdo0p4D8=
+			</data>
+		</dict>
 		<key>Resources/python3.13</key>
 		<dict>
 			<key>symlink</key>
@@ -3760,7 +3826,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			g02wYH4n+D/mpa3oUBc9TXOHFea5q5/XQ0MSTQjiVm8=
+			XtwngVfQsGlZY3j+O9XJdFuVNNF1REVqb8qcb233Et8=
 			</data>
 		</dict>
 	</dict>

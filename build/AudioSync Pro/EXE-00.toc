@@ -1,9 +1,8 @@
-('/Users/keyhan/Server/AudioSync - MaxForLive/build/AudioSync Pro/AudioSync '
- 'Pro',
+('/Users/keyhan/Server/AudioSyncPro/build/AudioSync Pro/AudioSync Pro',
  False,
  False,
  True,
- ['/Users/keyhan/Server/AudioSync - MaxForLive/icon.icns'],
+ ['/Users/keyhan/Server/AudioSyncPro/icon.icns'],
  None,
  False,
  False,
@@ -13,11 +12,10 @@
  'arm64',
  None,
  None,
- '/Users/keyhan/Server/AudioSync - MaxForLive/build/AudioSync Pro/AudioSync '
- 'Pro.pkg',
+ '/Users/keyhan/Server/AudioSyncPro/build/AudioSync Pro/AudioSync Pro.pkg',
  [('pyi-contents-directory _internal', '', 'OPTION'),
   ('PYZ-00.pyz',
-   '/Users/keyhan/Server/AudioSync - MaxForLive/build/AudioSync Pro/PYZ-00.pyz',
+   '/Users/keyhan/Server/AudioSyncPro/build/AudioSync Pro/PYZ-00.pyz',
    'PYZ'),
   ('python3.13/lib-dynload/_struct.cpython-313-darwin.so',
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/lib-dynload/_struct.cpython-313-darwin.so',
@@ -26,52 +24,47 @@
    '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/lib-dynload/zlib.cpython-313-darwin.so',
    'EXTENSION'),
   ('struct',
-   '/Users/keyhan/Server/AudioSync - MaxForLive/build/AudioSync '
-   'Pro/localpycs/struct.pyc',
+   '/Users/keyhan/Server/AudioSyncPro/build/AudioSync Pro/localpycs/struct.pyc',
    'PYMODULE'),
   ('pyimod01_archive',
-   '/Users/keyhan/Server/AudioSync - MaxForLive/build/AudioSync '
+   '/Users/keyhan/Server/AudioSyncPro/build/AudioSync '
    'Pro/localpycs/pyimod01_archive.pyc',
    'PYMODULE'),
   ('pyimod02_importers',
-   '/Users/keyhan/Server/AudioSync - MaxForLive/build/AudioSync '
+   '/Users/keyhan/Server/AudioSyncPro/build/AudioSync '
    'Pro/localpycs/pyimod02_importers.pyc',
    'PYMODULE'),
   ('pyimod03_ctypes',
-   '/Users/keyhan/Server/AudioSync - MaxForLive/build/AudioSync '
+   '/Users/keyhan/Server/AudioSyncPro/build/AudioSync '
    'Pro/localpycs/pyimod03_ctypes.pyc',
    'PYMODULE'),
   ('pyiboot01_bootstrap',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyInstaller/loader/pyiboot01_bootstrap.py',
+   '/Users/keyhan/Server/AudioSyncPro/.venv/lib/python3.13/site-packages/PyInstaller/loader/pyiboot01_bootstrap.py',
    'PYSOURCE'),
   ('pyi_rth_inspect',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_inspect.py',
-   'PYSOURCE'),
-  ('pyi_rth_pyqt6',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pyqt6.py',
+   '/Users/keyhan/Server/AudioSyncPro/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_inspect.py',
    'PYSOURCE'),
   ('pyi_rth_pkgutil',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pkgutil.py',
+   '/Users/keyhan/Server/AudioSyncPro/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pkgutil.py',
    'PYSOURCE'),
   ('pyi_rth_multiprocessing',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_multiprocessing.py',
+   '/Users/keyhan/Server/AudioSyncPro/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_multiprocessing.py',
    'PYSOURCE'),
   ('pyi_rth_setuptools',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_setuptools.py',
+   '/Users/keyhan/Server/AudioSyncPro/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_setuptools.py',
    'PYSOURCE'),
-  ('main', '/Users/keyhan/Server/AudioSync - MaxForLive/main.py', 'PYSOURCE')],
+  ('pyi_rth_pkgres',
+   '/Users/keyhan/Server/AudioSyncPro/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pkgres.py',
+   'PYSOURCE'),
+  ('pyi_rth_pyqt6',
+   '/Users/keyhan/Server/AudioSyncPro/.venv/lib/python3.13/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pyqt6.py',
+   'PYSOURCE'),
+  ('main', '/Users/keyhan/Server/AudioSyncPro/main.py', 'PYSOURCE')],
  [],
  False,
  False,
- 1770501845,
+ 1770518542,
  [('runw',
-   '/Users/keyhan/Server/AudioSync - '
-   'MaxForLive/.venv/lib/python3.13/site-packages/PyInstaller/bootloader/Darwin-64bit/runw',
+   '/Users/keyhan/Server/AudioSyncPro/.venv/lib/python3.13/site-packages/PyInstaller/bootloader/Darwin-64bit/runw',
    'EXECUTABLE')],
  '/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/Python')

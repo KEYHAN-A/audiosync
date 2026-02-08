@@ -1,12 +1,16 @@
-"""Workflow bar — step indicator with contextual next-action button."""
+"""Workflow bar — circular step indicators with glass panel.
+
+Design: frosted-glass bar with circular numbered steps,
+cyan glow on active, gradient connector lines, pill action button.
+"""
 
 from __future__ import annotations
 
 from enum import IntEnum
 from typing import Optional
 
-from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QColor, QFont, QPainter, QPen
+from PyQt6.QtCore import Qt, pyqtSignal, QRectF
+from PyQt6.QtGui import QColor, QFont, QPainter, QPen, QLinearGradient
 from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
@@ -35,19 +39,19 @@ _STEP_ACTIONS = {
     Step.IMPORT: "Add Files",
     Step.ANALYZE: "Analyze",
     Step.SYNC: "Sync",
-    Step.EXPORT: "Export",
+    Step.EXPORT: "Export Audio",
 }
 
 
 class _StepIndicator(QWidget):
-    """Individual step circle + label, painted custom."""
+    """Circular step indicator with glow effect."""
 
     def __init__(self, step: Step, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.step = step
         self._state = "future"  # "completed", "current", "future"
-        self.setFixedHeight(40)
-        self.setMinimumWidth(70)
+        self.setFixedHeight(48)
+        self.setMinimumWidth(80)
 
     def set_state(self, state: str) -> None:
         self._state = state
@@ -59,49 +63,70 @@ class _StepIndicator(QWidget):
         w = self.width()
         h = self.height()
 
-        # Circle
-        cx = 16
+        cx = 20
         cy = h // 2
-        r = 10
+        r = 14
 
         if self._state == "completed":
-            circle_color = QColor(COLORS["accent"])
+            # Filled cyan circle with subtle glow
+            glow_color = QColor(COLORS["accent"])
+            glow_color.setAlpha(30)
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.setBrush(glow_color)
+            painter.drawEllipse(cx - r - 4, cy - r - 4, (r + 4) * 2, (r + 4) * 2)
+
+            painter.setBrush(QColor(COLORS["accent"]))
+            painter.drawEllipse(cx - r, cy - r, r * 2, r * 2)
+
             text_color = QColor(COLORS["accent"])
             num_color = QColor("#ffffff")
         elif self._state == "current":
-            circle_color = QColor(COLORS["accent"])
-            text_color = QColor(COLORS["text_bright"])
-            num_color = QColor("#ffffff")
-        else:
-            circle_color = QColor(COLORS["border_light"])
-            text_color = QColor(COLORS["text_dim"])
-            num_color = QColor(COLORS["text_dim"])
+            # Bright glow ring
+            glow_color = QColor(COLORS["accent"])
+            glow_color.setAlpha(25)
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.setBrush(glow_color)
+            painter.drawEllipse(cx - r - 6, cy - r - 6, (r + 6) * 2, (r + 6) * 2)
 
-        # Draw circle
-        painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(circle_color)
-        painter.drawEllipse(cx - r, cy - r, r * 2, r * 2)
+            # Outer ring
+            painter.setPen(QPen(QColor(COLORS["accent"]), 2))
+            painter.setBrush(QColor(COLORS["bg_panel"]))
+            painter.drawEllipse(cx - r, cy - r, r * 2, r * 2)
+
+            text_color = QColor(COLORS["text_bright"])
+            num_color = QColor(COLORS["accent"])
+        else:
+            # Ghost circle
+            painter.setPen(QPen(QColor(COLORS["border_light"]), 1.5))
+            painter.setBrush(QColor(COLORS["bg_dark"]))
+            painter.drawEllipse(cx - r, cy - r, r * 2, r * 2)
+
+            text_color = QColor(COLORS["text_muted"])
+            num_color = QColor(COLORS["text_muted"])
 
         # Number or checkmark
         painter.setPen(num_color)
         font = painter.font()
-        font.setPixelSize(11)
+        font.setPixelSize(12)
         font.setBold(True)
         painter.setFont(font)
 
         if self._state == "completed":
+            # Unicode checkmark
+            font.setPixelSize(14)
+            painter.setFont(font)
             painter.drawText(cx - r, cy - r, r * 2, r * 2,
                              Qt.AlignmentFlag.AlignCenter, "\u2713")
         else:
             painter.drawText(cx - r, cy - r, r * 2, r * 2,
                              Qt.AlignmentFlag.AlignCenter, str(self.step.value + 1))
 
-        # Label
+        # Label text
         painter.setPen(text_color)
         font.setPixelSize(12)
         font.setBold(self._state == "current")
         painter.setFont(font)
-        label_x = cx + r + 6
+        label_x = cx + r + 8
         painter.drawText(label_x, cy - 8, w - label_x, 16,
                          Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft,
                          _STEP_LABELS[self.step])
@@ -110,13 +135,13 @@ class _StepIndicator(QWidget):
 
 
 class _StepConnector(QWidget):
-    """Thin line connecting two steps."""
+    """Gradient line connecting two steps."""
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self._active = False
-        self.setFixedHeight(40)
-        self.setFixedWidth(24)
+        self.setFixedHeight(48)
+        self.setFixedWidth(28)
 
     def set_active(self, active: bool) -> None:
         self._active = active
@@ -129,28 +154,35 @@ class _StepConnector(QWidget):
         h = self.height()
         y = h // 2
 
-        color = QColor(COLORS["accent"]) if self._active else QColor(COLORS["border_light"])
-        painter.setPen(QPen(color, 2))
-        painter.drawLine(2, y, w - 2, y)
+        if self._active:
+            grad = QLinearGradient(2, y, w - 2, y)
+            grad.setColorAt(0, QColor(COLORS["accent"]))
+            grad.setColorAt(1, QColor(COLORS["secondary"]))
+            painter.setPen(QPen(grad, 2))
+        else:
+            painter.setPen(QPen(QColor(COLORS["border_light"]), 1.5))
+
+        painter.drawLine(4, y, w - 4, y)
         painter.end()
 
 
 class WorkflowBar(QWidget):
-    """
-    Horizontal workflow step indicator with a contextual action button.
+    """Glass workflow bar with circular step indicators."""
 
-    Steps: Import -> Analyze -> Sync -> Export
-    """
+    action_triggered = pyqtSignal(int)
+    nle_export_triggered = pyqtSignal()
 
-    action_triggered = pyqtSignal(int)  # Step enum value
-
-    def __init__(self, parent: Optional[QWidget] = None) -> None:
+    def __init__(
+        self,
+        nle_available: bool = False,
+        parent: Optional[QWidget] = None,
+    ) -> None:
         super().__init__(parent)
-        self.setFixedHeight(52)
+        self.setFixedHeight(58)
         self.setProperty("cssClass", "workflow-bar")
 
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(16, 6, 16, 6)
+        layout.setContentsMargins(20, 5, 20, 5)
         layout.setSpacing(0)
 
         self._indicators: list[_StepIndicator] = []
@@ -168,19 +200,29 @@ class WorkflowBar(QWidget):
 
         layout.addStretch()
 
-        # Reset button (small, ghost style)
+        # Reset button — ghost
         self._reset_btn = QPushButton("Reset")
         self._reset_btn.setProperty("cssClass", "danger")
-        self._reset_btn.setFixedHeight(30)
+        self._reset_btn.setFixedHeight(32)
         self._reset_btn.setVisible(False)
         self._reset_btn.clicked.connect(lambda: self.action_triggered.emit(-1))
         layout.addWidget(self._reset_btn)
 
-        # Primary action button
+        # NLE Export button — secondary purple pill
+        self._nle_available = nle_available
+        self._nle_btn = QPushButton("  Export NLE Timeline  ")
+        self._nle_btn.setProperty("cssClass", "secondary")
+        self._nle_btn.setFixedHeight(36)
+        self._nle_btn.setMinimumWidth(140)
+        self._nle_btn.setVisible(False)
+        self._nle_btn.clicked.connect(self.nle_export_triggered.emit)
+        layout.addWidget(self._nle_btn)
+
+        # Primary action button — solid accent pill
         self._action_btn = QPushButton("Add Files")
         self._action_btn.setProperty("cssClass", "primary")
-        self._action_btn.setFixedHeight(34)
-        self._action_btn.setMinimumWidth(120)
+        self._action_btn.setFixedHeight(36)
+        self._action_btn.setMinimumWidth(130)
         self._action_btn.clicked.connect(self._on_action)
         layout.addWidget(self._action_btn)
 
@@ -193,7 +235,6 @@ class WorkflowBar(QWidget):
         has_sync: bool,
         busy: bool = False,
     ) -> None:
-        """Refresh the step indicator based on app state."""
         if has_sync:
             current = Step.EXPORT
         elif has_analysis:
@@ -217,14 +258,17 @@ class WorkflowBar(QWidget):
         for i, conn in enumerate(self._connectors):
             conn.set_active(i < current.value)
 
-        # Update action button
         action_text = _STEP_ACTIONS[current]
         self._action_btn.setText(f"  {action_text}  ")
         self._action_btn.setEnabled(not busy)
 
-        # Show reset button when analysis exists
         self._reset_btn.setVisible(has_analysis or has_sync)
         self._reset_btn.setEnabled(not busy)
+
+        self._nle_btn.setVisible(
+            self._nle_available and has_analysis and not busy
+        )
+        self._nle_btn.setEnabled(not busy)
 
     def _on_action(self) -> None:
         self.action_triggered.emit(self._current_step.value)
