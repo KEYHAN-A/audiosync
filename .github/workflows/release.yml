@@ -16,6 +16,9 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   # -----------------------------------------------------------------------
   #  Tauri desktop app (macOS, Windows, Linux)
