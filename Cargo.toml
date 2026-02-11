@@ -1,0 +1,15 @@
+[workspace]
+members = [
+    "audiosync-core",
+    "audiosync-cli",
+    "src-tauri",
+]
+resolver = "2"
+
+[workspace.package]
+version = "3.0.0"
+edition = "2024"
+authors = ["Keyhan"]
+license = "GPL-3.0"
+repository = "https://github.com/KEYHAN-A/audiosync"
+description = "Multi-device audio/video synchronization with FFT cross-correlation"

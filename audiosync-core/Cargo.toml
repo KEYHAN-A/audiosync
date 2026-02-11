@@ -1,0 +1,53 @@
+[package]
+name = "audiosync-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Core audio synchronization engine — FFT cross-correlation, drift detection, audio I/O"
+
+[dependencies]
+# FFT
+rustfft = "6"
+
+# Audio I/O
+symphonia = { version = "0.5", features = ["all"] }
+hound = "3"
+
+# Resampling
+rubato = "0.16"
+
+# Arrays
+ndarray = "0.16"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# HTTP client (for cloud)
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+
+# Async
+tokio = { version = "1", features = ["rt", "sync", "macros"] }
+
+# XML generation (FCPXML export)
+quick-xml = { version = "0.37", features = ["serialize"] }
+
+# Platform directories (cache, config)
+dirs = "6"
+
+# Regex (grouping)
+regex = "1"
+
+# Logging
+log = "0.4"
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# UUID (session IDs for cache)
+uuid = { version = "1", features = ["v4"] }
+
+# Time
+chrono = { version = "0.4", features = ["serde"] }

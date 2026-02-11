@@ -5,8 +5,6 @@ __pycache__/
 *.so
 *.egg-info/
 *.egg
-dist/
-build/
 .eggs/
 
 # Virtual environments
@@ -17,6 +15,17 @@ env/
 
 # PyInstaller
 *.spec
+
+# Rust
+target/
+Cargo.lock
+
+# Node.js
+node_modules/
+dist/
+
+# Build output
+build/
 
 # IDE / Editor
 .vscode/

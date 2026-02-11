@@ -1,0 +1,369 @@
+/* ============================================================================
+   AudioSync Pro — Glassmorphism Design System
+   Dark navy + electric blue/purple theme
+   Adapted from website/style.css and python/app/theme.py
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   CSS Custom Properties — Single source of truth for all colors
+   --------------------------------------------------------------------------- */
+:root {
+  /* Backgrounds — layered navy depth */
+  --navy-deep: #050816;
+  --navy: #0a0e1a;
+  --bg-panel: #111827;
+  --bg-card: #151c2e;
+  --bg-input: #1a2236;
+  --bg-hover: rgba(56, 189, 248, 0.10);
+  --bg-selected: rgba(56, 189, 248, 0.18);
+
+  /* Glass surfaces — translucent */
+  --glass: rgba(21, 28, 46, 0.65);
+  --glass-border: rgba(56, 189, 248, 0.12);
+  --glass-hover: rgba(56, 189, 248, 0.22);
+  --glass-glow: rgba(56, 189, 248, 0.08);
+
+  /* Borders */
+  --border: rgba(56, 189, 248, 0.08);
+  --border-subtle: rgba(56, 189, 248, 0.12);
+  --border-light: rgba(56, 189, 248, 0.18);
+  --border-bright: rgba(56, 189, 248, 0.30);
+
+  /* Text — always bright on dark */
+  --text: #e0e7ff;
+  --text-dim: #8b95b8;
+  --text-bright: #f0f4ff;
+  --text-muted: #5e6a8a;
+
+  /* Accent — cyan-blue primary */
+  --cyan: #38bdf8;
+  --cyan-bright: #7dd3fc;
+  --cyan-dim: #0ea5e9;
+  --cyan-subtle: rgba(56, 189, 248, 0.15);
+  --glow-cyan: rgba(56, 189, 248, 0.25);
+
+  /* Secondary — purple */
+  --purple: #a78bfa;
+  --purple-bright: #c4b5fd;
+  --purple-subtle: rgba(167, 139, 250, 0.12);
+  --glow-purple: rgba(167, 139, 250, 0.25);
+
+  /* Status */
+  --danger: #f87171;
+  --danger-hover: #fca5a5;
+  --warning: #fbbf24;
+  --success: #34d399;
+
+  /* Fonts */
+  --font-sans: "Inter", "SF Pro Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Menlo", monospace;
+}
+
+/* ---------------------------------------------------------------------------
+   Reset & Base
+   --------------------------------------------------------------------------- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--navy-deep);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+::selection {
+  background-color: var(--cyan);
+  color: white;
+}
+
+/* ---------------------------------------------------------------------------
+   Background Grid (same as website)
+   --------------------------------------------------------------------------- */
+.bg-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(56, 189, 248, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Glow Orbs (ambient background decoration)
+   --------------------------------------------------------------------------- */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-orb-cyan {
+  background: var(--glow-cyan);
+}
+
+.glow-orb-purple {
+  background: var(--glow-purple);
+}
+
+/* ---------------------------------------------------------------------------
+   Glass Card — reusable frosted-glass panel
+   --------------------------------------------------------------------------- */
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 0 30px var(--glass-glow);
+}
+
+/* ---------------------------------------------------------------------------
+   Buttons
+   --------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background-color: var(--bg-input);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--cyan);
+  color: var(--text-bright);
+}
+
+.btn:active {
+  background-color: rgba(56, 189, 248, 0.12);
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  color: var(--text-muted);
+  background-color: var(--navy);
+  border-color: var(--border);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Primary — solid cyan pill */
+.btn-primary {
+  background-color: var(--cyan);
+  color: var(--navy-deep);
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 16px;
+  padding: 10px 28px;
+}
+
+.btn-primary:hover {
+  background-color: var(--cyan-bright);
+  color: var(--navy-deep);
+}
+
+.btn-primary:active {
+  background-color: var(--cyan-dim);
+}
+
+.btn-primary:disabled {
+  background-color: var(--border-subtle);
+  color: var(--text-muted);
+}
+
+/* Accent — smaller primary */
+.btn-accent {
+  background-color: var(--cyan);
+  color: var(--navy-deep);
+  border: none;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 6px 16px;
+}
+
+.btn-accent:hover {
+  background-color: var(--cyan-bright);
+  color: var(--navy-deep);
+}
+
+/* Secondary — outlined purple */
+.btn-secondary {
+  background-color: var(--purple-subtle);
+  color: var(--purple);
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  font-weight: 600;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(167, 139, 250, 0.18);
+  color: var(--purple-bright);
+  border-color: rgba(167, 139, 250, 0.40);
+}
+
+/* Danger — ghost red */
+.btn-danger {
+  background-color: transparent;
+  color: var(--danger);
+  border-color: transparent;
+}
+
+.btn-danger:hover {
+  background-color: rgba(248, 113, 113, 0.10);
+  border-color: rgba(248, 113, 113, 0.30);
+  color: var(--danger-hover);
+}
+
+/* Ghost — transparent, minimal border */
+.btn-ghost {
+  background-color: transparent;
+  border-color: var(--border-subtle);
+  color: var(--text-dim);
+}
+
+.btn-ghost:hover {
+  background-color: rgba(56, 189, 248, 0.06);
+  border-color: var(--border-light);
+  color: var(--text);
+}
+
+.btn-ghost:disabled {
+  background-color: transparent;
+  border-color: var(--border);
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* Small */
+.btn-sm {
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 8px;
+}
+
+/* ---------------------------------------------------------------------------
+   Scrollbar — ultra-thin glass
+   --------------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(56, 189, 248, 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(56, 189, 248, 0.30);
+}
+
+/* ---------------------------------------------------------------------------
+   Gradient Text (same as website)
+   --------------------------------------------------------------------------- */
+.gradient-text {
+  background: linear-gradient(135deg, var(--cyan), var(--purple), var(--cyan-bright));
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 6s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ---------------------------------------------------------------------------
+   Tooltip
+   --------------------------------------------------------------------------- */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Input fields
+   --------------------------------------------------------------------------- */
+input, select {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+input:focus, select:focus {
+  border-color: var(--cyan);
+}
+
+input::placeholder {
+  color: var(--text-muted);
+}

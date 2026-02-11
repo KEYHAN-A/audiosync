@@ -1,180 +1,116 @@
-# AudioSync Pro — Automated Release Builds
+# AudioSync Pro — Release Builds
 #
-# Triggers on version tags (e.g. v2.1.0).
-# Builds standalone binaries for macOS, Windows, and Linux using PyInstaller.
-# Uploads them as GitHub Release assets.
+# Triggers on version tags (e.g. v3.0.0).
+# Builds:
+#   1. Tauri desktop app (.dmg, .msi, .deb/.AppImage)
+#   2. CLI binaries for all platforms
 #
 # To use:
-#   git tag v2.1.0
-#   git push origin v2.1.0
-#
-# NOTE: This workflow is a scaffold. Review and adjust before enabling.
-# macOS builds require macos-latest runner; cross-platform builds take ~10-15 min.
+#   git tag v3.0.0
+#   git push origin v3.0.0
 
 name: Release
 
 on:
   push:
     tags:
-      - 'v*'
-
-permissions:
-  contents: write
+      - "v*"
 
 jobs:
-  build-macos:
-    runs-on: macos-latest
+  # -----------------------------------------------------------------------
+  #  Tauri desktop app (macOS, Windows, Linux)
+  # -----------------------------------------------------------------------
+  tauri-build:
+    name: Tauri (${{ matrix.platform }})
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: --target universal-apple-darwin
+          - platform: ubuntu-22.04
+            args: ""
+          - platform: windows-latest
+            args: ""
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          python-version: '3.13'
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
-
-      - name: Install ffmpeg
-        run: brew install ffmpeg
-
-      - name: Build macOS app
-        run: |
-          chmod +x build_app.sh
-          ./build_app.sh
-
-      - name: Package artifact
-        run: |
-          cd dist
-          ditto -c -k --sequesterRsrc --keepParent "AudioSync Pro.app" "../AudioSync-Pro-macOS.zip"
-
-      - name: Upload macOS artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: AudioSync-Pro-macOS
-          path: AudioSync-Pro-macOS.zip
-
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
-
-      - name: Install ffmpeg
-        run: choco install ffmpeg -y
-
-      - name: Build Windows exe
-        shell: cmd
-        run: build_windows.bat
-
-      - name: Package artifact
-        run: |
-          cd dist
-          Compress-Archive -Path "AudioSync Pro" -DestinationPath "../AudioSync-Pro-Windows.zip"
-
-      - name: Upload Windows artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: AudioSync-Pro-Windows
-          path: AudioSync-Pro-Windows.zip
-
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-
-      - name: Install system dependencies
+      - name: Install Linux dependencies
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg libgl1 libegl1
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libgtk-3-dev
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
-
-      - name: Build Linux binary
-        run: |
-          chmod +x build_linux.sh
-          ./build_linux.sh
-
-      - name: Package artifact
-        run: |
-          cd dist
-          tar -czf "../AudioSync-Pro-Linux.tar.gz" "AudioSync Pro"
-
-      - name: Upload Linux artifact
-        uses: actions/upload-artifact@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          name: AudioSync-Pro-Linux
-          path: AudioSync-Pro-Linux.tar.gz
+          node-version: 20
+          cache: npm
 
-  create-release:
-    needs: [build-macos, build-windows, build-linux]
-    if: always() && needs.build-macos.result == 'success'
-    runs-on: ubuntu-latest
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: cargo test --workspace
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "AudioSync Pro ${{ github.ref_name }}"
+          releaseBody: "See the [CHANGELOG](https://github.com/KEYHAN-A/audiosync/blob/main/CHANGELOG.md) for details."
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
+
+  # -----------------------------------------------------------------------
+  #  CLI binary builds
+  # -----------------------------------------------------------------------
+  cli-build:
+    name: CLI (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact: audiosync-cli-macos-arm64
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact: audiosync-cli-macos-x64
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: audiosync-cli-linux-x64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: audiosync-cli-windows-x64
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          path: artifacts
+          targets: ${{ matrix.target }}
 
-      - name: Extract version from tag
-        id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      - name: Build CLI (release)
+        run: cargo build --release --target ${{ matrix.target }} -p audiosync-cli
 
-      - name: Collect release files
-        id: files
-        run: |
-          FILES=""
-          for f in artifacts/AudioSync-Pro-macOS/AudioSync-Pro-macOS.zip \
-                   artifacts/AudioSync-Pro-Windows/AudioSync-Pro-Windows.zip \
-                   artifacts/AudioSync-Pro-Linux/AudioSync-Pro-Linux.tar.gz; do
-            [ -f "$f" ] && FILES="$FILES$f\n"
-          done
-          echo -e "$FILES" > /tmp/release_files.txt
-          cat /tmp/release_files.txt
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Upload CLI artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: AudioSync Pro ${{ steps.version.outputs.VERSION }}
-          body: |
-            ## AudioSync Pro ${{ steps.version.outputs.VERSION }}
-
-            ### Downloads
-            - **macOS**: `AudioSync-Pro-macOS.zip` — Extract and run `AudioSync Pro.app`
-            - **Windows**: `AudioSync-Pro-Windows.zip` — Extract and run `AudioSync Pro.exe`
-            - **Linux**: `AudioSync-Pro-Linux.tar.gz` — Extract and run `AudioSync Pro`
-
-            > Requires [FFmpeg](https://ffmpeg.org) installed on your system for video file support.
-
-            See [CHANGELOG.md](https://github.com/KEYHAN-A/audiosync/blob/main/CHANGELOG.md) for details.
-          files: |
-            artifacts/AudioSync-Pro-macOS/AudioSync-Pro-macOS.zip
-            artifacts/AudioSync-Pro-Windows/AudioSync-Pro-Windows.zip
-            artifacts/AudioSync-Pro-Linux/AudioSync-Pro-Linux.tar.gz
-          fail_on_unmatched_files: false
-          draft: false
-          prerelease: false
+          name: ${{ matrix.artifact }}
+          path: |
+            target/${{ matrix.target }}/release/audiosync
+            target/${{ matrix.target }}/release/audiosync.exe
+          if-no-files-found: ignore
