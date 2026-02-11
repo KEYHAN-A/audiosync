@@ -25,6 +25,9 @@
     "dialog:allow-confirm",
     "shell:default",
     "shell:allow-open",
-    "store:default"
+    "store:default",
+    "clipboard-manager:default",
+    "clipboard-manager:allow-write-text",
+    "clipboard-manager:allow-read-text"
   ]
 }

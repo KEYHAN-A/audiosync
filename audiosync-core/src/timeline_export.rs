@@ -76,45 +76,94 @@ pub fn export_fcpxml(
     ));
     xml.push_str("          <spine>\n");
 
-    // Place clips on lanes (each track = one lane)
+    // Collect all clips with their lane assignment and asset id
+    struct PlacedClip {
+        lane: i32,
+        offset_s: f64,
+        dur_s: f64,
+        aid: usize,
+        name: String,
+    }
+
+    let mut primary_clips: Vec<PlacedClip> = Vec::new();
+    let mut connected_clips: Vec<PlacedClip> = Vec::new();
+
     for (ti, track) in tracks.iter().enumerate() {
         let lane = ti as i32;
-
         for (ci, clip) in track.clips.iter().enumerate() {
-            let offset_s = clip.timeline_offset_s;
-            let dur_s = clip.duration_s;
-
-            // Find asset id
             let aid = asset_map
                 .iter()
                 .find(|&&(t, c, _)| t == ti && c == ci)
                 .map(|&(_, _, a)| a)
                 .unwrap_or(2);
-
+            let placed = PlacedClip {
+                lane,
+                offset_s: clip.timeline_offset_s,
+                dur_s: clip.duration_s,
+                aid,
+                name: clip.name.clone(),
+            };
             if lane == 0 {
-                // Primary storyline
-                xml.push_str(&format!(
-                    "            <asset-clip ref=\"r{}\" name=\"{}\" \
-                     offset=\"{:.6}s\" duration=\"{:.6}s\" start=\"0s\"/>\n",
-                    aid,
-                    escape_xml(&clip.name),
-                    offset_s,
-                    dur_s,
-                ));
+                primary_clips.push(placed);
             } else {
-                // Connected clip on a lane
-                xml.push_str(&format!(
-                    "            <asset-clip ref=\"r{}\" name=\"{}\" \
-                     offset=\"{:.6}s\" duration=\"{:.6}s\" start=\"0s\" \
-                     lane=\"{}\"/>\n",
-                    aid,
-                    escape_xml(&clip.name),
-                    offset_s,
-                    dur_s,
-                    lane,
-                ));
+                connected_clips.push(placed);
             }
         }
+    }
+
+    // Sort primary clips by offset
+    primary_clips.sort_by(|a, b| {
+        a.offset_s
+            .partial_cmp(&b.offset_s)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+
+    // Build primary storyline with gap elements for DaVinci Resolve compatibility
+    let mut cursor = 0.0f64;
+
+    for pc in &primary_clips {
+        // Insert a gap if there's dead time before this clip
+        if pc.offset_s > cursor + 0.001 {
+            let gap_dur = pc.offset_s - cursor;
+            xml.push_str(&format!(
+                "            <gap name=\"Gap\" offset=\"{:.6}s\" \
+                 duration=\"{:.6}s\" start=\"3600s\"/>\n",
+                cursor, gap_dur,
+            ));
+        }
+        xml.push_str(&format!(
+            "            <asset-clip ref=\"r{}\" name=\"{}\" \
+             offset=\"{:.6}s\" duration=\"{:.6}s\" start=\"0s\"/>\n",
+            pc.aid,
+            escape_xml(&pc.name),
+            pc.offset_s,
+            pc.dur_s,
+        ));
+        cursor = pc.offset_s + pc.dur_s;
+    }
+
+    // Append a trailing gap to reach the full timeline duration if needed
+    if cursor < timeline_dur - 0.001 {
+        let gap_dur = timeline_dur - cursor;
+        xml.push_str(&format!(
+            "            <gap name=\"Gap\" offset=\"{:.6}s\" \
+             duration=\"{:.6}s\" start=\"3600s\"/>\n",
+            cursor, gap_dur,
+        ));
+    }
+
+    // Connected clips (lane > 0) — placed with offset and lane attribute
+    for cc in &connected_clips {
+        xml.push_str(&format!(
+            "            <asset-clip ref=\"r{}\" name=\"{}\" \
+             offset=\"{:.6}s\" duration=\"{:.6}s\" start=\"0s\" \
+             lane=\"{}\"/>\n",
+            cc.aid,
+            escape_xml(&cc.name),
+            cc.offset_s,
+            cc.dur_s,
+            cc.lane,
+        ));
     }
 
     xml.push_str("          </spine>\n");

@@ -197,6 +197,17 @@ pub fn analyze(
         }
     }
 
+    // Phase 6.5: Enforce non-overlap within each track
+    // A single device can only record one clip at a time, so clips from
+    // the same track must be sequential — never overlapping.
+    check_cancelled(cancel)?;
+    for ti in 0..tracks.len() {
+        if ti == ref_idx {
+            continue;
+        }
+        fix_intra_track_overlaps(&mut tracks[ti], sr, &mut clip_offsets, &mut warnings);
+    }
+
     // Phase 7: Normalize timeline
     prog!(total_steps - 1, "Normalizing timeline...");
     check_cancelled(cancel)?;
@@ -867,6 +878,111 @@ fn stitch_enhanced_timeline(
     }
 
     enhanced
+}
+
+/// Enforce non-overlap constraint within a single track.
+///
+/// After cross-correlation some clips from the same device may land at
+/// overlapping positions, which is physically impossible (a single camera
+/// records sequentially).  When overlap is detected the track is
+/// re-sequenced using the best-placed clip as an anchor and creation-time
+/// gaps for the rest.
+fn fix_intra_track_overlaps(
+    track: &mut Track,
+    sr: u32,
+    clip_offsets: &mut HashMap<String, i64>,
+    warnings: &mut Vec<String>,
+) {
+    if track.clips.len() < 2 {
+        return;
+    }
+
+    // Sort clips by creation_time (then by name as tiebreaker)
+    track.sort_clips_by_time();
+
+    // Check for overlaps
+    let mut has_overlap = false;
+    for i in 0..track.clips.len() - 1 {
+        let end_i = track.clips[i].timeline_offset_samples
+            + track.clips[i].length_samples() as i64;
+        let start_next = track.clips[i + 1].timeline_offset_samples;
+        if end_i > start_next {
+            has_overlap = true;
+            break;
+        }
+    }
+
+    if !has_overlap {
+        return;
+    }
+
+    // Find the clip with the best (highest) confidence to use as anchor
+    let anchor_idx = track
+        .clips
+        .iter()
+        .enumerate()
+        .max_by(|(_, a), (_, b)| {
+            a.confidence
+                .partial_cmp(&b.confidence)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        })
+        .map(|(i, _)| i)
+        .unwrap_or(0);
+
+    let msg = format!(
+        "Track '{}': overlap detected — re-sequencing using '{}' as anchor",
+        track.name, track.clips[anchor_idx].name
+    );
+    warnings.push(msg.clone());
+    warn!("{}", msg);
+
+    // Re-build offsets: walk forward from anchor, then backward
+    // Forward pass: anchor_idx+1 .. end
+    for i in (anchor_idx + 1)..track.clips.len() {
+        let gap_s = if let (Some(prev_ct), Some(curr_ct)) = (
+            track.clips[i - 1].creation_time,
+            track.clips[i].creation_time,
+        ) {
+            let gap = curr_ct - (prev_ct + track.clips[i - 1].duration_s);
+            gap.max(0.0)
+        } else {
+            0.5
+        };
+
+        let offset = track.clips[i - 1].timeline_offset_samples
+            + track.clips[i - 1].length_samples() as i64
+            + (gap_s * sr as f64) as i64;
+        track.clips[i].timeline_offset_samples = offset;
+        track.clips[i].timeline_offset_s = offset as f64 / sr as f64;
+        clip_offsets.insert(track.clips[i].file_path.clone(), offset);
+    }
+
+    // Backward pass: anchor_idx-1 .. 0
+    for i in (0..anchor_idx).rev() {
+        let gap_s = if let (Some(curr_ct), Some(next_ct)) = (
+            track.clips[i].creation_time,
+            track.clips[i + 1].creation_time,
+        ) {
+            let gap = next_ct - (curr_ct + track.clips[i].duration_s);
+            gap.max(0.0)
+        } else {
+            0.5
+        };
+
+        let offset = track.clips[i + 1].timeline_offset_samples
+            - track.clips[i].length_samples() as i64
+            - (gap_s * sr as f64) as i64;
+        track.clips[i].timeline_offset_samples = offset;
+        track.clips[i].timeline_offset_s = offset as f64 / sr as f64;
+        clip_offsets.insert(track.clips[i].file_path.clone(), offset);
+    }
+
+    info!(
+        "Track '{}': re-sequenced {} clips around anchor '{}'",
+        track.name,
+        track.clips.len(),
+        track.clips[anchor_idx].name
+    );
 }
 
 fn inherit_drift_for_short_clips(tracks: &mut [Track], ref_idx: usize) {
