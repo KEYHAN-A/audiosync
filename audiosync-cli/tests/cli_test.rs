@@ -18,8 +18,8 @@ fn test_version() {
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
     assert!(
-        stdout.contains("3.0.0"),
-        "Version output should contain 3.0.0, got: {}",
+        stdout.contains("3.1.0"),
+        "Version output should contain 3.1.0, got: {}",
         stdout
     );
 }
