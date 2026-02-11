@@ -2,7 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub](https://img.shields.io/badge/GitHub-KEYHAN--A%2Faudiosync-181717?logo=github)](https://github.com/KEYHAN-A/audiosync)
-[![Version](https://img.shields.io/badge/version-3.0.0-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
+[![Version](https://img.shields.io/badge/version-3.1.0-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-a78bfa)]()
 [![Website](https://img.shields.io/badge/website-audiosync.pro-38bdf8)](https://audiosync.pro)
 [![CI](https://github.com/KEYHAN-A/audiosync/actions/workflows/ci.yml/badge.svg)](https://github.com/KEYHAN-A/audiosync/actions/workflows/ci.yml)
@@ -27,6 +27,8 @@ AudioSync Pro finds exactly where each clip sits on a shared timeline using audi
 - **NLE timeline export** — FCPXML (Final Cut Pro / DaVinci Resolve) and EDL (Premiere / Avid)
 - **Multiple formats** — WAV, AIFF, FLAC, MP3 (16/24/32-bit)
 - **Video support** — Extract audio from MP4, MOV, MKV, AVI, etc. via ffmpeg
+- **Cloud save/load** — Save projects to the cloud via Keyhan Studio account (optional)
+- **Timeline sharing** — Share synced timelines via a public link with interactive viewer
 - **Cross-platform** — macOS, Windows, Linux
 
 ---
@@ -109,6 +111,8 @@ AudioSyncPro/
 ├── src/                  # Vue 3 frontend
 │   ├── composables/
 │   │   ├── useAudioSync.js   # Central state + Tauri invoke wrappers
+│   │   ├── useAuth.js        # Device code OAuth + JWT session management
+│   │   ├── useCloud.js       # Cloud project CRUD + timeline sharing
 │   │   └── useToast.js       # Toast notification system
 │   ├── components/
 │   │   ├── MainLayout.vue    # App shell, toolbar, shortcuts, drag-drop
@@ -117,6 +121,9 @@ AudioSyncPro/
 │   │   ├── TrackCard.vue     # Per-track card with clip list
 │   │   ├── WaveformCanvas.vue# Canvas 2D timeline with waveform peaks
 │   │   ├── ResizeSplitter.vue# Draggable panel divider
+│   │   ├── LoginDialog.vue   # Device code login flow
+│   │   ├── CloudProjectsDialog.vue  # Cloud project list + save/load
+│   │   ├── ShareDialog.vue   # Timeline sharing via link
 │   │   ├── ProcessingDialog.vue
 │   │   ├── ExportDialog.vue
 │   │   ├── DriftFixDialog.vue
@@ -209,6 +216,8 @@ cargo test -p audiosync-cli
 | Waveform visualization | Yes | -- | -- |
 | Drag-and-drop | Yes | -- | -- |
 | Project save/load | Yes | Yes | No |
+| Cloud save/load | Yes | -- | -- |
+| Timeline sharing | Yes | -- | -- |
 | JSON output | -- | Yes | Yes |
 | Headless/server use | -- | Yes | Yes |
 | GUI | Tauri + Vue 3 | -- | PyQt6 (legacy) |
@@ -219,11 +228,18 @@ cargo test -p audiosync-cli
 
 AudioSync Pro v3.0 is a ground-up rewrite in Rust. The algorithm is identical but the implementation is new.
 
-**What changed:**
+**What changed in v3.0:**
 - Python/PyQt6 → Rust/Tauri v2 + Vue 3
 - `soundfile` + `scipy` → `symphonia` + `rustfft` + `rubato`
 - `opentimelineio` → native FCPXML/EDL generation
 - Single binary → Cargo workspace with 3 crates
+
+**What's new in v3.1.0:**
+- Cloud save/load via Keyhan Studio account (optional, app works fully offline)
+- Timeline sharing via public link with interactive waveform viewer
+- Fixed drag-and-drop for Tauri v2 native file handling
+- Fixed intra-track clip overlap enforcement
+- Fixed FCPXML gap elements for DaVinci Resolve compatibility
 
 **What stays:**
 - The Python implementation in `python/` with its own CLI

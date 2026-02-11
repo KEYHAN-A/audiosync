@@ -5,6 +5,29 @@ All notable changes to AudioSync Pro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-02-11
+
+### Fixed
+- Drag-and-drop broken in Tauri v2 (File.path was Tauri v1 only) — now uses native onDragDropEvent
+- Clips from the same device overlapping on the timeline — added intra-track non-overlap enforcement
+- FCPXML export missing gap elements, causing DaVinci Resolve to not create a timeline
+
+### Added
+- Login via Google device code flow (optional — app works fully without login)
+- Cloud project save/load via Keyhan Studio account
+- Timeline sharing via public link with interactive viewer at studio.keyhan.info/share/
+- Clipboard plugin for share URL copy
+
+## [3.0.0] - 2026-02-11
+
+### Changed
+- Complete rewrite from Python/PyQt6 to Rust/Tauri v2 + Vue 3
+- Audio engine: soundfile + scipy → symphonia + rustfft + rubato
+- Timeline export: opentimelineio → native FCPXML v1.11 + EDL (CMX 3600)
+- Packaging: PyInstaller → Cargo workspace with 3 crates (core, cli, tauri)
+- GUI: PyQt6 → Vue 3 with Canvas 2D waveform timeline
+- CLI syntax: python cli.py → audiosync (native binary)
+
 ## [2.5.1] - 2026-02-08
 
 ### Added
@@ -153,6 +176,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Processing dialog with real-time progress and ETA
 - macOS .app bundle build script
 
+[3.1.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.1.0
+[3.0.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.0.0
 [2.3.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v2.3.0
 [2.2.2]: https://github.com/KEYHAN-A/audiosync/releases/tag/v2.2.2
 [2.2.1]: https://github.com/KEYHAN-A/audiosync/releases/tag/v2.2.1

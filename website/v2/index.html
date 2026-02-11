@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow">
     <meta name="author" content="Keyhan">
     <meta name="keywords"
-        content="audio sync, video sync, multi-device synchronization, FFT cross-correlation, audio alignment, multi-camera sync, DaVinci Resolve, FCPXML, timeline export, free audio tool, open source audio, Rust, Tauri, cloud sync, timeline sharing">
+        content="audio sync, video sync, multi-device synchronization, FFT cross-correlation, audio alignment, multi-camera sync, DaVinci Resolve, OTIO, timeline export, free audio tool, open source audio">
     <link rel="canonical" href="https://audiosync.keyhan.info/">
 
     <!-- Open Graph -->
@@ -44,7 +44,7 @@
             "price": "0",
             "priceCurrency": "USD"
         },
-        "softwareVersion": "3.1.0",
+        "softwareVersion": "2.5.1",
         "author": {
             "@type": "Person",
             "name": "Keyhan",
@@ -92,12 +92,17 @@
 
 <body class="font-sans">
 
+    <!-- Archived Banner -->
+    <div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#a78bfa,#38bdf8);color:#050816;text-align:center;padding:10px 16px;font-size:14px;font-weight:600;">
+        This is the archived v2 site. <a href="https://audiosync.keyhan.info" style="color:#050816;text-decoration:underline;">Visit audiosync.keyhan.info for the latest version.</a>
+    </div>
+
     <!-- Background Grid -->
     <div class="bg-grid"></div>
 
     <!-- ==================== NAVIGATION ==================== -->
     <header>
-        <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-navy-deep/80 border-b border-white/5"
+        <nav class="fixed left-0 right-0 z-50 backdrop-blur-xl bg-navy-deep/80 border-b border-white/5" style="top:40px"
             role="navigation" aria-label="Main navigation">
             <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
                 <a href="#" class="flex items-center gap-3">
@@ -165,7 +170,6 @@
                 <!-- Subtitle -->
                 <p class="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed">
                     Multi-device audio and video synchronization with sample-accurate FFT cross-correlation.
-                    Built with <strong class="text-white/70">Rust</strong> and <strong class="text-white/70">Tauri v2</strong> for native performance.
                     Import, analyze &amp; sync, and export — three steps to perfectly aligned audio.
                 </p>
 
@@ -207,8 +211,8 @@
                 </div>
 
                 <!-- Version badge -->
-                <p class="mt-6 text-xs text-white/30 font-mono"><span id="hero-version">v3.1.0</span> &middot; Free
-                    &amp; Open Source &middot; Built with Rust</p>
+                <p class="mt-6 text-xs text-white/30 font-mono"><span id="hero-version">v2.5.1</span> &middot; Free
+                    &amp; Open Source</p>
             </div>
         </section>
 
@@ -299,9 +303,9 @@
                                     d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-white mb-2">NLE Timeline Export</h3>
-                        <p class="text-white/50 text-sm leading-relaxed">Export your synced timeline as FCPXML or
-                            EDL. Open it in DaVinci Resolve, Final Cut Pro, or Premiere with all clips pre-arranged on the correct tracks.</p>
+                        <h3 class="text-lg font-semibold text-white mb-2">DaVinci Resolve Export</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Export your synced timeline as OTIO, FCPXML, or
+                            EDL. Open it in DaVinci Resolve, Final Cut Pro, or Premiere with all clips pre-arranged.</p>
                     </div>
                 </div>
             </div>
@@ -367,7 +371,7 @@
                                 <h3 class="text-xl font-semibold text-white mb-2">Export</h3>
                                 <p class="text-white/50 leading-relaxed">Export one drift-corrected, synced audio file
                                     per track — perfectly aligned from start to finish. Choose WAV, AIFF, FLAC, or MP3
-                                    with configurable quality. Or export an NLE timeline (FCPXML/EDL) for DaVinci
+                                    with configurable quality. Or export an NLE timeline (OTIO/FCPXML/EDL) for DaVinci
                                     Resolve, Final Cut Pro, or Premiere.</p>
                             </div>
                         </div>
@@ -438,7 +442,7 @@
                     <div class="glass-card p-7 fade-in fade-delay-6">
                         <div class="text-3xl mb-4">🎬</div>
                         <h3 class="text-lg font-semibold text-white mb-2">DaVinci Resolve Workflow</h3>
-                        <p class="text-white/50 text-sm leading-relaxed">Export an FCPXML timeline and import it into
+                        <p class="text-white/50 text-sm leading-relaxed">Export an OTIO timeline and import it into
                             DaVinci Resolve. All your clips land on the right tracks at the right positions — ready to
                             color and edit.</p>
                     </div>
@@ -513,7 +517,7 @@
                             </svg>
                         </div>
                         <h3 class="text-lg font-semibold text-white mb-2">Polyphase Resampling</h3>
-                        <p class="text-white/50 text-sm leading-relaxed">Rubato FFT resampler for sample rate conversion with
+                        <p class="text-white/50 text-sm leading-relaxed">SciPy-powered sample rate conversion with
                             minimal artifacts. Professional-quality resampling when needed.</p>
                     </div>
 
@@ -561,7 +565,7 @@
                             </svg>
                         </div>
                         <h3 class="text-lg font-semibold text-white mb-2">Scientific Precision</h3>
-                        <p class="text-white/50 text-sm leading-relaxed">Rust-native DSP engine with rustfft. FFT
+                        <p class="text-white/50 text-sm leading-relaxed">NumPy + SciPy powered DSP engine. FFT
                             cross-correlation with sub-sample accuracy, plus automatic clock drift detection and
                             correction via linear regression.</p>
                     </div>
@@ -628,11 +632,12 @@
                         <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5">
                             <svg class="w-6 h-6 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-white mb-2">Share Timelines</h3>
-                        <p class="text-white/50 text-sm leading-relaxed">Share your synced timeline via a link. Recipients can view the interactive waveform timeline and download the FCPXML — no account needed.</p>
+                        <h3 class="text-lg font-semibold text-white mb-2">Auto Sync</h3>
+                        <p class="text-white/50 text-sm leading-relaxed">Changes sync automatically when you're
+                            connected. Work offline and your projects upload when you're back online.</p>
                     </div>
 
                     <!-- Cloud 5 -->
@@ -747,58 +752,34 @@
                 <p class="text-white/30 text-sm fade-in fade-delay-2">
                     Requires <a href="https://ffmpeg.org"
                         class="text-cyan/60 hover:text-cyan transition-colors underline underline-offset-4">ffmpeg</a>
-                    for video file support &middot; Built with Rust + Tauri v2
+                    for
+                    video file support &middot; Python 3.10+ for building from source
                 </p>
             </div>
         </section>
 
-        <!-- ==================== BUILT WITH RUST ==================== -->
-        <section class="relative py-24 px-6">
+        <!-- ==================== PERFORMANCE ==================== -->
+        <section class="relative py-20 px-6">
             <div class="max-w-5xl mx-auto">
-                <div class="text-center mb-16 fade-in">
-                    <p class="text-cyan text-sm font-semibold tracking-widest uppercase mb-3">Performance</p>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Built with Rust</h2>
-                    <p class="text-white/50 max-w-2xl mx-auto">AudioSync Pro v3 is a ground-up rewrite in Rust. Native performance, minimal memory footprint, single binary — no Python runtime required.</p>
-                    <div class="section-divider mt-6"></div>
-                </div>
-
                 <div class="glass-card p-10 md:p-14 fade-in">
-                    <div class="grid md:grid-cols-4 gap-10 text-center">
+                    <div class="grid md:grid-cols-3 gap-10 text-center">
                         <div>
-                            <div class="text-4xl font-bold gradient-text mb-2">~10x</div>
-                            <p class="text-white/50 text-sm">Faster analysis than the Python version</p>
-                        </div>
-                        <div>
-                            <div class="text-4xl font-bold gradient-text mb-2">~5x</div>
-                            <p class="text-white/50 text-sm">Lower memory usage — 8 kHz analysis copies only</p>
-                        </div>
-                        <div>
-                            <div class="text-4xl font-bold gradient-text mb-2">15 MB</div>
-                            <p class="text-white/50 text-sm">Single binary — no Python runtime, no pip install</p>
+                            <div class="text-4xl font-bold gradient-text mb-2">36x</div>
+                            <p class="text-white/50 text-sm">Faster than full-resolution analysis with 8 kHz
+                                downsampling
+                            </p>
                         </div>
                         <div>
                             <div class="text-4xl font-bold gradient-text mb-2">&lt; 0.1ms</div>
-                            <p class="text-white/50 text-sm">Sub-millisecond precision for sample-accurate alignment</p>
+                            <p class="text-white/50 text-sm">Sub-millisecond temporal precision for sample-accurate
+                                alignment</p>
                         </div>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-                    <div class="glass-card p-5 text-center fade-in fade-delay-1">
-                        <p class="text-cyan font-mono font-bold text-sm mb-1">rustfft</p>
-                        <p class="text-white/40 text-xs">FFT cross-correlation</p>
-                    </div>
-                    <div class="glass-card p-5 text-center fade-in fade-delay-2">
-                        <p class="text-purple font-mono font-bold text-sm mb-1">rubato</p>
-                        <p class="text-white/40 text-xs">Polyphase resampling</p>
-                    </div>
-                    <div class="glass-card p-5 text-center fade-in fade-delay-3">
-                        <p class="text-cyan font-mono font-bold text-sm mb-1">symphonia</p>
-                        <p class="text-white/40 text-xs">Audio decoding</p>
-                    </div>
-                    <div class="glass-card p-5 text-center fade-in fade-delay-4">
-                        <p class="text-purple font-mono font-bold text-sm mb-1">hound</p>
-                        <p class="text-white/40 text-xs">WAV export</p>
+                        <div>
+                            <div class="text-4xl font-bold gradient-text mb-2">0 MB</div>
+                            <p class="text-white/50 text-sm">Full-res audio never loaded into memory during analysis
+                                phase
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -832,7 +813,7 @@
                     <span>&copy; 2026 AudioSync Pro</span>
                 </div>
                 <div class="flex items-center gap-6">
-                    <span id="footer-version" class="font-mono text-xs">v3.1.0</span>
+                    <span id="footer-version" class="font-mono text-xs">v2.5.1</span>
                     <a href="https://github.com/KEYHAN-A/audiosync" target="_blank" rel="noopener"
                         class="hover:text-white transition-colors" aria-label="GitHub repository">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
