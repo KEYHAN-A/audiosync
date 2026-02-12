@@ -8,25 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.1.0] - 2026-02-11
 
 ### Fixed
-- Drag-and-drop broken in Tauri v2 (File.path was Tauri v1 only) — now uses native onDragDropEvent
-- Clips from the same device overlapping on the timeline — added intra-track non-overlap enforcement
-- FCPXML export missing gap elements, causing DaVinci Resolve to not create a timeline
+- Drag-and-drop now works reliably — files drop straight into tracks
+- Clips from the same device no longer overlap on the timeline (physically impossible situations are now auto-corrected)
+- FCPXML timelines now import correctly into DaVinci Resolve with proper gap elements
 
 ### Added
-- Login via Google device code flow (optional — app works fully without login)
-- Cloud project save/load via Keyhan Studio account
-- Timeline sharing via public link with interactive viewer at studio.keyhan.info/share/
-- Clipboard plugin for share URL copy
+- Sign in with Google to unlock cloud features (completely optional — the app works fully without an account)
+- Save and load projects from the cloud
+- Share your synced timeline with anyone via a link — they can view it and download the FCPXML
+- One-click copy for share URLs
 
 ## [3.0.0] - 2026-02-11
 
 ### Changed
-- Complete rewrite from Python/PyQt6 to Rust/Tauri v2 + Vue 3
-- Audio engine: soundfile + scipy → symphonia + rustfft + rubato
-- Timeline export: opentimelineio → native FCPXML v1.11 + EDL (CMX 3600)
-- Packaging: PyInstaller → Cargo workspace with 3 crates (core, cli, tauri)
-- GUI: PyQt6 → Vue 3 with Canvas 2D waveform timeline
-- CLI syntax: python cli.py → audiosync (native binary)
+- Rebuilt from the ground up in Rust with a Tauri v2 desktop shell and Vue 3 frontend
+- New audio engine — dramatically faster analysis and lower memory usage
+- Native FCPXML v1.11 and EDL (CMX 3600) timeline export — works great with DaVinci Resolve, Final Cut Pro, and Premiere
+- Ships as a single ~12 MB binary — just download and open
+- New CLI tool: `audiosync analyze`, `audiosync sync`, `audiosync drift`
 
 ## [2.5.1] - 2026-02-08
 
