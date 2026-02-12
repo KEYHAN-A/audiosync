@@ -5,6 +5,16 @@ All notable changes to AudioSync Pro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.1] - 2026-02-12
+
+### Fixed
+- Login connection error — desktop app was blocked by CORS; API now accepts Tauri origins
+- Windows CI build — added missing icon.ico for Tauri bundler
+
+### Changed
+- Website copy refreshed — warmer tone, clearer ffmpeg note, removed references to previous versions
+- Changelog rewritten with user-friendly descriptions
+
 ## [3.1.0] - 2026-02-11
 
 ### Fixed
@@ -175,6 +185,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Processing dialog with real-time progress and ETA
 - macOS .app bundle build script
 
+[3.1.1]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.1.1
 [3.1.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.1.0
 [3.0.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.0.0
 [2.3.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v2.3.0
