@@ -7,6 +7,7 @@
 use audiosync_core::audio_io::{export_track, is_supported_file, load_clip};
 use audiosync_core::engine;
 use audiosync_core::grouping::group_files_by_device;
+use audiosync_core::validation::{self, ValidationResult, MissingFileInfo, RelinkResult};
 use audiosync_core::models::*;
 use audiosync_core::project_io;
 use audiosync_core::timeline_export;
@@ -592,6 +593,33 @@ pub fn get_file_groups(paths: Vec<String>) -> BTreeMap<String, Vec<String>> {
         .filter(|p| is_supported_file(p))
         .collect();
     group_files_by_device(&supported)
+}
+
+/// Validate all source files in the current project.
+#[tauri::command]
+pub fn validate_source_files(state: State<'_, AppState>) -> Result<ValidationResult, String> {
+    let tracks = state.tracks.lock().map_err(|e| e.to_string())?;
+    Ok(validation::validate_source_files(&tracks))
+}
+
+/// Relink missing files using a mapping of old paths to new paths.
+#[tauri::command]
+pub fn relink_files(
+    remapping: std::collections::HashMap<String, String>,
+    state: State<'_, AppState>,
+) -> Result<RelinkResult, String> {
+    let mut tracks = state.tracks.lock().map_err(|e| e.to_string())?;
+    validation::relink_files(&mut tracks, &remapping).map_err(|e| e.to_string())
+}
+
+/// Search for missing files in a directory.
+#[tauri::command]
+pub fn find_missing_files_in_directory(
+    missing_files: Vec<MissingFileInfo>,
+    search_dir: String,
+) -> Result<std::collections::HashMap<String, String>, String> {
+    validation::find_missing_files_in_directory(&missing_files, std::path::Path::new(&search_dir))
+        .map_err(|e| e.to_string())
 }
 
 // ---------------------------------------------------------------------------

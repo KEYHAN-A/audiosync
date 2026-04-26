@@ -9,6 +9,7 @@
 //! - **project_io**: JSON project save/load.
 //! - **timeline_export**: FCPXML and EDL generation.
 //! - **cloud**: Cloud API client (Phase 3+).
+//! - **error**: Structured error types with user-friendly messages.
 
 pub mod models;
 pub mod grouping;
@@ -18,6 +19,12 @@ pub mod engine;
 pub mod project_io;
 pub mod timeline_export;
 pub mod cloud;
+pub mod error;
+pub mod logging;
+pub mod validation;
 
 // Re-export key types for convenience.
 pub use models::*;
+pub use error::{AudioSyncError, Result as AudioSyncResult};
+pub use logging::{DiagnosticsReport, init_logging, init_cli_logging, init_gui_logging, log_sync_result};
+pub use validation::{ValidationResult, MissingFileInfo, RelinkResult, validate_source_files, relink_files, find_missing_files_in_directory};
