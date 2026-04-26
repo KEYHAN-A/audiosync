@@ -5,6 +5,25 @@ All notable changes to AudioSync Pro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2026-04-26
+
+### Added
+- **Structured error types** with user-friendly messages and platform-specific fix suggestions
+- **Structured logging** using tracing (replaces env_logger)
+- **Diagnostics export** — sync quality reports (JSON/text) with confidence scores and drift metrics
+- **File validation** — check all source files exist before processing
+- **File relinking** — remap missing files to new locations after project load
+- **Missing Files Dialog** — UI for relinking missing media with folder search
+- **Property-based testing** framework (proptest) for better test coverage
+
+### Changed
+- Test coverage increased from 51 to 52 tests
+- Improved error messages with actionable recovery suggestions
+
+### Technical
+- Added dependencies: tracing, tracing-subscriber, tracing-appender, proptest, rstest, rayon
+- New modules: error.rs, logging.rs, validation.rs
+
 ## [3.1.1] - 2026-02-12
 
 ### Fixed
