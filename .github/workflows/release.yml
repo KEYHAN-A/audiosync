@@ -22,31 +22,57 @@ permissions:
 jobs:
   # -----------------------------------------------------------------------
   #  Tauri desktop app (macOS, Windows, Linux)
+  #
+  #  Note: Jobs must run sequentially because tauri-action doesn't handle
+  #  concurrent release updates properly - parallel uploads will overwrite
+  #  each other leaving only the last platform's files in the release.
   # -----------------------------------------------------------------------
-  tauri-build:
-    name: Tauri (${{ matrix.platform }})
-    runs-on: ${{ matrix.platform }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: macos-latest
-            args: --target universal-apple-darwin
-          - platform: ubuntu-22.04
-            args: ""
-          - platform: windows-latest
-            args: ""
-
+  tauri-macos:
+    name: Tauri (macOS)
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: cargo test --workspace
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "AudioSync Pro ${{ github.ref_name }}"
+          releaseBody: "See the [CHANGELOG](https://github.com/KEYHAN-A/audiosync/blob/main/CHANGELOG.md) for details."
+          releaseDraft: true
+          prerelease: false
+          args: --target universal-apple-darwin
+
+  tauri-linux:
+    name: Tauri (Linux)
+    runs-on: ubuntu-22.04
+    needs: tauri-macos
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Install Linux dependencies
-        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libgtk-3-dev
@@ -73,7 +99,40 @@ jobs:
           releaseBody: "See the [CHANGELOG](https://github.com/KEYHAN-A/audiosync/blob/main/CHANGELOG.md) for details."
           releaseDraft: true
           prerelease: false
-          args: ${{ matrix.args }}
+
+  tauri-windows:
+    name: Tauri (Windows)
+    runs-on: windows-latest
+    needs: tauri-linux
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: cargo test --workspace
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "AudioSync Pro ${{ github.ref_name }}"
+          releaseBody: "See the [CHANGELOG](https://github.com/KEYHAN-A/audiosync/blob/main/CHANGELOG.md) for details."
+          releaseDraft: true
+          prerelease: false
+
 
   # -----------------------------------------------------------------------
   #  CLI binary builds
