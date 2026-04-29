@@ -7,6 +7,7 @@
 use audiosync_core::audio_io::{export_track, is_supported_file, load_clip};
 use audiosync_core::engine;
 use audiosync_core::grouping::group_files_by_device;
+use audiosync_core::sync_format;
 use audiosync_core::validation::{self, ValidationResult, MissingFileInfo, RelinkResult};
 use audiosync_core::models::*;
 use audiosync_core::project_io;
@@ -620,6 +621,42 @@ pub fn find_missing_files_in_directory(
 ) -> Result<std::collections::HashMap<String, String>, String> {
     validation::find_missing_files_in_directory(&missing_files, std::path::Path::new(&search_dir))
         .map_err(|e| e.to_string())
+}
+
+/// Export sync metadata as a .sync sidecar file.
+#[tauri::command]
+pub fn export_sync_file(
+    path: String,
+    project_name: String,
+    state: State<'_, AppState>,
+) -> Result<(), String> {
+    let tracks = state.tracks.lock().map_err(|e| e.to_string())?;
+    let result = state
+        .result
+        .lock()
+        .map_err(|e| e.to_string())?
+        .clone()
+        .ok_or_else(|| "No analysis result — run analysis first.".to_string())?;
+
+    let sync = sync_format::export_sync(&tracks, &result, &project_name)
+        .map_err(|e| e.to_string())?;
+    sync_format::write_sync_file(&sync, &path).map_err(|e| e.to_string())
+}
+
+/// Import sync metadata from a .sync sidecar file.
+#[tauri::command]
+pub fn import_sync_file(path: String) -> Result<serde_json::Value, String> {
+    let sync = sync_format::read_sync_file(&path).map_err(|e| e.to_string())?;
+    let warnings = sync_format::validate_sync(&sync);
+
+    let json = serde_json::to_value(&sync).map_err(|e| e.to_string())?;
+    let mut result = json.as_object().cloned().unwrap_or_default();
+    result.insert(
+        "_validation_warnings".to_string(),
+        serde_json::to_value(&warnings).unwrap_or_default(),
+    );
+
+    Ok(serde_json::Value::Object(result))
 }
 
 // ---------------------------------------------------------------------------

@@ -38,6 +38,8 @@ pub fn run() {
             commands::load_project,
             commands::update_config,
             commands::get_file_groups,
+            commands::export_sync_file,
+            commands::import_sync_file,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

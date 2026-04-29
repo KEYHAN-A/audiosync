@@ -22,6 +22,7 @@ pub mod cloud;
 pub mod error;
 pub mod logging;
 pub mod validation;
+pub mod sync_format;
 
 // Re-export key types for convenience.
 pub use models::*;
