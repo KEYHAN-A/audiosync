@@ -15,6 +15,7 @@ use log::{debug, info, warn};
 use rustfft::{num_complex::Complex, FftPlanner};
 use std::collections::HashMap;
 
+#[cfg(feature = "audio-io")]
 use crate::audio_io::{detect_project_sample_rate, read_clip_full_res};
 use crate::models::*;
 
@@ -301,6 +302,7 @@ pub fn analyze(
 }
 
 /// Stitch each track into a single continuous audio array at export SR.
+#[cfg(feature = "audio-io")]
 pub fn sync(
     tracks: &mut [Track],
     result: &SyncResult,
@@ -689,6 +691,7 @@ pub fn apply_drift_correction(audio: &[f32], drift_ppm: f64) -> Vec<f32> {
     result
 }
 
+#[cfg(feature = "audio-io")]
 fn apply_drift_correction_f64(audio: &[f64], drift_ppm: f64) -> Vec<f64> {
     if drift_ppm.abs() < 1e-6 {
         return audio.to_vec();
