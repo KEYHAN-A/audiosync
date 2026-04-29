@@ -302,6 +302,37 @@ pub fn remove_clip(
     Ok(state_tracks.iter().map(TrackInfo::from).collect())
 }
 
+/// Manually adjust a clip's timeline offset.
+#[tauri::command]
+pub fn adjust_clip_offset(
+    track_index: usize,
+    clip_index: usize,
+    new_offset_s: f64,
+    state: State<'_, AppState>,
+) -> Result<Vec<TrackInfo>, String> {
+    let mut tracks = state.tracks.lock().map_err(|e| e.to_string())?;
+    if track_index >= tracks.len() {
+        return Err("Track index out of range".to_string());
+    }
+    if clip_index >= tracks[track_index].clips.len() {
+        return Err("Clip index out of range".to_string());
+    }
+
+    let clip = &mut tracks[track_index].clips[clip_index];
+    clip.timeline_offset_s = new_offset_s;
+    clip.timeline_offset_samples = (new_offset_s * ANALYSIS_SR as f64).round() as i64;
+    clip.analyzed = true;
+    clip.confidence = -1.0;
+
+    // Invalidate analysis result since user has overridden it
+    let mut result = state.result.lock().map_err(|e| e.to_string())?;
+    if let Some(ref mut r) = *result {
+        r.clip_offsets.insert(clip.file_path.clone(), clip.timeline_offset_samples);
+    }
+
+    Ok(tracks.iter().map(TrackInfo::from).collect())
+}
+
 /// Get current tracks state.
 #[tauri::command]
 pub fn get_tracks(state: State<'_, AppState>) -> Result<Vec<TrackInfo>, String> {
