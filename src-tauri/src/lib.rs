@@ -38,6 +38,9 @@ pub fn run() {
             commands::load_project,
             commands::update_config,
             commands::get_file_groups,
+            commands::prepare_playback,
+            commands::get_audio_chunk,
+            commands::get_playback_info,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

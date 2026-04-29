@@ -7,6 +7,7 @@
 use audiosync_core::audio_io::{export_track, is_supported_file, load_clip};
 use audiosync_core::engine;
 use audiosync_core::grouping::group_files_by_device;
+use audiosync_core::playback::PlaybackBuffer;
 use audiosync_core::validation::{self, ValidationResult, MissingFileInfo, RelinkResult};
 use audiosync_core::models::*;
 use audiosync_core::project_io;
@@ -28,6 +29,7 @@ pub struct AppState {
     pub result: Mutex<Option<SyncResult>>,
     pub config: Mutex<SyncConfig>,
     pub cancel_token: Mutex<Option<CancelToken>>,
+    pub playback: Mutex<Option<PlaybackBuffer>>,
 }
 
 // ---------------------------------------------------------------------------
@@ -662,4 +664,97 @@ fn sanitize_filename(name: &str) -> String {
             }
         })
         .collect()
+}
+
+// ---------------------------------------------------------------------------
+//  Playback commands
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PlaybackInfo {
+    pub duration_s: f64,
+    pub sample_rate: u32,
+    pub total_samples: usize,
+    pub track_count: usize,
+}
+
+/// Prepare playback buffers for all tracks. Runs on a blocking thread
+/// since it reads full-resolution audio from disk.
+#[tauri::command]
+pub async fn prepare_playback(
+    app: AppHandle,
+    state: State<'_, AppState>,
+) -> Result<PlaybackInfo, String> {
+    let tracks = state.tracks.lock().map_err(|e| e.to_string())?.clone();
+    let result = state.result.lock().map_err(|e| e.to_string())?.clone()
+        .ok_or_else(|| "No analysis result — run analysis first".to_string())?;
+
+    let app_clone = app.clone();
+    let total_tracks = tracks.len();
+
+    let buffer = tokio::task::spawn_blocking(move || {
+        let mut buf = PlaybackBuffer::new(&tracks, &result);
+
+        let _ = app_clone.emit("playback-progress", ProgressPayload {
+            step: 0,
+            total: total_tracks,
+            message: "Preparing playback...".to_string(),
+        });
+
+        if let Err(e) = buf.prepare_all(&tracks, &result) {
+            return Err(format!("Playback preparation failed: {}", e));
+        }
+
+        let _ = app_clone.emit("playback-progress", ProgressPayload {
+            step: total_tracks,
+            total: total_tracks,
+            message: "Playback ready".to_string(),
+        });
+
+        Ok(buf)
+    })
+    .await
+    .map_err(|e| format!("Playback task failed: {}", e))??;
+
+    let info = PlaybackInfo {
+        duration_s: buffer.duration_s(),
+        sample_rate: buffer.sample_rate(),
+        total_samples: buffer.total_samples(),
+        track_count: buffer.track_count(),
+    };
+
+    *state.playback.lock().map_err(|e| e.to_string())? = Some(buffer);
+
+    Ok(info)
+}
+
+/// Get a chunk of audio for a specific track.
+/// Returns f32 samples suitable for Web Audio API.
+#[tauri::command]
+pub fn get_audio_chunk(
+    track_index: usize,
+    start_sample: u64,
+    num_samples: u32,
+    state: State<'_, AppState>,
+) -> Result<Vec<f32>, String> {
+    let playback = state.playback.lock().map_err(|e| e.to_string())?;
+    let buf = playback.as_ref().ok_or_else(|| "Playback not prepared".to_string())?;
+    Ok(buf.get_chunk(track_index, start_sample, num_samples))
+}
+
+/// Get playback info without re-preparing buffers.
+#[tauri::command]
+pub fn get_playback_info(
+    state: State<'_, AppState>,
+) -> Result<Option<PlaybackInfo>, String> {
+    let playback = state.playback.lock().map_err(|e| e.to_string())?;
+    match playback.as_ref() {
+        Some(buf) => Ok(Some(PlaybackInfo {
+            duration_s: buf.duration_s(),
+            sample_rate: buf.sample_rate(),
+            total_samples: buf.total_samples(),
+            track_count: buf.track_count(),
+        })),
+        None => Ok(None),
+    }
 }
