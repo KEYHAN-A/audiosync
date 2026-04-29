@@ -5,6 +5,7 @@ import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useAudioSync } from "../composables/useAudioSync.js";
 import { useAuth } from "../composables/useAuth.js";
 import { useToast } from "../composables/useToast.js";
+import { useSettings } from "../composables/useSettings.js";
 import WorkflowBar from "./WorkflowBar.vue";
 import TrackPanel from "./TrackPanel.vue";
 import WaveformCanvas from "./WaveformCanvas.vue";
@@ -17,6 +18,7 @@ import LoginDialog from "./LoginDialog.vue";
 import CloudProjectsDialog from "./CloudProjectsDialog.vue";
 import ShareDialog from "./ShareDialog.vue";
 import ToastNotification from "./ToastNotification.vue";
+import OnboardingOverlay from "./OnboardingOverlay.vue";
 
 const {
   state,
@@ -44,6 +46,8 @@ const { showToast } = useToast();
 
 const { state: authState, isLoggedIn, initAuth } = useAuth();
 
+const { hasCompletedOnboarding, loadSettings, markOnboardingComplete } = useSettings();
+
 // Dialog visibility
 const showExportDialog = ref(false);
 const showAboutDialog = ref(false);
@@ -51,6 +55,7 @@ const showDriftDialog = ref(false);
 const showLoginDialog = ref(false);
 const showCloudDialog = ref(false);
 const showShareDialog = ref(false);
+const showOnboarding = ref(false);
 
 // Drag-and-drop
 const isDragOver = ref(false);
@@ -67,6 +72,8 @@ onMounted(async () => {
   await setupListeners();
   await fetchVersion();
   await initAuth();
+  await loadSettings();
+  showOnboarding.value = !hasCompletedOnboarding.value;
 
   // Listen for native menu events from Rust
   unlistenMenu = await listen("menu-event", (event) => {
@@ -87,6 +94,10 @@ onMounted(async () => {
       isDragOver.value = false;
       const paths = event.payload.paths;
       if (paths && paths.length > 0) {
+        if (showOnboarding.value) {
+          showOnboarding.value = false;
+          markOnboardingComplete();
+        }
         importPaths(paths).then(() => {
           showToast(`Imported ${paths.length} file(s)`, "success");
         });
@@ -172,6 +183,21 @@ function handleKeydown(e) {
 }
 
 // ---------------------------------------------------------------------------
+//  Onboarding
+// ---------------------------------------------------------------------------
+
+function handleOnboardingDismiss() {
+  showOnboarding.value = false;
+  markOnboardingComplete();
+}
+
+function handleOnboardingImport() {
+  showOnboarding.value = false;
+  markOnboardingComplete();
+  importFiles();
+}
+
+// ---------------------------------------------------------------------------
 //  Workflow actions
 // ---------------------------------------------------------------------------
 
@@ -223,6 +249,13 @@ const versionLabel = computed(
     <div class="bg-grid"></div>
     <div class="glow-orb glow-orb-cyan orb-1"></div>
     <div class="glow-orb glow-orb-purple orb-2"></div>
+
+    <!-- Onboarding overlay (first-run only) -->
+    <OnboardingOverlay
+      v-if="showOnboarding"
+      @dismiss="handleOnboardingDismiss"
+      @importFiles="handleOnboardingImport"
+    />
 
     <!-- Drag overlay -->
     <Transition name="fade">
