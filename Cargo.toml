@@ -2,6 +2,7 @@
 members = [
     "audiosync-core",
     "audiosync-cli",
+    "audiosync-wasm",
     "src-tauri",
 ]
 resolver = "2"
