@@ -1,11 +1,31 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, computed } from "vue";
+import { usePlayback } from "../composables/usePlayback.js";
 
 const props = defineProps({
   tracks: { type: Array, default: () => [] },
   analysisResult: { type: Object, default: null },
   timelineDuration: { type: Number, default: 0 },
 });
+
+const {
+  isPlaying,
+  isPreparing,
+  currentTime,
+  duration,
+  trackCount,
+  trackMutes,
+  trackSolos,
+  prepare,
+  play,
+  stop,
+  pause,
+  seek,
+  toggleMute,
+  toggleSolo,
+  cleanup,
+  formatTime,
+} = usePlayback();
 
 const canvas = ref(null);
 const container = ref(null);
@@ -234,6 +254,37 @@ function drawTimeline(ctx, w, h) {
     ctx.lineTo(centerX, h);
     ctx.stroke();
     ctx.setLineDash([]);
+
+    // Live playhead during playback
+    if (isPlaying.value || currentTime.value > 0) {
+      const phX = LABEL_W + currentTime.value * pxPerSec - scrollX.value;
+      if (phX >= LABEL_W && phX <= w) {
+        // Glow
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.15)";
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(phX, RULER_H);
+        ctx.lineTo(phX, h);
+        ctx.stroke();
+
+        // Line
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(phX, RULER_H);
+        ctx.lineTo(phX, h);
+        ctx.stroke();
+
+        // Head triangle
+        ctx.fillStyle = "#38bdf8";
+        ctx.beginPath();
+        ctx.moveTo(phX - 5, RULER_H);
+        ctx.lineTo(phX + 5, RULER_H);
+        ctx.lineTo(phX, RULER_H + 8);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
   }
 
   ctx.restore();
@@ -402,6 +453,62 @@ function handleWheel(e) {
 }
 
 // ---------------------------------------------------------------------------
+//  Playback handlers
+// ---------------------------------------------------------------------------
+
+async function handlePlay() {
+  if (!isPlaying.value) {
+    if (currentTime.value >= duration.value) {
+      seek(0);
+    }
+    await play();
+    startPlaybackDraw();
+  }
+}
+
+function handleStop() {
+  stop();
+  seek(0);
+  draw();
+}
+
+function handleCanvasClick(e) {
+  if (!isAnalyzed.value) return;
+
+  const rect = canvas.value.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const dur = props.timelineDuration || 1;
+  const timelineW = (rect.width - LABEL_W - 8) * zoom.value;
+  const pxPerSec = timelineW / dur;
+
+  if (x <= LABEL_W) return;
+
+  const clickTime = (x - LABEL_W + scrollX.value) / pxPerSec;
+  if (clickTime >= 0 && clickTime <= dur) {
+    seek(clickTime);
+    if (isPlaying.value) {
+      play(clickTime);
+    }
+    draw();
+  }
+}
+
+let playbackDrawId = null;
+
+function startPlaybackDraw() {
+  if (playbackDrawId) cancelAnimationFrame(playbackDrawId);
+  function tick() {
+    if (!isPlaying.value) {
+      playbackDrawId = null;
+      return;
+    }
+    draw();
+    playbackDrawId = requestAnimationFrame(tick);
+  }
+  playbackDrawId = requestAnimationFrame(tick);
+}
+
+// ---------------------------------------------------------------------------
 //  Lifecycle
 // ---------------------------------------------------------------------------
 
@@ -419,7 +526,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (animationId) cancelAnimationFrame(animationId);
+  if (playbackDrawId) cancelAnimationFrame(playbackDrawId);
   if (resizeObserver) resizeObserver.disconnect();
+  cleanup();
 });
 
 watch(
@@ -438,10 +547,67 @@ watch(
 
 <template>
   <div ref="container" class="waveform-container">
+    <!-- Transport bar (visible after analysis) -->
+    <div v-if="isAnalyzed" class="transport-bar">
+      <div class="transport-controls">
+        <button
+          v-if="!isPlaying"
+          class="transport-btn"
+          :disabled="isPreparing"
+          @click="handlePlay"
+          :title="isPreparing ? 'Preparing...' : 'Play (Space)'"
+        >
+          <svg v-if="!isPreparing" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span v-else class="transport-spinner"></span>
+        </button>
+        <button
+          v-else
+          class="transport-btn transport-btn-active"
+          @click="pause"
+          title="Pause (Space)"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+          </svg>
+        </button>
+        <button class="transport-btn" @click="handleStop" title="Stop">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="4" y="4" width="16" height="16" rx="2"/>
+          </svg>
+        </button>
+      </div>
+
+      <span class="transport-time">{{ formatTime(currentTime) }}</span>
+      <span class="transport-time-dim">/</span>
+      <span class="transport-time-dim">{{ formatTime(duration) }}</span>
+
+      <!-- Per-track mute/solo -->
+      <div v-if="trackCount > 0" class="transport-tracks">
+        <template v-for="(track, ti) in tracks" :key="ti">
+          <button
+            class="track-control"
+            :class="{ 'track-control-active': trackMutes[ti] }"
+            @click="toggleMute(ti)"
+            :title="`Mute ${track.name}`"
+          >M</button>
+          <button
+            class="track-control track-control-solo"
+            :class="{ 'track-control-active': trackSolos[ti] }"
+            @click="toggleSolo(ti)"
+            :title="`Solo ${track.name}`"
+          >S</button>
+        </template>
+      </div>
+    </div>
+
     <canvas
       ref="canvas"
       class="waveform-canvas"
+      :class="{ 'canvas-with-transport': isAnalyzed }"
       @wheel="handleWheel"
+      @click="handleCanvasClick"
     ></canvas>
     <div v-if="isAnalyzed" class="zoom-indicator">
       {{ Math.round(zoom * 100) }}%
@@ -474,5 +640,115 @@ watch(
   padding: 2px 8px;
   border-radius: 6px;
   border: 1px solid var(--border-subtle);
+}
+
+/* Transport bar */
+.transport-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 14px 14px 0 0;
+}
+
+.transport-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.transport-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-input);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.transport-btn:hover:not(:disabled) {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.transport-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.transport-btn-active {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.transport-spinner {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--text-muted);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.transport-time {
+  font-family: "JetBrains Mono", "SF Mono", monospace;
+  font-size: 11px;
+  color: var(--text-bright);
+  min-width: 56px;
+}
+.transport-time-dim {
+  font-family: "JetBrains Mono", "SF Mono", monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.transport-tracks {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 8px;
+}
+
+.track-control {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.track-control:hover {
+  border-color: var(--border-light);
+  color: var(--text);
+}
+.track-control-active {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.track-control-solo.track-control-active {
+  background: rgba(167, 139, 250, 0.15);
+  border-color: var(--purple);
+  color: var(--purple);
+}
+
+.canvas-with-transport {
+  border-radius: 0 0 14px 14px;
 }
 </style>
