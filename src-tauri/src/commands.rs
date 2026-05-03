@@ -690,13 +690,24 @@ fn downsample_peaks(samples: &[f32], n: usize) -> Vec<f32> {
 }
 
 fn sanitize_filename(name: &str) -> String {
-    name.chars()
-        .map(|c| {
-            if c.is_alphanumeric() || c == '_' || c == '-' || c == '.' {
-                c
-            } else {
-                '_'
+    // Allow Unicode, but replace characters that are invalid in paths.
+    // Dangeros: / \ : * ? " < > | and control chars.
+    let mut result = String::with_capacity(name.len());
+    for c in name.chars() {
+        match c {
+            '/' | '\\' | ':' | '*' | '?' | '"' | '<' | '>' | '|' => {
+                result.push('_');
             }
-        })
-        .collect()
+            c if c.is_control() => {
+                result.push('_');
+            }
+            _ => {
+                result.push(c);
+            }
+        }
+    }
+    if result.is_empty() {
+        result.push_str("untitled");
+    }
+    result
 }
