@@ -1,7 +1,7 @@
 /**
  * useAuth — Device code authentication flow for AudioSync Pro.
  *
- * Uses the api.keyhan.info device auth endpoints:
+ * Uses the KEYHAN STUDIO Core device auth endpoints:
  *   POST /auth/device/code   → get device_code + user_code
  *   POST /auth/device/token  → poll until authorized, receive JWT
  *   GET  /auth/me             → get current user info
@@ -11,7 +11,7 @@ import { reactive, computed } from "vue";
 import { Store } from "@tauri-apps/plugin-store";
 import { open as openUrl } from "@tauri-apps/plugin-shell";
 
-const API_BASE = "https://api.keyhan.info";
+const API_BASE = "https://core.keyhan.info";
 
 // Persistent store for auth token
 let store = null;
@@ -45,13 +45,41 @@ const isLoggedIn = computed(() => !!state.token && !!state.user);
 //  API helpers
 // ---------------------------------------------------------------------------
 
-async function apiFetch(path, options = {}) {
+async function apiFetch(path, options = {}, retry = true) {
   const headers = { "Content-Type": "application/json", ...options.headers };
   if (state.token) {
     headers["Authorization"] = `Bearer ${state.token}`;
   }
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  let res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  if (res.status === 401 && retry && path !== "/auth/web/refresh" && await refreshAccessToken()) {
+    headers["Authorization"] = `Bearer ${state.token}`;
+    res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  }
   return res.json();
+}
+
+async function refreshAccessToken() {
+  try {
+    const s = await getStore();
+    const refreshToken = await s.get("refreshToken");
+    if (!refreshToken) return false;
+    const res = await fetch(`${API_BASE}/auth/web/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    if (!data.success || !data.token || !data.refreshToken) return false;
+    state.token = data.token;
+    state.user = data.user;
+    await s.set("token", data.token);
+    await s.set("refreshToken", data.refreshToken);
+    await s.save();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -99,7 +127,7 @@ async function startDeviceLogin() {
   try {
     const data = await apiFetch("/auth/device/code", {
       method: "POST",
-      body: JSON.stringify({ client_info: "AudioSync Pro Desktop" }),
+      body: JSON.stringify({ client_id: "audiosync-desktop", client_info: "AudioSync Pro Desktop" }),
     });
 
     if (!data.success) {
@@ -150,7 +178,7 @@ async function pollForToken(deviceCode, expiresIn, interval) {
         try {
           const data = await apiFetch("/auth/device/token", {
             method: "POST",
-            body: JSON.stringify({ device_code: deviceCode }),
+            body: JSON.stringify({ client_id: "audiosync-desktop", device_code: deviceCode }),
           });
 
           if (data.success && data.token) {
@@ -164,6 +192,7 @@ async function pollForToken(deviceCode, expiresIn, interval) {
 
             const s = await getStore();
             await s.set("token", data.token);
+            await s.set("refreshToken", data.refreshToken);
             await s.save();
 
             resolve(true);
@@ -197,14 +226,21 @@ function cancelDeviceLogin() {
 
 /** Log out and clear stored token */
 async function logout() {
+  const s = await getStore();
+  const refreshToken = await s.get("refreshToken");
+  if (refreshToken) {
+    try {
+      await fetch(`${API_BASE}/auth/web/revoke`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ refreshToken }) });
+    } catch { /* Local logout still succeeds offline. */ }
+  }
   state.token = null;
   state.user = null;
   state.userCode = null;
   state.deviceFlowActive = false;
 
   try {
-    const s = await getStore();
     await s.delete("token");
+    await s.delete("refreshToken");
     await s.save();
   } catch (e) {
     console.warn("Failed to clear auth store:", e);

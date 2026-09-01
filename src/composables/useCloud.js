@@ -1,7 +1,7 @@
 /**
  * useCloud — Cloud project CRUD and timeline sharing.
  *
- * Endpoints on api.keyhan.info:
+ * Endpoints on core.keyhan.info:
  *   GET    /audiosync/projects         → list user projects
  *   POST   /audiosync/projects         → create project
  *   GET    /audiosync/projects/:id     → get project with data

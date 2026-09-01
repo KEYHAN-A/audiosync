@@ -2,7 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub](https://img.shields.io/badge/GitHub-KEYHAN--A%2Faudiosync-181717?logo=github)](https://github.com/KEYHAN-A/audiosync)
-[![Version](https://img.shields.io/badge/version-3.1.1-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
+[![Version](https://img.shields.io/badge/version-3.2.0-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-a78bfa)]()
 [![Website](https://img.shields.io/badge/website-audiosync.pro-38bdf8)](https://audiosync.pro)
 [![CI](https://github.com/KEYHAN-A/audiosync/actions/workflows/ci.yml/badge.svg)](https://github.com/KEYHAN-A/audiosync/actions/workflows/ci.yml)
@@ -54,11 +54,7 @@ Headless command-line tool for servers, pipelines, and automation.
 ```bash
 # Build the CLI
 cargo build --release -p audiosync-cli
-
-# Analyze files
 ./target/release/audiosync analyze CamA_001.mp4 CamA_002.mp4 Zoom_001.wav --json
-
-# Sync and export
 ./target/release/audiosync sync *.mp4 *.wav -o ./output --format wav --bit-depth 24
 
 # Measure clock drift between two files

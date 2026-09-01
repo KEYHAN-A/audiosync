@@ -25,7 +25,7 @@ logger = logging.getLogger("audiosync.cloud")
 # SSL context that works inside PyInstaller bundles (bundled CA certs).
 _ssl_ctx = ssl.create_default_context(cafile=certifi.where())
 
-API_BASE = "https://api.keyhan.info"
+API_BASE = "https://core.keyhan.info"
 SETTINGS_ORG = "KeyhanStudio"
 SETTINGS_APP = "AudioSyncPro"
 
@@ -55,6 +55,10 @@ class CloudClient:
         self._settings.setValue("cloud/token", token)
         self._settings.sync()
 
+    def set_refresh_token(self, token: str) -> None:
+        self._settings.setValue("cloud/refresh_token", token)
+        self._settings.sync()
+
     def get_token(self) -> Optional[str]:
         """Retrieve stored JWT token."""
         val = self._settings.value("cloud/token")
@@ -63,6 +67,7 @@ class CloudClient:
     def clear_token(self) -> None:
         """Remove stored token."""
         self._settings.remove("cloud/token")
+        self._settings.remove("cloud/refresh_token")
         self._settings.sync()
 
     def is_authenticated(self) -> bool:
@@ -88,6 +93,7 @@ class CloudClient:
             device_code, user_code, verification_uri, expires_in, interval
         """
         return self._request("POST", "/auth/device/code", body={
+            "client_id": "audiosync-desktop",
             "client_info": "AudioSync Pro Desktop",
         })
 
@@ -106,10 +112,13 @@ class CloudClient:
         while time.time() - start < timeout:
             try:
                 result = self._request("POST", "/auth/device/token", body={
+                    "client_id": "audiosync-desktop",
                     "device_code": device_code,
                 })
                 if result.get("success") and result.get("token"):
                     self.set_token(result["token"])
+                    if result.get("refreshToken"):
+                        self.set_refresh_token(result["refreshToken"])
                     return result
                 error = result.get("error", "")
                 if error == "expired":
@@ -166,6 +175,12 @@ class CloudClient:
 
     def logout(self) -> None:
         """Sign out: clear the stored token."""
+        refresh_token = self._settings.value("cloud/refresh_token")
+        if refresh_token:
+            try:
+                self._request("POST", "/auth/web/revoke", body={"refreshToken": refresh_token})
+            except CloudError:
+                pass
         self.clear_token()
 
     # ----- Internal HTTP -------------------------------------------------------
@@ -175,6 +190,7 @@ class CloudClient:
         method: str,
         path: str,
         body: Optional[dict] = None,
+        retry_auth: bool = True,
     ) -> dict:
         """Make an authenticated HTTP request to the API.
 
@@ -211,6 +227,18 @@ class CloudClient:
                 pass
 
             if exc.code == 401:
+                refresh_token = self._settings.value("cloud/refresh_token")
+                if retry_auth and refresh_token and path != "/auth/web/refresh":
+                    refreshed = self._request(
+                        "POST",
+                        "/auth/web/refresh",
+                        body={"refreshToken": refresh_token},
+                        retry_auth=False,
+                    )
+                    if refreshed.get("token") and refreshed.get("refreshToken"):
+                        self.set_token(refreshed["token"])
+                        self.set_refresh_token(refreshed["refreshToken"])
+                        return self._request(method, path, body=body, retry_auth=False)
                 raise CloudError("Authentication failed. Please sign in again.", 401)
             if exc.code == 403:
                 error_msg = "Access denied"
