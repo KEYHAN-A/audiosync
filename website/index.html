@@ -113,7 +113,7 @@
                     <a href="#download" class="hover:text-cyan transition-colors">Download</a>
                 </div>
                 <div class="hidden md:flex items-center gap-3">
-                    <a href="https://studio.keyhan.info/login" target="_blank" rel="noopener"
+                    <a href="https://core.keyhan.info/account" target="_blank" rel="noopener"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-purple/20 text-purple-bright text-sm font-medium hover:bg-purple/10 hover:border-purple/30 transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -663,7 +663,7 @@
 
                 <!-- CTA -->
                 <div class="text-center mt-12 fade-in">
-                    <a href="https://studio.keyhan.info/login" target="_blank" rel="noopener"
+                    <a href="https://core.keyhan.info/account" target="_blank" rel="noopener"
                         class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-purple/10 border border-purple/20 text-purple-bright font-semibold text-base hover:bg-purple/20 hover:border-purple/30 transition-all">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -885,7 +885,7 @@
             statusEl.textContent = '';
 
             try {
-                const res = await fetch('https://api.keyhan.info/audiosync/subscribe', {
+                const res = await fetch('https://core.keyhan.info/audiosync/subscribe', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email }),
