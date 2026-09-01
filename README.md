@@ -4,12 +4,40 @@
 [![GitHub](https://img.shields.io/badge/GitHub-KEYHAN--A%2Faudiosync-181717?logo=github)](https://github.com/KEYHAN-A/audiosync)
 [![Version](https://img.shields.io/badge/version-3.2.3-38bdf8)](https://github.com/KEYHAN-A/audiosync/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-a78bfa)]()
-[![Website](https://img.shields.io/badge/website-audiosync.pro-38bdf8)](https://audiosync.pro)
+[![Website](https://img.shields.io/badge/website-audiosync.keyhan.info-38bdf8)](https://audiosync.keyhan.info)
 [![CI](https://github.com/KEYHAN-A/audiosync/actions/workflows/ci.yml/badge.svg)](https://github.com/KEYHAN-A/audiosync/actions/workflows/ci.yml)
 
 Multi-device audio/video synchronization with FFT cross-correlation, automatic clock drift detection, and NLE timeline export. Built with **Rust** and **Tauri v2** for native performance.
 
-**Free and open source.** [Website](https://audiosync.pro) | [Download](https://github.com/KEYHAN-A/audiosync/releases) | [Report Issue](https://github.com/KEYHAN-A/audiosync/issues)
+**Free and open source.** [Website](https://audiosync.keyhan.info) | [Download](https://github.com/KEYHAN-A/audiosync/releases/tag/v3.2.3) | [KEYHAN STUDIO Account](https://core.keyhan.info/account) | [Report Issue](https://github.com/KEYHAN-A/audiosync/issues)
+
+## AudioSync Pro v3.2.3
+
+The current production release completes the migration to the standalone KEYHAN STUDIO Core platform:
+
+- Unified KEYHAN STUDIO authentication, account details, token refresh, session revocation, and logout.
+- Cloud project create/load/update/delete flows and public timeline sharing through `core.keyhan.info`.
+- Website sign-in and newsletter subscription through the same account platform.
+- Cross-product KEYHAN STUDIO integrations and the portable `.sync` sidecar protocol.
+- Missing-file validation, folder search, and relinking commands registered in the desktop application.
+- Reproducible native releases using a pinned, aligned Tauri 2.11 Rust and JavaScript dependency graph.
+- Verified native installers for macOS, Windows, and Linux.
+
+Existing desktop users should install v3.2.3 to move their authentication, projects, and sharing flows to KEYHAN STUDIO Core.
+
+### Download
+
+| Platform | Package |
+| --- | --- |
+| macOS — Universal | [Download DMG](https://github.com/KEYHAN-A/audiosync/releases/latest/download/AudioSync.Pro_3.2.3_universal.dmg) |
+| Windows — x64 | [Download installer](https://github.com/KEYHAN-A/audiosync/releases/latest/download/AudioSync.Pro_3.2.3_x64-setup.exe) |
+| Linux — x86_64 | [Download AppImage](https://github.com/KEYHAN-A/audiosync/releases/latest/download/AudioSync.Pro_3.2.3_amd64.AppImage) |
+
+Additional Debian, RPM, MSI, app archive, and CLI artifacts are available on the [release page](https://github.com/KEYHAN-A/audiosync/releases/tag/v3.2.3). See the [changelog](CHANGELOG.md) for the complete release history.
+
+### KEYHAN STUDIO Core
+
+AudioSync remains local-first for media processing. Core stores account information, cloud project documents, sharing metadata, sessions, and product entitlements; source audio and video files remain on the user's machine. Users can review their KEYHAN STUDIO products and product data from the [unified account portal](https://core.keyhan.info/account).
 
 ---
 
@@ -42,7 +70,7 @@ The full GUI experience with waveform visualization, drag-and-drop, and real-tim
 ```bash
 # Build and run
 npm install
-cargo tauri dev
+npm run tauri dev
 ```
 
 **Features:** Glassmorphism UI, Canvas waveform timeline, resizable panels, file drag-and-drop, native menus, keyboard shortcuts (Cmd+O/S/R/E/D), progress dialogs, drift measurement tool, project save/load.
@@ -97,11 +125,11 @@ AudioSyncPro/
 │       ├── metadata.rs       # ffprobe creation timestamps
 │       ├── project_io.rs     # JSON project save/load
 │       ├── timeline_export.rs# FCPXML v1.11 + EDL (CMX 3600)
-│       └── cloud.rs          # Cloud API client (future)
+│       └── cloud.rs          # KEYHAN STUDIO Core cloud client
 ├── audiosync-cli/        # Rust CLI binary
 ├── src-tauri/            # Tauri v2 desktop app (Rust backend)
 │   └── src/
-│       ├── commands.rs       # IPC bridge (15 commands)
+│       ├── commands.rs       # Desktop IPC bridge
 │       ├── menu.rs           # Native app menu
 │       └── lib.rs            # App entry, plugins, state
 ├── src/                  # Vue 3 frontend
@@ -174,10 +202,10 @@ npm install
 cargo test --workspace
 
 # Development mode (hot-reload)
-cargo tauri dev
+npm run tauri dev
 
 # Production build
-cargo tauri build
+npm run tauri build
 
 # CLI only (no GUI dependencies)
 cargo build --release -p audiosync-cli
@@ -186,7 +214,7 @@ cargo build --release -p audiosync-cli
 ### Test
 
 ```bash
-# All tests (51 total: 41 unit + 9 CLI integration + 1 doctest)
+# All tests (69 total: 59 core unit + 9 CLI integration + 1 doctest)
 cargo test --workspace
 
 # Core library only
@@ -236,6 +264,12 @@ AudioSync Pro v3.0 is a ground-up rewrite in Rust. The algorithm is identical bu
 - Fixed drag-and-drop for Tauri v2 native file handling
 - Fixed intra-track clip overlap enforcement
 - Fixed FCPXML gap elements for DaVinci Resolve compatibility
+
+**What's new in v3.2.3:**
+- Unified authentication, cloud projects, sharing, and sessions through KEYHAN STUDIO Core
+- Portable `.sync` sidecars and cross-product integration adapters
+- Missing-file validation and relinking in the desktop command bridge
+- Reproducible macOS, Windows, and Linux releases with pinned Tauri dependencies
 
 **What stays:**
 - The Python implementation in `python/` with its own CLI
