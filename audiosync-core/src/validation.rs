@@ -1,8 +1,11 @@
 //! File validation and relinking utilities.
 
-use crate::{error::{AudioSyncError, Result}, Clip, Track};
+use crate::{
+    error::{AudioSyncError, Result},
+    Clip, Track,
+};
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// Validation result for a collection of clips.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

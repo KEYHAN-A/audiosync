@@ -38,6 +38,9 @@ pub fn run() {
             commands::load_project,
             commands::update_config,
             commands::get_file_groups,
+            commands::validate_source_files,
+            commands::relink_files,
+            commands::find_missing_files_in_directory,
             commands::export_sync_file,
             commands::import_sync_file,
         ])

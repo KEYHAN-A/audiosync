@@ -182,8 +182,6 @@ impl DiagnosticsReport {
         tracks: &[crate::Track],
         result: &crate::SyncResult,
     ) -> Self {
-        use crate::Track;
-
         let low_confidence: Vec<String> = tracks
             .iter()
             .flat_map(|t| {
