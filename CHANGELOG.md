@@ -5,6 +5,16 @@ All notable changes to AudioSync Pro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.1] - 2026-09-01
+
+### Changed
+- Moved desktop authentication, account details, cloud projects, sharing, and token refresh to `core.keyhan.info`
+- Moved website sign-in and newsletter subscriptions to the unified KEYHAN STUDIO account service
+- Added automatic access-token refresh and server-side session revocation on logout
+
+### Added
+- Cross-product KEYHAN STUDIO integrations and the portable `.sync` sidecar protocol
+
 ## [3.2.0] - 2026-04-26
 
 ### Added
@@ -204,6 +214,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Processing dialog with real-time progress and ETA
 - macOS .app bundle build script
 
+[3.2.1]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.2.1
+[3.2.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.2.0
 [3.1.1]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.1.1
 [3.1.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.1.0
 [3.0.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.0.0

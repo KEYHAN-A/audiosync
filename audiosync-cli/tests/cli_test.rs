@@ -17,10 +17,10 @@ fn test_version() {
         .expect("Failed to run audiosync");
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
+    let expected = env!("CARGO_PKG_VERSION");
     assert!(
-        stdout.contains("3.2.0"),
-        "Version output should contain 3.2.0, got: {}",
-        stdout
+        stdout.contains(expected),
+        "Version output should contain {expected}, got: {stdout}"
     );
 }
 
