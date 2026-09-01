@@ -5,6 +5,11 @@ All notable changes to AudioSync Pro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.2] - 2026-09-01
+
+### Fixed
+- Restored the reusable Tauri CLI script so production desktop release builds terminate and package correctly
+
 ## [3.2.1] - 2026-09-01
 
 ### Changed
@@ -214,6 +219,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Processing dialog with real-time progress and ETA
 - macOS .app bundle build script
 
+[3.2.2]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.2.2
 [3.2.1]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.2.1
 [3.2.0]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.2.0
 [3.1.1]: https://github.com/KEYHAN-A/audiosync/releases/tag/v3.1.1
