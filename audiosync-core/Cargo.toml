@@ -6,16 +6,20 @@ authors.workspace = true
 license.workspace = true
 description = "Core audio synchronization engine — FFT cross-correlation, drift detection, audio I/O"
 
+[features]
+default = ["audio-io", "cloud", "export", "project", "validation", "logging", "testing", "chrono"]
+audio-io = ["dep:symphonia", "dep:hound", "dep:rubato", "dep:dirs", "dep:uuid"]
+cloud = ["dep:reqwest", "dep:tokio"]
+export = ["dep:quick-xml", "audio-io"]
+project = []
+validation = []
+logging = ["dep:tracing-subscriber", "dep:tracing-appender"]
+testing = ["dep:proptest", "dep:rstest"]
+chrono = ["dep:chrono"]
+
 [dependencies]
 # FFT
 rustfft = "6"
-
-# Audio I/O
-symphonia = { version = "0.5", features = ["all"] }
-hound = "3"
-
-# Resampling
-rubato = "0.16"
 
 # Arrays
 ndarray = "0.16"
@@ -24,17 +28,22 @@ ndarray = "0.16"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
-# HTTP client (for cloud)
-reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+# HTTP client (for cloud) — optional, not needed for WASM
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false, optional = true }
 
-# Async
-tokio = { version = "1", features = ["rt", "sync", "macros"] }
+# Async — optional, not needed for WASM
+tokio = { version = "1", features = ["rt", "sync", "macros"], optional = true }
 
-# XML generation (FCPXML export)
-quick-xml = { version = "0.37", features = ["serialize"] }
+# Audio I/O — optional for WASM builds
+symphonia = { version = "0.5", features = ["all"], optional = true }
+hound = { version = "3", optional = true }
+rubato = { version = "0.16", optional = true }
 
-# Platform directories (cache, config)
-dirs = "6"
+# XML generation (FCPXML export) — optional
+quick-xml = { version = "0.37", features = ["serialize"], optional = true }
+
+# Platform directories — optional for WASM
+dirs = { version = "6", optional = true }
 
 # Regex (grouping)
 regex = "1"
@@ -42,25 +51,25 @@ regex = "1"
 # Logging
 log = "0.4"
 tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
-tracing-appender = "0.2"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"], optional = true }
+tracing-appender = { version = "0.2", optional = true }
 
 # Error handling
 thiserror = "2"
 anyhow = "1"
 
-# Testing
-proptest = "1"
-rstest = "0.23"
+# Testing — dev-only, not needed for WASM
+proptest = { version = "1", optional = true }
+rstest = { version = "0.23", optional = true }
 
-# Parallel processing
-rayon = "1"
+# Parallel processing — unused, kept for future use
+rayon = { version = "1", optional = true }
 
 # Progress reporting
 indicatif = { version = "0.17", optional = true }
 
-# UUID (session IDs for cache)
-uuid = { version = "1", features = ["v4"] }
+# UUID (session IDs for cache) — optional, not needed for WASM
+uuid = { version = "1", features = ["v4"], optional = true }
 
 # Time
-chrono = { version = "0.4", features = ["serde"] }
+chrono = { version = "0.4", features = ["serde"], optional = true }
