@@ -29,6 +29,7 @@ pub fn run() {
             commands::create_track,
             commands::remove_track,
             commands::remove_clip,
+            commands::adjust_clip_offset,
             commands::get_tracks,
             commands::run_analysis,
             commands::run_sync_and_export,

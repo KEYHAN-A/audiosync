@@ -1,5 +1,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, computed } from "vue";
+import { useAudioSync } from "../composables/useAudioSync.js";
+
+const { adjustOffset } = useAudioSync();
 
 const props = defineProps({
   tracks: { type: Array, default: () => [] },
@@ -220,6 +223,18 @@ function drawTimeline(ctx, w, h) {
       ctx.textAlign = "left";
       const labelX = Math.max(clipX + 6, LABEL_W + 6);
       ctx.fillText(clip.name, labelX, y + LANE_H - 8);
+
+      // Selected clip highlight
+      if (selectedClip.value && selectedClip.value.trackIdx === ti && selectedClip.value.clipIdx === ci) {
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 2;
+        ctx.shadowColor = "rgba(56, 189, 248, 0.4)";
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        roundRect(ctx, Math.max(clipX, LABEL_W) + 0.5, y + 4.5, clipW - 1, LANE_H - 9, 6);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
     }
   }
 
@@ -389,6 +404,13 @@ function hexToRgba(hex, alpha) {
 //  Interaction
 // ---------------------------------------------------------------------------
 
+// Clip selection & drag state
+const selectedClip = ref(null); // { trackIdx, clipIdx }
+const isDragging = ref(false);
+const dragStartX = ref(0);
+const dragStartOffset = ref(0);
+const dragTooltip = ref(null); // { x, y, text }
+
 function handleWheel(e) {
   if (e.ctrlKey || e.metaKey) {
     e.preventDefault();
@@ -397,6 +419,122 @@ function handleWheel(e) {
     draw();
   } else {
     scrollX.value = Math.max(0, scrollX.value + e.deltaX);
+    draw();
+  }
+}
+
+// Hit-test: find which clip is at canvas position (x, y)
+function hitTestClip(canvasX, canvasY) {
+  if (!isAnalyzed.value) return null;
+  const duration = props.timelineDuration || 1;
+  const timelineW = (canvasX - LABEL_W) * zoom.value;
+
+  for (let ti = 0; ti < props.tracks.length; ti++) {
+    const y = RULER_H + ti * (LANE_H + LANE_GAP) + LANE_GAP;
+    if (canvasY < y + 4 || canvasY > y + LANE_H - 4) continue;
+
+    const track = props.tracks[ti];
+    for (let ci = 0; ci < (track.clips || []).length; ci++) {
+      const clip = track.clips[ci];
+      const timelineWW = (canvasX + scrollX.value) * zoom.value;
+      const duration2 = props.timelineDuration || 1;
+      const tlW = (canvasX + scrollX.value) * zoom.value;
+      const dur = props.timelineDuration || 1;
+
+      // Simpler approach: use the same pxPerSec as drawing
+      const rect = canvas.value.getBoundingClientRect();
+      const w = rect.width;
+      const tlWidth = (w - LABEL_W - 8) * zoom.value;
+      const pxPerSec = tlWidth / dur;
+
+      const clipX = LABEL_W + clip.timeline_offset_s * pxPerSec - scrollX.value;
+      const clipW = clip.duration_s * pxPerSec;
+
+      if (canvasX >= clipX && canvasX <= clipX + clipW) {
+        return { trackIdx: ti, clipIdx: ci };
+      }
+    }
+  }
+  return null;
+}
+
+function handleMouseDown(e) {
+  if (!isAnalyzed.value) return;
+  const rect = canvas.value.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  const hit = hitTestClip(x, y);
+  if (hit) {
+    selectedClip.value = hit;
+    isDragging.value = true;
+    dragStartX.value = e.clientX;
+    dragStartOffset.value = props.tracks[hit.trackIdx].clips[hit.clipIdx].timeline_offset_s;
+    e.preventDefault();
+  } else {
+    selectedClip.value = null;
+    draw();
+  }
+}
+
+function handleMouseMove(e) {
+  if (!isDragging.value || !selectedClip.value) return;
+
+  const deltaX = e.clientX - dragStartX.value;
+  const rect = canvas.value.getBoundingClientRect();
+  const w = rect.width;
+  const dur = props.timelineDuration || 1;
+  const tlWidth = (w - LABEL_W - 8) * zoom.value;
+  const pxPerSec = tlWidth / dur;
+
+  const deltaS = deltaX / pxPerSec;
+  const newOffset = Math.max(0, dragStartOffset.value + deltaS);
+
+  // Show tooltip with offset
+  dragTooltip.value = {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top - 30,
+    text: `${newOffset.toFixed(3)}s`,
+  };
+
+  // Update the clip visually (will be confirmed on mouseup)
+  const clip = props.tracks[selectedClip.value.trackIdx].clips[selectedClip.value.clipIdx];
+  clip.timeline_offset_s = newOffset;
+  draw();
+}
+
+async function handleMouseUp(e) {
+  if (!isDragging.value || !selectedClip.value) return;
+
+  isDragging.value = false;
+  dragTooltip.value = null;
+
+  const { trackIdx, clipIdx } = selectedClip.value;
+  const clip = props.tracks[trackIdx].clips[clipIdx];
+
+  await adjustOffset(trackIdx, clipIdx, clip.timeline_offset_s);
+  draw();
+}
+
+function handleKeydown(e) {
+  if (!selectedClip.value || !isAnalyzed.value) return;
+
+  const { trackIdx, clipIdx } = selectedClip.value;
+  const clip = props.tracks[trackIdx].clips[clipIdx];
+  if (!clip) return;
+
+  const step = e.shiftKey ? 0.01 : 0.001;
+
+  if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    const newOffset = Math.max(0, clip.timeline_offset_s - step);
+    adjustOffset(trackIdx, clipIdx, newOffset);
+  } else if (e.key === "ArrowRight") {
+    e.preventDefault();
+    const newOffset = clip.timeline_offset_s + step;
+    adjustOffset(trackIdx, clipIdx, newOffset);
+  } else if (e.key === "Escape") {
+    selectedClip.value = null;
     draw();
   }
 }
@@ -441,8 +579,24 @@ watch(
     <canvas
       ref="canvas"
       class="waveform-canvas"
+      :class="{ 'canvas-with-transport': isAnalyzed, 'canvas-dragging': isDragging }"
       @wheel="handleWheel"
+      @mousedown="handleMouseDown"
+      @mousemove="handleMouseMove"
+      @mouseup="handleMouseUp"
+      @mouseleave="isDragging = false; dragTooltip = null"
+      tabindex="0"
+      @keydown="handleKeydown"
     ></canvas>
+    <!-- Drag tooltip -->
+    <div v-if="dragTooltip" class="drag-tooltip" :style="{ left: dragTooltip.x + 'px', top: dragTooltip.y + 'px' }">
+      {{ dragTooltip.text }}
+    </div>
+    <!-- Offset indicator for selected clip -->
+    <div v-if="selectedClip && !isDragging && isAnalyzed" class="selected-info">
+      Selected: {{ tracks[selectedClip.trackIdx]?.clips[selectedClip.clipIdx]?.name }}
+      &middot; Arrow keys to nudge (1ms, Shift=10ms) &middot; Esc to deselect
+    </div>
     <div v-if="isAnalyzed" class="zoom-indicator">
       {{ Math.round(zoom * 100) }}%
     </div>
@@ -474,5 +628,39 @@ watch(
   padding: 2px 8px;
   border-radius: 6px;
   border: 1px solid var(--border-subtle);
+}
+
+.canvas-dragging {
+  cursor: ew-resize;
+}
+
+/* Drag tooltip */
+.drag-tooltip {
+  position: absolute;
+  padding: 4px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--cyan);
+  border-radius: 6px;
+  color: var(--cyan);
+  font-family: "JetBrains Mono", "SF Mono", monospace;
+  font-size: 11px;
+  pointer-events: none;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+/* Selected clip info */
+.selected-info {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  background: rgba(17, 24, 39, 0.85);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-dim);
+  font-size: 10px;
+  pointer-events: none;
+  white-space: nowrap;
 }
 </style>

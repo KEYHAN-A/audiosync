@@ -197,6 +197,21 @@ async function removeClip(trackIndex, clipIndex) {
   }
 }
 
+/** Manually adjust a clip's timeline offset */
+async function adjustOffset(trackIndex, clipIndex, newOffsetS) {
+  try {
+    const tracks = await invoke("adjust_clip_offset", {
+      trackIndex,
+      clipIndex,
+      newOffsetS,
+    });
+    state.tracks = tracks;
+    state.statusMessage = `Offset adjusted to ${newOffsetS.toFixed(3)}s`;
+  } catch (e) {
+    setError("Adjust offset failed: " + e);
+  }
+}
+
 /** Run the analysis engine */
 async function runAnalysis(maxOffsetS = null) {
   if (totalClips.value === 0) {
@@ -405,6 +420,7 @@ export function useAudioSync() {
     createTrack,
     removeTrack,
     removeClip,
+    adjustOffset,
     runAnalysis,
     runSyncAndExport,
     cancelOperation,
