@@ -25,18 +25,18 @@ const emit = defineEmits(["addTrack", "addFiles", "removeTrack", "removeClip", "
     <!-- Empty state -->
     <div v-if="tracks.length === 0" class="empty-state">
       <div class="empty-icon">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
         </svg>
       </div>
-      <p class="empty-title">No tracks yet</p>
+      <p class="empty-title">Drop your files here</p>
       <p class="empty-subtitle">
-        Import audio/video files to get started. Files are auto-grouped by device name.
+        Import audio or video recordings from your cameras, mics, or recorders. Files are auto-grouped by device name.
       </p>
       <button class="btn btn-primary" @click="emit('importFiles')">
-        + Import Files
+        <span class="btn-icon">+</span> Import Files
       </button>
-      <p class="empty-hint">or drag &amp; drop files here</p>
+      <p class="empty-hint">WAV, MP4, MOV, FLAC, MP3 & more</p>
     </div>
 
     <!-- Track list -->
@@ -87,13 +87,13 @@ const emit = defineEmits(["addTrack", "addFiles", "removeTrack", "removeClip", "
 }
 
 .empty-icon {
-  color: var(--text-muted);
+  color: var(--cyan);
   margin-bottom: 16px;
-  opacity: 0.5;
+  opacity: 0.35;
 }
 
 .empty-title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-dim);
   margin-bottom: 6px;
@@ -102,7 +102,7 @@ const emit = defineEmits(["addTrack", "addFiles", "removeTrack", "removeClip", "
 .empty-subtitle {
   font-size: 12px;
   color: var(--text-muted);
-  max-width: 220px;
+  max-width: 240px;
   line-height: 1.5;
   margin-bottom: 20px;
 }
